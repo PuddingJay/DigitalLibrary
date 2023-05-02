@@ -11,7 +11,7 @@ function App() {
     <Routes>
       <Route path="/" element={<AdminLayout />}>
         <Route
-          path="/dashboard"
+          path="/"
           element={<AdminDashboard />}
         />
         <Route

@@ -6,6 +6,7 @@
 
 .outletContainer {
   display: flex;
+  min-height: 100vh;
 
   .outlet {
     flex: 4;

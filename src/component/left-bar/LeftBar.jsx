@@ -7,7 +7,7 @@ export default function LeftBar() {
     <div className="leftBar">
       <div className="menu">
         <ul>
-          <Link to="/dashboard">
+          <Link to="/">
             <li>Dashboard</li>
           </Link>
           <Link to="/daftarpustaka">

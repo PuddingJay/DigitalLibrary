@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "fullName": "Jenny Chan",
+    "Jurusan": "3 waterfoot road",
+    "NIS": "333-962-7516",
+    "Kelas": "jenny.chan@email.com"
+  },
+  {
+    "id": 2,
+    "fullName": "Jessica warren",
+    "Jurusan": "4 tall town",
+    "NIS": "011-211-7516",
+    "Kelas": "jessica.warren@email.com"
+  },
+  {
+    "id": 3,
+    "fullName": "Tony Frank",
+    "Jurusan": "11 lesly road",
+    "NIS": "788-962-7516",
+    "Kelas": "tony.frank@email.com"
+  },
+  {
+    "id": 4,
+    "fullName": "Jeremy Clark",
+    "Jurusan": "333 miltown manor",
+    "NIS": "011-962-111",
+    "Kelas": "jeremy.clark@email.com"
+  },
+  {
+    "id": 5,
+    "fullName": "Raymond Edwards",
+    "Jurusan": "99 blue acres",
+    "NIS": "3231-962-7516",
+    "Kelas": "raymon.edwards@email.com"
+  }
+]
