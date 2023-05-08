@@ -1,11 +1,11 @@
 .leftBar {
   display: flex;
-  flex: 1;
+  flex: 15%;
 
   .menu {
     height: 100%;
     background-color: #29266a;
-    width: 350px;
+    width: 320px;
 
     ul {
       display: flex;
@@ -17,13 +17,15 @@
 
       li {
         list-style-type: none;
-        text-align: center;
+        text-align: left;
         color: white;
         font-weight: bold;
         font-size: 28px;
+        padding-left: 30px;
       }
 
-      li:hover {
+      li:hover,
+      li::marker {
         color: #ffbe17;
         text-decoration: underline;
       }

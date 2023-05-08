@@ -4,7 +4,7 @@ import './AdminDashboard.scss'
 export default function AdminDashboard() {
   return (
     <>
-      <h2>Perpustakaan Digital SMA Yuppentek 1 Kota Tangerang</h2>
+      <h2 className="dashboardTitle">Perpustakaan Digital SMA Yuppentek 1 Kota Tangerang</h2>
       <div className="dashboardContainer">
         <div className="jumlahBukuContainer">
           Jumlah Buku : berapa

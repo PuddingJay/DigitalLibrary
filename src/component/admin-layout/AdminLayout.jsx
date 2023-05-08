@@ -9,10 +9,12 @@ export default function AdminLayout() {
     <>
       <NavBar />
       <div className="barBiru"></div>
-      <div className="outletContainer">
+      <div className="mainContainer">
         <LeftBar />
-        <div className="outlet">
-          <Outlet />
+        <div className="outletContainer">
+          <div className="outletContent">
+            <Outlet />
+          </div>
         </div>
 
       </div>
