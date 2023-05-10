@@ -4,20 +4,11 @@
   border-bottom: 5px solid #ffbe17;
 }
 
-.mainContainer {
+.outletContainer {
   display: flex;
   min-height: 100vh;
 
-  .outletContainer {
-    flex: 85%;
-    background-color: #dfdfe9;
-
-    .outletContent {
-      box-shadow: 0px 0px 10px rgb(192, 192, 192);
-      background-color: white;
-      padding: 20px 20px 60px;
-      margin: 40px;
-      border-radius: 5px;
-    }
+  .outlet {
+    flex: 4;
   }
 }
