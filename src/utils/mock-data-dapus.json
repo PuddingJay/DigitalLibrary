@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "idBuku": "20.1.1",
+    "judulBuku": "Aqua",
+    "jumlahBuku": "2",
+    "keterangan": "Baik"
+  },
+  {
+    "id": 2,
+    "idBuku": "20.1.2",
+    "judulBuku": "Le Minerale",
+    "jumlahBuku": "6",
+    "keterangan": "Baik"
+  },
+  {
+    "id": 3,
+    "idBuku": "20.1.3",
+    "judulBuku": "Si Kancil Anak Nakal",
+    "jumlahBuku": "7",
+    "keterangan": "Sampul Rusak"
+  },
+  {
+    "id": 4,
+    "idBuku": "20.1.4",
+    "judulBuku": "Daily Conversations",
+    "jumlahBuku": "e-book",
+    "keterangan": "Baik"
+  },
+  {
+    "id": 5,
+    "idBuku": "20.1.5",
+    "judulBuku": "Supernova",
+    "jumlahBuku": "3",
+    "keterangan": "Tidak Ada Sampul"
+  },
+  {
+    "id": 6,
+    "idBuku": "20.1.6",
+    "judulBuku": "Buku Penjas",
+    "jumlahBuku": "3",
+    "keterangan": "Hilang"
+  },
+  {
+    "id": 7,
+    "idBuku": "20.1.7",
+    "judulBuku": "Math",
+    "jumlahBuku": "6",
+    "keterangan": "Baik"
+  },
+  {
+    "id": 8,
+    "idBuku": "20.1.8",
+    "judulBuku": "Biologi",
+    "jumlahBuku": "5",
+    "keterangan": "Baik"
+  }
+]

@@ -1,0 +1,11 @@
+@import "../../../style.scss";
+
+.action {
+  width: 2rem;
+
+  .buttonWrapper {
+    display: flex;
+    padding: 0;
+    gap: 10px;
+  }
+}

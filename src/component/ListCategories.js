@@ -1,15 +1,15 @@
 import React, { Component } from "react";
 import { Col } from "react-bootstrap";
 import axios from "axios";
-import { API_URL } from "../Utils/Constant";
+import { API_URL } from "../utils/Constant";
 import ListGroup from 'react-bootstrap/ListGroup';
 
 export default class ListCategories extends Component {
   constructor(props) {
     super(props)
-  
+
     this.state = {
-       catogories : []
+      catogories: []
     }
   }
   componentDidMount() {
@@ -23,7 +23,7 @@ export default class ListCategories extends Component {
         console.log(error);
       });
   }
-  
+
   render() {
     const { categories } = this.state;
     const { ChangeCategory, categoryTerpilih } = this.props;
@@ -36,19 +36,19 @@ export default class ListCategories extends Component {
         <ListGroup>
           {categories && categories.map((category) => (
             <ListGroup.Item key={category.id}
-            
-                onClick={() => ChangeCategory(category.nama)}
-                className={categoryTerpilih === category.nama && "category-aktif"}
-                style={{cursor: 'pointer'}} 
-                >
-                  <h9>
-                   {category.nama}
-                </h9>
-                
+
+              onClick={() => ChangeCategory(category.nama)}
+              className={categoryTerpilih === category.nama && "category-aktif"}
+              style={{ cursor: 'pointer' }}
+            >
+              <h9>
+                {category.nama}
+              </h9>
+
             </ListGroup.Item>
           ))}
-          
-          
+
+
         </ListGroup>
       </Col>
     );
