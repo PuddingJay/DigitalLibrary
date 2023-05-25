@@ -7,7 +7,7 @@ export default function AdminLayout() {
   return (
     <>
       <NavBar />
-      <div className="barBiru"></div>
+
       <div className="mainContainer">
         <LeftBar />
         <div className="outletContainer">

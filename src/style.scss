@@ -64,43 +64,43 @@ html {
 // }
 
 @mixin mobile {
-  @media (max-width: 749px) {
+  @media (min-width: 576px) {
     @content;
   }
 }
 
 @mixin tablet {
-  @media (max-width: 1000px) and (min-width: 750px) {
+  @media (min-width: 768px) {
     @content;
   }
 }
 
 @mixin laptop-s {
-  @media (max-width: 1100px) and (min-width: 1008px) {
+  @media (min-width: 992px) {
     @content;
   }
 }
 
 @mixin laptop-m {
-  @media (max-width: 1280px) and (min-width: 1105px) {
+  @media (min-width: 1200px) {
     @content;
   }
 }
 
 @mixin laptop-l {
-  @media (max-width: 1440px) and (min-width: 1300px) {
+  @media (min-width: 1400px) {
     @content;
   }
 }
 
 @mixin laptop-xl {
-  @media (max-width: 1920px) and (min-width: 1500px) {
+  @media (min-width: 1900px) {
     @content;
   }
 }
 
 @mixin laptop-xxl {
-  @media (max-width: 2560px) and (min-width: 2000px) {
+  @media (min-width: 2500px) {
     @content;
   }
 }
@@ -112,26 +112,26 @@ html {
 // }
 
 
-.outletContainer {
+// .outletContainer {
 
-  @include mobile {
-    width: 350px;
-  }
+//   @include mobile {
+//     width: 350px;
+//   }
 
-  @include tablet {
-    width: 745px;
-  }
+//   @include tablet {
+//     width: 745px;
+//   }
 
-  @include laptop-s {
-    width: 985px;
-  }
+//   @include laptop-s {
+//     width: 985px;
+//   }
 
-  .outletItem {
-    flex: 5;
+//   .outletItem {
+//     flex: 5;
 
-    @include mobile {
-      margin-top: 20px;
-      flex: 1;
-    }
-  }
-}
+//     @include mobile {
+//       margin-top: 20px;
+//       flex: 1;
+//     }
+//   }
+// }
