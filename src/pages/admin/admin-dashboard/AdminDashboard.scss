@@ -17,10 +17,11 @@ h2 {
   font-weight: bold;
 
   .jumlahBukuContainer {
-    width: 50%;
     text-align: center;
-    padding: 100px;
-    border: 1px solid black;
+
+    .card {
+      height: 200px;
+    }
   }
 
   .inventarisContainer {
@@ -29,20 +30,11 @@ h2 {
     align-items: stretch;
     width: 75%;
 
-    .peminjaman {
-      text-align: center;
-      border: 1px solid black;
-      flex-grow: 1;
-      align-self: auto;
-      padding: 100px;
-    }
-
+    .peminjaman,
     .pengembalian {
-      text-align: center;
-      border: 1px solid black;
-      flex-grow: 1;
-      align-self: auto;
-      padding: 100px;
+      .card {
+        height: 250px;
+      }
     }
   }
 }

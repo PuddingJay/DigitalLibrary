@@ -1,7 +1,7 @@
-import { ListCategories, Books, NavbarComponent, } from "../../../component";
+import { ListCategories, Books } from "../../../component";
 import { Col, Row, Container } from "react-bootstrap";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+// import Form from "react-bootstrap/Form";
+// import Button from "react-bootstrap/Button";
 
 import React, { Component } from "react";
 import { API_URL } from "../../../utils/Constant";
@@ -48,16 +48,12 @@ export default class Home extends Component {
 
   render() {
     const { books } = this.state;
-    const { categoryTerpilih } = this.state;
+    // const { categoryTerpilih } = this.state;
     return (
       <div className="App">
-        <NavbarComponent />
+        {/* <NavbarComponent /> */}
         <NavBar>
         </NavBar>
-        <Form className="d-flex ml-2">
-          <Form.Control type="search" placeholder="Search" className="me-2" aria-label="Search" />
-          <Button variant="success">Search</Button>
-        </Form>
         <div className="mt-3">
           <Container fluid>
             <Row>
