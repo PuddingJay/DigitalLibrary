@@ -6,8 +6,8 @@
     "judulBuku": "Aqua",
     "tanggalPinjam": "11-1-2022",
     "tanggalKembali": "22-3-2022",
-    "status": "Terlambat 2 Bulan",
-    "keterangan": "Denda : Rp. 50000"
+    "status": "Dikembalikan",
+    "denda": " Rp. 50000"
   },
   {
     "id": 2,
@@ -16,8 +16,8 @@
     "judulBuku": "Aqua",
     "tanggalPinjam": "11-1-2022",
     "tanggalKembali": "22-3-2022",
-    "status": "Terlambat 2 Bulan",
-    "keterangan": "Denda : Rp. 50000"
+    "status": "Belum Dikembalikan",
+    "denda": " Rp. 50000"
   },
   {
     "id": 3,
@@ -26,8 +26,8 @@
     "judulBuku": "Aqua",
     "tanggalPinjam": "11-1-2022",
     "tanggalKembali": "22-3-2022",
-    "status": "Terlambat 2 Bulan",
-    "keterangan": "Denda : Rp. 50000"
+    "status": "Dikembalikan",
+    "denda": " Rp. 50000"
   },
   {
     "id": 4,
@@ -36,8 +36,8 @@
     "judulBuku": "Aqua",
     "tanggalPinjam": "11-1-2022",
     "tanggalKembali": "22-3-2022",
-    "status": "Terlambat 2 Bulan",
-    "keterangan": "Denda : Rp. 50000"
+    "status": "Dikembalikan",
+    "denda": " Rp. 50000"
   },
   {
     "id": 5,
@@ -46,8 +46,8 @@
     "judulBuku": "Aqua",
     "tanggalPinjam": "11-1-2022",
     "tanggalKembali": "22-3-2022",
-    "status": "Terlambat 2 Bulan",
-    "keterangan": "Denda : Rp. 50000"
+    "status": "Dikembalikan",
+    "denda": " Rp. 50000"
   },
   {
     "id": 6,
@@ -56,8 +56,8 @@
     "judulBuku": "Aqua",
     "tanggalPinjam": "11-1-2022",
     "tanggalKembali": "22-3-2022",
-    "status": "Terlambat 2 Bulan",
-    "keterangan": "Denda : Rp. 50000"
+    "status": "Dikembalikan",
+    "denda": " Rp. 50000"
   },
   {
     "id": 7,
@@ -66,8 +66,8 @@
     "judulBuku": "Aqua",
     "tanggalPinjam": "11-1-2022",
     "tanggalKembali": "22-3-2022",
-    "status": "Terlambat 2 Bulan",
-    "keterangan": "Denda : Rp. 50000"
+    "status": "Dikembalikan",
+    "denda": " Rp. 50000"
   },
   {
     "id": 8,
@@ -76,7 +76,7 @@
     "judulBuku": "Aqua",
     "tanggalPinjam": "11-1-2022",
     "tanggalKembali": "22-3-2022",
-    "status": "Terlambat 2 Bulan",
-    "keterangan": "Denda : Rp. 50000"
+    "status": "Dikembalikan",
+    "denda": " Rp. 50000"
   }
 ]
