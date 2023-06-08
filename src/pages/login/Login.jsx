@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const Login = () => {
   return (
     <div className="login">
-      <div className="card">
+      <div className="cardLogin">
         <div className="left">
           <h1>Selamat Datang</h1>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laboriosam nesciunt quam odio porro doloremque soluta ab provident ullam rem nemo fuga quis, odit ipsa enim excepturi molestiae commodi? Explicabo, aliquam!</p>

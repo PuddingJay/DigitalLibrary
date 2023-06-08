@@ -5,7 +5,7 @@ import { Col, Row } from "react-bootstrap";
 import "../index.css";
 import { useNavigate } from "react-router-dom";
 
-const Books = ({ book }) => {
+const CardBooks = ({ book }) => {
   const navigate = useNavigate();
   return (
     <div>
@@ -31,4 +31,4 @@ const Books = ({ book }) => {
   );
 };
 
-export default Books;
+export default CardBooks;

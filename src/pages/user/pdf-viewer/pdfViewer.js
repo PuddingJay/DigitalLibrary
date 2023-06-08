@@ -1,5 +1,5 @@
-import NavbarComponent from "../../component/NavbarComponent";
-import "./Pdf_viewer.css";
+import NavbarComponent from "../../../component/NavbarComponent";
+import "./pdfViewer.css";
 import React, { useState } from "react";
 import { Viewer } from "@react-pdf-viewer/core"; // install this library
 // Plugins
@@ -10,7 +10,7 @@ import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 // Worker
 import { Worker } from "@react-pdf-viewer/core"; // install this library
 
-export const Pdf_viewer = () => {
+export const PdfViewer = () => {
   // Create new plugin instance
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
@@ -86,4 +86,4 @@ export const Pdf_viewer = () => {
   );
 };
 
-export default Pdf_viewer;
+export default PdfViewer;

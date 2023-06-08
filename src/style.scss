@@ -1,127 +1,135 @@
+$primary: #29266a;
+
+@import "../node_modules/@coreui/coreui/scss/coreui";
+
 html {
   scroll-behavior: smooth;
 }
 
-$themes: (
-  light: (textColor: #000,
-    bg: white,
-    bg2: rgb(123, 190, 248),
-    bg3: rgb(123, 190, 248),
-    logo: rgb(123, 190, 248),
-    bgSoft: #f6f3f3,
-    textColorSoft: #555,
-    border: lightgray,
-    border2: #000,
-  ),
-  dark: (textColor: whitesmoke,
-    bg: #222,
-    bg2: #222,
-    bg3: rgb(81, 145, 201),
-    logo: white,
-    bgSoft: #333,
-    textColorSoft: lightgray,
-    border: #444,
-    border2: white,
-  ),
-);
-
-@mixin themify($themes) {
-
-  @each $theme,
-  $map in $themes {
-    .theme-#{$theme} & {
-      $theme-map: () !global;
-
-      @each $key,
-      $submap in $map {
-        $value: map-get(map-get($themes, $theme), "#{$key}");
-        $theme-map: map-merge($theme-map,
-          ($key: $value,
-          )) !global;
-      }
-
-      @content;
-      $theme-map: null !global;
-    }
-  }
+.cardLayout {
+  box-shadow: 0px 0px 10px rgb(192, 192, 192);
+  background-color: white;
+  padding: 20px 20px 60px;
+  margin: 40px;
+  border-radius: 5px;
 }
 
-@function themed($key) {
-  @return map-get($theme-map, $key);
-}
+// $themes: (
+//   light: (textColor: #000,
+//     bg: white,
+//     bg2: #29266a,
+//     bg3: rgb(123, 190, 248),
+//     logo: rgb(123, 190, 248),
+//     bgSoft: #f6f3f3,
+//     textColorSoft: #555,
+//     border: lightgray,
+//     border2: #000,
+//   ),
+//   dark: (textColor: whitesmoke,
+//     bg: #222,
+//     bg2: #222,
+//     bg3: rgb(81, 145, 201),
+//     logo: white,
+//     bgSoft: #333,
+//     textColorSoft: lightgray,
+//     border: #444,
+//     border2: white,
+//   ),
+// );
+
+// @mixin themify($themes) {
+
+//   @each $theme,
+//   $map in $themes {
+//     .theme-#{$theme} & {
+//       $theme-map: () !global;
+
+//       @each $key,
+//       $submap in $map {
+//         $value: map-get(map-get($themes, $theme), "#{$key}");
+//         $theme-map: map-merge($theme-map,
+//           ($key: $value,
+//           )) !global;
+//       }
+
+//       @content;
+//       $theme-map: null !global;
+//     }
+//   }
+// }
+
+// @function themed($key) {
+//   @return map-get($theme-map, $key);
+// }
 
 @mixin mobile {
-  @media (max-width: 749px) {
+  @media (min-width: 576px) {
     @content;
   }
 }
 
 @mixin tablet {
-  @media (max-width: 1000px) and (min-width: 750px) {
+  @media (min-width: 768px) {
     @content;
   }
 }
 
 @mixin laptop-s {
-  @media (max-width: 1100px) and (min-width: 1008px) {
+  @media (min-width: 992px) {
     @content;
   }
 }
 
 @mixin laptop-m {
-  @media (max-width: 1280px) and (min-width: 1105px) {
+  @media (min-width: 1200px) {
     @content;
   }
 }
 
 @mixin laptop-l {
-  @media (max-width: 1440px) and (min-width: 1300px) {
+  @media (min-width: 1400px) {
     @content;
   }
 }
 
 @mixin laptop-xl {
-  @media (max-width: 1920px) and (min-width: 1500px) {
+  @media (min-width: 1900px) {
     @content;
   }
 }
 
 @mixin laptop-xxl {
-  @media (max-width: 2560px) and (min-width: 2000px) {
+  @media (min-width: 2500px) {
     @content;
   }
 }
 
-.background {
-  @include themify($themes) {
-    background-color: themed("bgSoft");
-  }
-}
+// .background {
+//   @include themify($themes) {
+//     background-color: themed("bgSoft");
+//   }
+// }
 
+// .outletContainer {
 
-.outletContainer {
-  display: flex;
-  width: 1072px;
-  margin: 0 auto;
+//   @include mobile {
+//     width: 350px;
+//   }
 
-  @include mobile {
-    width: 350px;
-  }
+//   @include tablet {
+//     width: 745px;
+//   }
 
-  @include tablet {
-    width: 745px;
-  }
+//   @include laptop-s {
+//     width: 985px;
+//   }
 
-  @include laptop-s {
-    width: 985px;
-  }
+//   .outletItem {
+//     flex: 5;
 
-  .outletItem {
-    flex: 5;
-
-    @include mobile {
-      margin-top: 20px;
-      flex: 1;
-    }
-  }
-}
+//     @include mobile {
+//       margin-top: 20px;
+//       flex: 1;
+//     }
+//   }
+// }

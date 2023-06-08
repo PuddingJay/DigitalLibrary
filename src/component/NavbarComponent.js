@@ -1,18 +1,29 @@
-import React from "react";
+import React, { useState, } from "react";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-function NavbarComponent() {
+function NavbarComponent({onSearch}) {
+
+  const [keyword, setKeyword] = useState('');
+
+  const handleSearch = () => {
+    onSearch(keyword);
+  };
+
   return (
     <Navbar variant="dark" expand="lg">
       <Container>
         <Navbar.Brand href="#">SMA YUPPENTEK 1</Navbar.Brand>
         <Form className="d-flex ml-2">
-          <Form.Control type="search" placeholder="Search" className="me-2" aria-label="Search" />
-          <Button variant="success">Search</Button>
+            <input type="text" value = {keyword} 
+            onChange={(e) => setKeyword(e.target.value)}
+            placeholder="Masukkan kata kunci" /> 
+            
+            <Button onClick={handleSearch} variant="success">Search</Button>  
         </Form>
+        
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className=" ml-6" style={{ maxHeight: "100px" }} navbarScroll>

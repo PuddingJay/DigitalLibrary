@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "idBuku": "20.1.1",
+    "peminjam": "Agung",
+    "judulBuku": "Aqua",
+    "tanggalPinjam": "11-1-2022",
+    "tanggalKembali": "22-3-2022",
+    "status": "Terlambat 2 Bulan",
+    "keterangan": "Denda : Rp. 50000"
+  },
+  {
+    "id": 2,
+    "idBuku": "20.1.2",
+    "peminjam": "Agung",
+    "judulBuku": "Aqua",
+    "tanggalPinjam": "11-1-2022",
+    "tanggalKembali": "22-3-2022",
+    "status": "Terlambat 2 Bulan",
+    "keterangan": "Denda : Rp. 50000"
+  },
+  {
+    "id": 3,
+    "idBuku": "20.1.3",
+    "peminjam": "Agung",
+    "judulBuku": "Aqua",
+    "tanggalPinjam": "11-1-2022",
+    "tanggalKembali": "22-3-2022",
+    "status": "Terlambat 2 Bulan",
+    "keterangan": "Denda : Rp. 50000"
+  },
+  {
+    "id": 4,
+    "idBuku": "20.1.4",
+    "peminjam": "Agung",
+    "judulBuku": "Aqua",
+    "tanggalPinjam": "11-1-2022",
+    "tanggalKembali": "22-3-2022",
+    "status": "Terlambat 2 Bulan",
+    "keterangan": "Denda : Rp. 50000"
+  },
+  {
+    "id": 5,
+    "idBuku": "20.1.5",
+    "peminjam": "Agung",
+    "judulBuku": "Aqua",
+    "tanggalPinjam": "11-1-2022",
+    "tanggalKembali": "22-3-2022",
+    "status": "Terlambat 2 Bulan",
+    "keterangan": "Denda : Rp. 50000"
+  },
+  {
+    "id": 6,
+    "idBuku": "20.1.6",
+    "peminjam": "Agung",
+    "judulBuku": "Aqua",
+    "tanggalPinjam": "11-1-2022",
+    "tanggalKembali": "22-3-2022",
+    "status": "Terlambat 2 Bulan",
+    "keterangan": "Denda : Rp. 50000"
+  },
+  {
+    "id": 7,
+    "idBuku": "20.1.7",
+    "peminjam": "Agung",
+    "judulBuku": "Aqua",
+    "tanggalPinjam": "11-1-2022",
+    "tanggalKembali": "22-3-2022",
+    "status": "Terlambat 2 Bulan",
+    "keterangan": "Denda : Rp. 50000"
+  },
+  {
+    "id": 8,
+    "idBuku": "20.1.8",
+    "peminjam": "Agung",
+    "judulBuku": "Aqua",
+    "tanggalPinjam": "11-1-2022",
+    "tanggalKembali": "22-3-2022",
+    "status": "Terlambat 2 Bulan",
+    "keterangan": "Denda : Rp. 50000"
+  }
+]

@@ -1,0 +1,50 @@
+@import "../../style.scss";
+
+.navBar {
+  display: flex;
+  background-color: white;
+  justify-content: space-between;
+  height: 111px;
+  padding: 10px 80px;
+
+  .logoSekolah {
+    flex-wrap: wrap;
+    align-content: flex-start;
+
+    img {
+      display: block;
+      margin: 0 auto;
+      // margin: 0 0 0 68px;
+      height: 70px;
+      border: none;
+    }
+
+    span {
+      display: block;
+      margin: 0 auto;
+      // margin: 0 0 0 20px;
+      font-weight: bold;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      line-height: 1;
+    }
+  }
+
+
+  .user {
+    display: flex;
+
+    .userBorder {
+      border: 1px solid black;
+      border-radius: 50%;
+      align-self: center;
+      padding: .5rem;
+
+      .icon {
+        height: 2rem;
+      }
+
+    }
+
+  }
+}

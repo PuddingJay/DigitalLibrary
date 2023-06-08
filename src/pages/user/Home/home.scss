@@ -1,0 +1,25 @@
+@import "../../../style.scss";
+
+.mt-5 {
+  display: grid !important;
+
+  @include tablet {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include laptop-s {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @include laptop-m {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  @include laptop-xl {
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  @include laptop-xxl {
+    grid-template-columns: repeat(9, 1fr);
+  }
+}

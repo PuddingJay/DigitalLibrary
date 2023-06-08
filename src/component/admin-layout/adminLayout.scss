@@ -1,14 +1,24 @@
 .barBiru {
   height: 44px;
   background-color: #29266a;
-  border-bottom: 5px solid #ffbe17;
+  // border-bottom: 5px solid #ffbe17;
+  border-bottom: .5rem solid #dfdfe9;
 }
 
-.outletContainer {
+.mainContainer {
   display: flex;
   min-height: 100vh;
 
-  .outlet {
-    flex: 4;
+  .outletContainer {
+    flex: 85%;
+    background-color: #dfdfe9;
+
+    // .outletContent {
+    // box-shadow: 0px 0px 10px rgb(192, 192, 192);
+    // background-color: white;
+    // padding: 20px 20px 60px;
+    // margin: 40px;
+    // border-radius: 5px;
+    // }
   }
 }

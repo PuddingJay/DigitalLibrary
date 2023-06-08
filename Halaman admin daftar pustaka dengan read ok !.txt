@@ -1,0 +1,238 @@
+// import './AdminDaftarPustaka.scss';
+import React, { useState, useEffect } from "react";
+import "../admin-dataAnggota/AdminDataAnggota.scss";
+import "./AdminDaftarPustaka.scss";
+import { nanoid } from "nanoid";
+import data from "../../../utils/mock-data-dapus.json";
+import { CButton } from "@coreui/react";
+import { PageHeader } from "../../../component/admin-page-heaader/PageHeader";
+import CIcon from "@coreui/icons-react";
+import { cilBook } from "@coreui/icons";
+import axios from "axios";
+
+const AdminDaftarPustaka = () => {
+  const [openModal, setOpenModal] = useState(false);
+  const [members, setMembers] = useState(data);
+  const [DaftarPustaka, setDaftarPustaka] = useState([]);
+  const [judul, setJudul] = useState("");
+  const [penulis, setPenulis] = useState("");
+  const [penerbit, setPenerbit] = useState("");
+  const [tahun_terbit, setTahun_terbit] = useState("");
+  const [Keterangan, setKeterangan] = useState("");
+  const [Jumlah, setJumlah] = useState("");
+  const [cover_buku, setCover_buku] = useState("");
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3005/BookRoute");
+      setDaftarPustaka(response.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleAdd = async () => {
+    await axios.post("http://localhost:3005/BookRoute", { judul, penulis, penerbit, tahun_terbit, Keterangan, Jumlah, cover_buku });
+    fetchData();
+    setJudul("");
+    setPenulis("");
+    setPenerbit("");
+    setTahun_terbit("");
+    setKeterangan("");
+    setJumlah("");
+    setCover_buku("");
+  };
+
+  const handleDelete = async (id) => {
+    await axios.delete(`http://localhost:3005/BookRoute/:kode_buku`);
+    fetchData();
+  };
+
+  const handleUpdate = async (id) => {
+    const response = await axios.put(`http://localhost:3005/BookRoute/:kode_buku`, { judul, penulis, penerbit, tahun_terbit, Keterangan, Jumlah, cover_buku });
+    fetchData();
+    setJudul("");
+    setPenulis("");
+    setPenerbit("");
+    setTahun_terbit("");
+    setKeterangan("");
+    setJumlah("");
+    setCover_buku("");
+  };
+  const [addFormData, setAddFormData] = useState({
+    // Jurusan: '',
+    judulBuku: "",
+    Penulis: "",
+    penerbit: "",
+    tahunTerbit: "",
+    jumlahBuku: "",
+    tipe: "",
+    file: "",
+  });
+  const [postPerPage] = useState(5);
+  const [currentPage, setcurrentPage] = useState(1);
+
+  const formOnChangeHandler = (event) => {
+    event.preventDefault();
+
+    const fieldName = event.target.getAttribute("name");
+    const fieldValue = event.target.value;
+
+    const newFormData = { ...addFormData };
+    newFormData[fieldName] = fieldValue;
+
+    setAddFormData(newFormData);
+  };
+
+  const formOnSubmitHandler = (event) => {
+    event.preventDefault();
+
+    const newMember = {
+      id: nanoid(),
+      idBuku: addFormData.idBuku,
+      judulBuku: addFormData.judulBuku,
+      Penulis: addFormData.Penulis,
+      penerbit: addFormData.penerbit,
+      tahunTerbit: addFormData.tahunTerbit,
+      jumlahBuku: addFormData.jumlahBuku,
+      tipe: addFormData.tipe,
+      file: addFormData.file,
+    };
+
+    const newMembers = [...members, newMember];
+    setMembers(newMembers);
+  };
+
+  const indexOfLastPage = currentPage * postPerPage;
+  const indexOfFirstPage = indexOfLastPage - postPerPage;
+  const currentPosts = members.slice(indexOfFirstPage, indexOfLastPage);
+
+  const showPagination = () => {
+    const pageNumbers = [];
+    const totalPosts = members.length;
+
+    for (let i = 1; i <= Math.ceil(totalPosts / postPerPage); i++) {
+      pageNumbers.push(i);
+    }
+
+    const pagination = (pageNumbers) => {
+      setcurrentPage(pageNumbers);
+    };
+
+    return (
+      <nav>
+        <ul className="pagination">
+          {pageNumbers.map((number) => (
+            <li key={number} className={currentPage === number ? "page-item active" : "page-item"}>
+              <button onClick={() => pagination(number)}> {number} </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    );
+  };
+  try {
+    return (
+      <>
+        <PageHeader title="Daftar Pustaka" icon={<CIcon icon={cilBook} size="xl" />} />
+        <div className="cardLayout">
+          <CButton
+            color="primary"
+            size="lg"
+            className="btnModal"
+            onClick={() => {
+              setOpenModal((prev) => !prev);
+            }}
+            // onClick={() => handleAdd(item.kode_buku)}
+          >
+            Tambah Buku
+          </CButton>
+
+          {openModal && (
+            <div className="modalBg">
+              <div className="modalWrapper">
+                <div className="formTambahAnggota">
+                  <form onSubmit={formOnSubmitHandler}>
+                    <input type="text" name="judulBuku" required="required" placeholder="Judul" onChange={formOnChangeHandler} />
+                    <input type="text" name="Penulis" required="required" placeholder="Penulis" onChange={formOnChangeHandler} />
+                    <input type="text" name="penerbit" required="required" placeholder="penerbit" onChange={formOnChangeHandler} />
+                    <input type="text" name="tahunTerbit" required="required" placeholder="Tahun Terbit" onChange={formOnChangeHandler} />
+                    <input type="text" name="jumlahBuku" required="required" placeholder="Jumlah Buku" onChange={formOnChangeHandler} />
+                    <input type="text" name="tipe" required="required" placeholder="Tipe buku" onChange={formOnChangeHandler} />
+                    <input type="text" name="file" required="required" placeholder="file buku" onChange={formOnChangeHandler} />
+                    {/* <input type="text" name="Jurusan" required="required" placeholder="Jurusan" onChange={formOnChangeHandler} /> */}
+                    <div className="btnActionModal">
+                      <button type="submit"> Tambah </button>
+                      <button
+                        onClick={() => {
+                          setOpenModal(false);
+                        }}
+                      >
+                        {" "}
+                        Kembali{" "}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          )}
+          <table>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>ID Buku</th>
+                <th>Judul Buku</th>
+                <th>Penulis</th>
+                <th>Penerbit</th>
+                <th>Tahun Terbit</th>
+                <th>Tipe</th>
+                <th>Jumlah Buku</th>
+                <th>Cover buku</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {DaftarPustaka.map((item, index) => (
+                <tr key={item.kode}>
+                  <td>{postPerPage * (currentPage - 1) + index + 1}</td>
+                  <td>{item.kode}</td>
+                  <td>{item.judul_buku}</td>
+                  <td>{item.penulis_buku}</td>
+                  <td>{item.penerbit_buku}</td>
+                  <td>{item.Tahun_penerbitan}</td>
+                  <td>{item.tipe_buku}</td>
+                  <td>{item.jumlah_buku_tersedia}</td>
+                  <td>{item.cover}</td>
+                  <td className="action">
+                    {/* <div className="d-grid gap-2 d-md-block"> */}
+                    <div className="buttonWrapper">
+                      <CButton color="primary">Detail</CButton>
+                      <CButton onClick={() => handleDelete(item.kode_buku)} color="danger">
+                        Hapus
+                      </CButton>
+                      <CButton onClick={() => handleUpdate(item.id)} color="dark">
+                        Edit
+                      </CButton>
+                    </div>
+                    {/* </div> */}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="pagination">{showPagination()}</div>
+        </div>
+      </>
+    );
+  } catch (e) {
+    alert(e.message);
+  }
+};
+
+export default AdminDaftarPustaka;
