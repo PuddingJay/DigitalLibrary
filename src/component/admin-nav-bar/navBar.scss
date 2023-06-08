@@ -30,7 +30,6 @@
     }
   }
 
-
   .user {
     display: flex;
 
@@ -38,13 +37,18 @@
       border: 1px solid black;
       border-radius: 50%;
       align-self: center;
-      padding: .5rem;
+      padding: 0.5rem;
 
       .icon {
         height: 2rem;
       }
-
     }
-
   }
+}
+
+.barBiru {
+  height: 44px;
+  background-color: #29266a;
+  // border-bottom: 5px solid #ffbe17;
+  border-bottom: 0.5rem solid #dfdfe9;
 }

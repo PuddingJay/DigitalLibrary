@@ -48,7 +48,6 @@ export default class Home extends Component {
   };
 
   render() {
-
     // const { categoryTerpilih } = this.state;
     return (
       <div className="App">
@@ -58,8 +57,8 @@ export default class Home extends Component {
           <Container fluid>
             <Row className="mb-3">
               <ListCategories categoryTerpilih={this.categoryTerpilih} ChangeCategory={this.ChangeCategory} />
-              <Col className="mb-2 ml-3" >
-                <Books/>
+              <Col className="mb-2 ml-3">
+                <Books />
               </Col>
             </Row>
           </Container>

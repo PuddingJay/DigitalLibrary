@@ -41,6 +41,7 @@ const ListCategories  = () => {
 
     return (
       <Col md={2} mt={-3}>
+      <Col md={2} mt={-3}>
         <strong>
           <h4>Filter buku</h4>
         </strong>

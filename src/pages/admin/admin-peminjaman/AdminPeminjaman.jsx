@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import './AdminPeminjaman.scss';
-import { CButton, CCol, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle, CForm, CFormInput, CFormSelect } from '@coreui/react'
-import { PageHeader } from './../../../component/admin-page-heaader/PageHeader';
-import CIcon from '@coreui/icons-react';
-import { cilSpreadsheet } from '@coreui/icons';
-import axios from 'axios';
-import { CDatePicker, CModal, CModalHeader, CModalBody, CModalTitle, CModalFooter } from '@coreui/react-pro'
-
+import React, { useEffect, useState } from "react";
+import "./AdminPeminjaman.scss";
+import { CButton, CCol, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle, CForm, CFormInput, CFormSelect } from "@coreui/react";
+import { PageHeader } from "./../../../component/admin-page-heaader/PageHeader";
+import CIcon from "@coreui/icons-react";
+import { cilSpreadsheet } from "@coreui/icons";
+import axios from "axios";
+import { CDatePicker, CModal, CModalHeader, CModalBody, CModalTitle, CModalFooter } from "@coreui/react-pro";
 
 const AdminPeminjaman = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -23,12 +22,12 @@ const AdminPeminjaman = () => {
     status: null,
     denda: null,
   });
-  const [currentId, setCurrentId] = useState('');
+  const [currentId, setCurrentId] = useState("");
   const batalHandler = () => {
     setAddFormData({});
     setOpenModal(false);
     setOpenModalUpdate(false);
-  }
+  };
 
   useEffect(() => {
     fetchData();
@@ -44,7 +43,7 @@ const AdminPeminjaman = () => {
   };
 
   const formOnChangeHandler = (event) => {
-    const fieldName = event.target.getAttribute('name');
+    const fieldName = event.target.getAttribute("name");
     const fieldValue = event.target.value;
 
     const newFormData = { ...addFormData };
@@ -54,55 +53,43 @@ const AdminPeminjaman = () => {
 
     setAddFormData(newFormData);
     console.log(addFormData);
-  }
+  };
 
   const formOnChangeTglPinjam = (value) => {
-    value !== null ?
-      setAddFormData(
-        {
+    value !== null
+      ? setAddFormData({
           ...addFormData,
-          tglPinjam: value.toISOString().split('T')[0]
-        }
-      ) :
-      setAddFormData(
-        {
+          tglPinjam: value.toISOString().split("T")[0],
+        })
+      : setAddFormData({
           ...addFormData,
-          tglPinjam: null
-        }
-      )
-  }
+          tglPinjam: null,
+        });
+  };
 
   const formOnChangeBatasPinjam = (value) => {
-    value !== null ?
-      setAddFormData(
-        {
+    value !== null
+      ? setAddFormData({
           ...addFormData,
-          batasPinjam: value.toISOString().split('T')[0]
-        }
-      ) :
-      setAddFormData(
-        {
+          batasPinjam: value.toISOString().split("T")[0],
+        })
+      : setAddFormData({
           ...addFormData,
-          batasPinjam: null
-        }
-      )
-  }
+          batasPinjam: null,
+        });
+  };
 
   const formOnChangeTglKembali = (value) => {
-    value !== null ?
-      setAddFormData(
-        {
+    value !== null
+      ? setAddFormData({
           ...addFormData,
-          tglKembali: value.toISOString().split('T')[0]
-        }
-      ) :
-      setAddFormData(
-        {
+          tglKembali: value.toISOString().split("T")[0],
+        })
+      : setAddFormData({
           ...addFormData,
-          tglKembali: null
-        }
-      )
-  }
+          tglKembali: null,
+        });
+  };
 
   const formOnSubmitHandler = (event) => {
     event.preventDefault();
@@ -116,24 +103,24 @@ const AdminPeminjaman = () => {
       tglPinjam: addFormData.tglPinjam,
       status: addFormData.status,
       denda: addFormData.denda,
-    }
+    };
 
     console.log(newDataPeminjaman);
     const newDataPeminjamans = [...peminjamanDatas, newDataPeminjaman];
     setPeminjamanDatas(newDataPeminjamans);
 
     axios
-      .post('http://localhost:3005/BookRoute/peminjaman', newDataPeminjaman)
+      .post("http://localhost:3005/BookRoute/peminjaman", newDataPeminjaman)
       .then((res) => {
         console.log(res);
         setOpenModal(false);
         fetchData();
-        setAddFormData({})
+        setAddFormData({});
       })
       .catch((err) => {
         console.log(err);
       });
-  }
+  };
 
   const handleDelete = async (idPeminjaman) => {
     try {
@@ -155,53 +142,51 @@ const AdminPeminjaman = () => {
       const chargePerDay = 3000;
       const totalCharge = chargePerDay * days;
 
-      return totalCharge > 0 ? 'Rp. ' + totalCharge : '-';
+      return totalCharge > 0 ? "Rp. " + totalCharge : "-";
     };
 
     const editedDataPeminjaman = {
       ...siswa,
-      tglKembali: new Date().toISOString().split('T')[0],
-      status: 'Dikembalikan',
-      denda: totalDenda(siswa.tglKembali, siswa.batasPinjam)
-    }
+      tglKembali: new Date().toISOString().split("T")[0],
+      status: "Dikembalikan",
+      denda: totalDenda(siswa.tglKembali, siswa.batasPinjam),
+    };
 
     try {
       await axios.put(`http://localhost:3005/BookRoute/peminjaman/${idPeminjaman}`, editedDataPeminjaman);
       fetchData();
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
-    setAddFormData('')
-  }
+    setAddFormData("");
+  };
 
   const toggleUpdate = async (idPeminjaman) => {
     setOpenModalUpdate(!openModalUpdate);
     const siswa = peminjaman.find((item) => item.idPeminjaman === idPeminjaman);
     setCurrentId(siswa);
     console.log(currentId);
-  }
+  };
 
   const formUpdateChangeHandler = (e) => {
     const { name, value } = e.target;
-    setCurrentId(prevState => ({
+    setCurrentId((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
     console.log(currentId);
-  }
+  };
 
   const formOnChangeDateHandler = (name, date) => {
-    date !== null ?
-      setCurrentId(prevState => ({
-        ...prevState,
-        [name]: date.toISOString().split('T')[0]
-      }))
-      :
-      setCurrentId(prevState => ({
-        ...prevState,
-        [name]: null
-      }))
-      ;
+    date !== null
+      ? setCurrentId((prevState) => ({
+          ...prevState,
+          [name]: date.toISOString().split("T")[0],
+        }))
+      : setCurrentId((prevState) => ({
+          ...prevState,
+          [name]: null,
+        }));
   };
 
   const formUpdateHandler = async (event) => {
@@ -211,13 +196,11 @@ const AdminPeminjaman = () => {
       await axios.put(`http://localhost:3005/BookRoute/peminjaman/${currentId.idPeminjaman}`, currentId);
       fetchData();
       batalHandler();
-    }
-    catch (err) {
-      console.error(err)
+    } catch (err) {
+      console.error(err);
     }
     console.log(currentId);
-  }
-
+  };
 
   const [postPerPage] = useState(5);
   const [currentPage, setcurrentPage] = useState(1);
@@ -235,28 +218,25 @@ const AdminPeminjaman = () => {
 
     const pagination = (pageNumbers) => {
       setcurrentPage(pageNumbers);
-    }
+    };
 
     return (
       <nav>
         <ul className="pagination">
-          {pageNumbers.map(number => (
-            <li key={number} className={currentPage === number ? 'page-item active' : 'page-item'}>
+          {pageNumbers.map((number) => (
+            <li key={number} className={currentPage === number ? "page-item active" : "page-item"}>
               <button onClick={() => pagination(number)}> {number} </button>
             </li>
           ))}
         </ul>
       </nav>
-    )
-  }
+    );
+  };
 
   try {
     return (
       <>
-        <PageHeader
-          title="Data Peminjaman"
-          icon={<CIcon icon={cilSpreadsheet} size='xl' />}
-        />
+        <PageHeader title="Data Peminjaman" icon={<CIcon icon={cilSpreadsheet} size="xl" />} />
         <div className="cardLayout">
           <CButton
             color="primary"
@@ -264,9 +244,12 @@ const AdminPeminjaman = () => {
             className="btnModal"
             onClick={() => {
               setOpenModal(!openModal);
-            }}>Tambah Data Pinjam</CButton>
+            }}
+          >
+            Tambah Data Pinjam
+          </CButton>
 
-          <CModal allignment='center' size='lg' scrollable visible={openModal} onClose={() => batalHandler()}>
+          <CModal allignment="center" size="lg" scrollable visible={openModal} onClose={() => batalHandler()}>
             <CModalHeader>
               <CModalTitle> Tambah Data Peminjaman</CModalTitle>
             </CModalHeader>
@@ -305,13 +288,16 @@ const AdminPeminjaman = () => {
                   <CButton
                     color="light"
                     onClick={() => {
-                      batalHandler()
-                    }}> Kembali </CButton>
+                      batalHandler();
+                    }}
+                  >
+                    {" "}
+                    Kembali{" "}
+                  </CButton>
                 </CModalFooter>
               </CForm>
             </CModalBody>
           </CModal>
-
 
           <table className="tableData">
             <thead>
@@ -342,16 +328,24 @@ const AdminPeminjaman = () => {
                   <td>{peminjaman.tglKembali}</td>
                   <td>{peminjaman.status}</td>
                   <td>{peminjaman.denda}</td>
-                  <td className='action'>
+                  <td className="action">
                     <div className="buttonWrapper">
                       <CDropdown>
                         <CDropdownToggle color="primary">Status</CDropdownToggle>
                         <CDropdownMenu>
                           <CDropdownItem onClick={() => OnChangeKembali(peminjaman.idPeminjaman)}>Kembalikan Buku</CDropdownItem>
-                          <CDropdownItem onClick={() => { toggleUpdate(peminjaman.idPeminjaman) }}>Edit</CDropdownItem>
+                          <CDropdownItem
+                            onClick={() => {
+                              toggleUpdate(peminjaman.idPeminjaman);
+                            }}
+                          >
+                            Edit
+                          </CDropdownItem>
                         </CDropdownMenu>
                       </CDropdown>
-                      <CButton color="danger" onClick={() => handleDelete(peminjaman.idPeminjaman)}>Hapus</CButton>
+                      <CButton color="danger" onClick={() => handleDelete(peminjaman.idPeminjaman)}>
+                        Hapus
+                      </CButton>
                     </div>
                   </td>
                 </tr>
@@ -359,12 +353,10 @@ const AdminPeminjaman = () => {
             </tbody>
           </table>
 
-          <div className='paginationContainer'>
-            {showPagination()}
-          </div>
+          <div className="paginationContainer">{showPagination()}</div>
         </div>
 
-        <CModal allignment='center' size='lg' scrollable visible={openModalUpdate} onClose={() => batalHandler()}>
+        <CModal allignment="center" size="lg" scrollable visible={openModalUpdate} onClose={() => batalHandler()}>
           <CModalHeader>
             <CModalTitle> Edit Data Peminjaman</CModalTitle>
           </CModalHeader>
@@ -380,13 +372,43 @@ const AdminPeminjaman = () => {
                 <CFormInput value={currentId.judulBuku} name="judulBuku" id="inputJudulBuku" label="Judul Buku" placeholder="Si Kancil Bandel Banget" onChange={formUpdateChangeHandler} />
               </CCol>
               <CCol md={4}>
-                <CDatePicker date={currentId.tglPinjam} name="tglPinjam" footer locale="en-US" id="tglPinjam" label="Tanggal Pinjam" onDateChange={date => { formOnChangeDateHandler('tglPinjam', date) }} />
+                <CDatePicker
+                  date={currentId.tglPinjam}
+                  name="tglPinjam"
+                  footer
+                  locale="en-US"
+                  id="tglPinjam"
+                  label="Tanggal Pinjam"
+                  onDateChange={(date) => {
+                    formOnChangeDateHandler("tglPinjam", date);
+                  }}
+                />
               </CCol>
               <CCol md={4}>
-                <CDatePicker date={currentId.batasPinjam} name="batasPinjam" footer locale="en-US" id="batasPinjam" label="Batas Pinjam" onDateChange={date => { formOnChangeDateHandler('batasPinjam', date) }} />
+                <CDatePicker
+                  date={currentId.batasPinjam}
+                  name="batasPinjam"
+                  footer
+                  locale="en-US"
+                  id="batasPinjam"
+                  label="Batas Pinjam"
+                  onDateChange={(date) => {
+                    formOnChangeDateHandler("batasPinjam", date);
+                  }}
+                />
               </CCol>
               <CCol md={4}>
-                <CDatePicker date={currentId.tglKembali} name="tglKembali" footer locale="en-US" id="tglKembali" label="Tanggal Kembali" onDateChange={date => { formOnChangeDateHandler('tglKembali', date) }} />
+                <CDatePicker
+                  date={currentId.tglKembali}
+                  name="tglKembali"
+                  footer
+                  locale="en-US"
+                  id="tglKembali"
+                  label="Tanggal Kembali"
+                  onDateChange={(date) => {
+                    formOnChangeDateHandler("tglKembali", date);
+                  }}
+                />
               </CCol>
               <CCol md={8}>
                 <CFormSelect value={currentId.status} name="status" id="inputStatus" label="Status" onChange={formUpdateChangeHandler}>
@@ -403,17 +425,21 @@ const AdminPeminjaman = () => {
                 <CButton
                   color="light"
                   onClick={() => {
-                    batalHandler()
-                  }}> Kembali </CButton>
+                    batalHandler();
+                  }}
+                >
+                  {" "}
+                  Kembali{" "}
+                </CButton>
               </CModalFooter>
             </CForm>
           </CModalBody>
         </CModal>
       </>
-    )
+    );
   } catch (e) {
     alert(e.message);
   }
-}
+};
 
-export default AdminPeminjaman
+export default AdminPeminjaman;

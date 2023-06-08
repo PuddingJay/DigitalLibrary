@@ -234,4 +234,6 @@ const AdminDataAnggota = () => {
   }
 };
 
-export default AdminDataAnggota;
+}
+
+export default AdminDataAnggota
