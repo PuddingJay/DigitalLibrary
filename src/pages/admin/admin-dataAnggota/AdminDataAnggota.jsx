@@ -27,10 +27,10 @@ const AdminDataAnggota = () => {
   }, []);
 
   const toggleModalTambah = () => {
-    setNIS('')
-    setNama('')
-    setKelas('')
-    setJurusan('')
+    setNIS("");
+    setNama("");
+    setKelas("");
+    setJurusan("");
 
     setModalTambah(!modalTambah);
   };
@@ -77,8 +77,8 @@ const AdminDataAnggota = () => {
     const formData = { NIS, Nama, Kelas, Jurusan };
 
     try {
-      console.log(`http://localhost:3005/BookRoute/siswa/${NIS}`)
-      console.log(formData)
+      console.log(`http://localhost:3005/BookRoute/siswa/${NIS}`);
+      console.log(formData);
       await axios.put(`http://localhost:3005/BookRoute/siswa/${currentAnggotaId}`, formData);
       toggleModalUpdate();
       fetchData();
@@ -111,8 +111,8 @@ const AdminDataAnggota = () => {
 
   const toggleModal = (NIS) => {
     const siswa = DataAnggota.find((item) => item.NIS === NIS);
-    console.log("siswa ="+ siswa);
-    console.log("Nama siswa ="+ siswa.Nama);
+    console.log("siswa =" + siswa);
+    console.log("Nama siswa =" + siswa.Nama);
     setCurrentAnggotaId(siswa);
     setNIS(siswa.NIS);
     setNama(siswa.Nama);
@@ -166,8 +166,7 @@ const AdminDataAnggota = () => {
             <ModalHeader toggle={toggleModalUpdate}>Form {currentAnggotaId ? "Edit" : "Edit"} Data</ModalHeader>
             <ModalBody>
               <Form innerRef={formRef}>
-                <FormGroup>
-                </FormGroup>
+                <FormGroup></FormGroup>
                 <FormGroup>
                   <Label for="Nama">Nama Lengkap</Label>
                   <Input type="text" name="Nama" id="Nama" value={Nama} onChange={(e) => setNama(e.target.value)} />
@@ -234,6 +233,4 @@ const AdminDataAnggota = () => {
   }
 };
 
-}
-
-export default AdminDataAnggota
+export default AdminDataAnggota;
