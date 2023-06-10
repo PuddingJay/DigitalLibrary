@@ -58,37 +58,37 @@ const AdminPeminjaman = () => {
   const formOnChangeTglPinjam = (value) => {
     value !== null
       ? setAddFormData({
-          ...addFormData,
-          tglPinjam: value.toISOString().split("T")[0],
-        })
+        ...addFormData,
+        tglPinjam: value.toISOString().split("T")[0],
+      })
       : setAddFormData({
-          ...addFormData,
-          tglPinjam: null,
-        });
+        ...addFormData,
+        tglPinjam: null,
+      });
   };
 
   const formOnChangeBatasPinjam = (value) => {
     value !== null
       ? setAddFormData({
-          ...addFormData,
-          batasPinjam: value.toISOString().split("T")[0],
-        })
+        ...addFormData,
+        batasPinjam: value.toISOString().split("T")[0],
+      })
       : setAddFormData({
-          ...addFormData,
-          batasPinjam: null,
-        });
+        ...addFormData,
+        batasPinjam: null,
+      });
   };
 
   const formOnChangeTglKembali = (value) => {
     value !== null
       ? setAddFormData({
-          ...addFormData,
-          tglKembali: value.toISOString().split("T")[0],
-        })
+        ...addFormData,
+        tglKembali: value.toISOString().split("T")[0],
+      })
       : setAddFormData({
-          ...addFormData,
-          tglKembali: null,
-        });
+        ...addFormData,
+        tglKembali: null,
+      });
   };
 
   const formOnSubmitHandler = (event) => {
@@ -180,13 +180,13 @@ const AdminPeminjaman = () => {
   const formOnChangeDateHandler = (name, date) => {
     date !== null
       ? setCurrentId((prevState) => ({
-          ...prevState,
-          [name]: date.toISOString().split("T")[0],
-        }))
+        ...prevState,
+        [name]: date.toISOString().split("T")[0],
+      }))
       : setCurrentId((prevState) => ({
-          ...prevState,
-          [name]: null,
-        }));
+        ...prevState,
+        [name]: null,
+      }));
   };
 
   const formUpdateHandler = async (event) => {
@@ -303,7 +303,6 @@ const AdminPeminjaman = () => {
             <thead>
               <tr>
                 <th>No</th>
-                <th>ID Pinjam </th>
                 <th>ID Buku</th>
                 <th>Peminjam</th>
                 <th>Judul Buku</th>
@@ -319,7 +318,6 @@ const AdminPeminjaman = () => {
               {currentPosts.map((peminjaman, index) => (
                 <tr key={peminjaman.idPeminjaman}>
                   <td>{postPerPage * (currentPage - 1) + index + 1}</td>
-                  <td>{peminjaman.idPeminjaman}</td>
                   <td>{peminjaman.idBuku}</td>
                   <td>{peminjaman.namaPeminjam}</td>
                   <td>{peminjaman.judulBuku}</td>

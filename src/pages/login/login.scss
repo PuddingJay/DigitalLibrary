@@ -36,7 +36,7 @@
         background: linear-gradient(#29266a8f, rgba(0, 0, 0, 0.5)),
           url('../../../public/images/perpus.jpg') center;
         background-size: cover;
-        padding: 40px;
+        padding: 20px;
         display: flex;
         flex-direction: column;
         color: #fff;
@@ -44,13 +44,23 @@
 
       display: none;
 
-      h1 {
-        font-size: 4em;
-        line-height: 70px;
-      }
+      .greeter {
+        margin: auto;
+        text-align: center;
 
-      p {
-        margin: 30px 0;
+        .divider {
+          height: 10px;
+          width: 75px;
+          border-radius: 15px;
+          margin: 20px auto;
+          background-color: white;
+        }
+
+        h1 {
+          font-size: 4em;
+          font-weight: bolder;
+          line-height: 70px;
+        }
       }
 
       span {
@@ -82,56 +92,74 @@
       flex: 1;
       padding: 50px;
       flex-direction: column;
-      gap: 50px;
-      justify-content: center;
+      gap: 10px;
 
-      h1 {
-        color: #333;
-      }
-
-      div {
+      .logo {
         display: flex;
-        flex-direction: column;
-        gap: 20px;
+        gap: 10px;
+        flex-direction: row;
 
-        input {
-          border: 1px solid lightgrey;
-          padding: 10px 10px;
+        img {
+          height: 20px;
+          width: 20px;
         }
 
-        button {
-          width: 50%;
-          padding: 10px;
-          border: none;
-          background-color: #29266a;
-          color: white;
-          font-weight: bold;
-        }
-
-      }
-
-      .toRegister {
-        @include mobile {
-          visibility: visible;
-        }
-
-        visibility: hidden;
-        margin-top: 10px;
-        gap: 0;
-
-        span:first-child {
-          font-weight: 700;
-          font-size: 14px;
-        }
-
-        a span:last-child {
-          display: block;
-          min-height: 44px;
-          font-weight: 500;
-          color: black;
-          font-size: 12px;
+        p {
+          font-weight: 600;
         }
       }
+
+      .loginContainer {
+
+        h1 {
+          margin: 0 0 60px 0;
+          color: #333;
+        }
+
+        .formLogin {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+
+          input {
+            border: 1px solid lightgrey;
+            padding: 10px 10px;
+          }
+
+          button {
+            width: 50%;
+            padding: 10px;
+            border: none;
+            background-color: #29266a;
+            color: white;
+            font-weight: bold;
+          }
+
+        }
+      }
+
+      // .toRegister {
+      //   @include mobile {
+      //     visibility: visible;
+      //   }
+
+      //   visibility: hidden;
+      //   margin-top: 10px;
+      //   gap: 0;
+
+      //   span:first-child {
+      //     font-weight: 700;
+      //     font-size: 14px;
+      //   }
+
+      //   a span:last-child {
+      //     display: block;
+      //     min-height: 44px;
+      //     font-weight: 500;
+      //     color: black;
+      //     font-size: 12px;
+      //   }
+      // }
 
     }
   }

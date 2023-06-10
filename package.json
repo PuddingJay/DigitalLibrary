@@ -28,7 +28,7 @@
     "react-router-dom": "^6.9.0",
     "react-scripts": "5.0.1",
     "reactstrap": "^9.1.10",
-    "sass": "^1.59.3",
+    "sass": "^1.63.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

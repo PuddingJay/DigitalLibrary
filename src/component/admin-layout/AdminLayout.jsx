@@ -15,11 +15,6 @@ export default function AdminLayout() {
             <Outlet />
           </div>
         </div>
-        <div className="outletContainer">
-          <div className="outletContent">
-            <Outlet />
-          </div>
-        </div>
       </div>
     </>
   );
