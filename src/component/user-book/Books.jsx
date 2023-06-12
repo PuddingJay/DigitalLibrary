@@ -23,7 +23,6 @@ const Books = () => {
 
   useEffect(() => {
     fetchData();
-    console.log(DaftarPustaka)
   }, []);
 
   const fetchData = async () => {

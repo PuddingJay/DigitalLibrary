@@ -35,7 +35,7 @@ const AdminPeminjaman = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3005/BookRoute/peminjaman");
+      const response = await axios.get("http://localhost:3005/peminjaman");
       setPeminjaman(response.data.data);
     } catch (error) {
       console.error(error);
@@ -110,7 +110,7 @@ const AdminPeminjaman = () => {
     setPeminjamanDatas(newDataPeminjamans);
 
     axios
-      .post("http://localhost:3005/BookRoute/peminjaman", newDataPeminjaman)
+      .post("http://localhost:3005/peminjaman", newDataPeminjaman)
       .then((res) => {
         console.log(res);
         setOpenModal(false);
@@ -124,7 +124,7 @@ const AdminPeminjaman = () => {
 
   const handleDelete = async (idPeminjaman) => {
     try {
-      await axios.delete(`http://localhost:3005/BookRoute/peminjaman/${idPeminjaman}`);
+      await axios.delete(`http://localhost:3005/peminjaman/${idPeminjaman}`);
       fetchData();
     } catch (err) {
       console.log(err);
@@ -153,7 +153,7 @@ const AdminPeminjaman = () => {
     };
 
     try {
-      await axios.put(`http://localhost:3005/BookRoute/peminjaman/${idPeminjaman}`, editedDataPeminjaman);
+      await axios.put(`http://localhost:3005/peminjaman/${idPeminjaman}`, editedDataPeminjaman);
       fetchData();
     } catch (err) {
       console.error(err);
@@ -193,7 +193,7 @@ const AdminPeminjaman = () => {
     event.preventDefault();
 
     try {
-      await axios.put(`http://localhost:3005/BookRoute/peminjaman/${currentId.idPeminjaman}`, currentId);
+      await axios.put(`http://localhost:3005/peminjaman/${currentId.idPeminjaman}`, currentId);
       fetchData();
       batalHandler();
     } catch (err) {

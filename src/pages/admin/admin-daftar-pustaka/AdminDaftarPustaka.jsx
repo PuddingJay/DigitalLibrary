@@ -8,6 +8,8 @@ import { PageHeader } from "../../../component/admin-page-heaader/PageHeader";
 import axios from "axios";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.css";
+import { cilBook } from "@coreui/icons";
+import CIcon from "@coreui/icons-react";
 
 const AdminDaftarPustaka = () => {
   const [DaftarPustaka, setDaftarPustaka] = useState([]);
@@ -50,7 +52,7 @@ const AdminDaftarPustaka = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3005/BookRoute/book");
+      const response = await axios.get("http://localhost:3005/book");
       setDaftarPustaka(response.data.data);
     } catch (error) {
       console.error(error);
@@ -66,7 +68,7 @@ const AdminDaftarPustaka = () => {
     console.log(formData);
 
     axios
-      .post("http://localhost:3005/BookRoute/book", formData)
+      .post("http://localhost:3005/book", formData)
       .then(() => {
         toggleModalTambah();
         console.log(formData);
@@ -76,12 +78,12 @@ const AdminDaftarPustaka = () => {
       .catch((error) => {
         console.error(error);
       });
-      console.log(formData);
+    console.log(formData);
   };
 
   const handleDelete = async (kode_buku) => {
     try {
-      await axios.delete(`http://localhost:3005/BookRoute/book/${kode_buku}`);
+      await axios.delete(`http://localhost:3005/book/${kode_buku}`);
       fetchData();
     } catch (error) {
       console.log(error);
@@ -90,12 +92,12 @@ const AdminDaftarPustaka = () => {
 
   const handleUpdate = async () => {
     const formData = new FormData(formRef.current);
-    
+
     cover_buku?.files && formData.append("cover_buku", cover_buku.files[0]);
     file_ebook?.files && formData.append("cover_buku", file_ebook.files[0]);
-    console.log('after',formData)
+    console.log('after', formData)
     try {
-      await axios.put(`http://localhost:3005/BookRoute/book/${currentBookId}`, formData);
+      await axios.put(`http://localhost:3005/book/${currentBookId}`, formData);
       toggleModalUpdate();
       fetchData();
 
@@ -103,22 +105,22 @@ const AdminDaftarPustaka = () => {
       setDaftarPustaka((prevData) => {
         return prevData.map((item) => {
           if (item.kode_buku === currentBookId) {
-             return {
-            ...item,
-            kode_buku: kode_buku || item.kode_buku,
-            judul: judul || item.judul,
-            penulis: penulis || item.penulis,
-            Kategori: Kategori || item.Kategori,
-            tahun_terbit: tahun_terbit || item.tahun_terbit,
-            keterangan: keterangan || item.keterangan,
-            jumlah: jumlah || item.jumlah,
-            cover_buku: cover_buku?.files[0]?.name || item.cover_buku,
-            file_ebook: file_ebook?.files[0]?.name || item.file_ebook,
-          };
+            return {
+              ...item,
+              kode_buku: kode_buku || item.kode_buku,
+              judul: judul || item.judul,
+              penulis: penulis || item.penulis,
+              Kategori: Kategori || item.Kategori,
+              tahun_terbit: tahun_terbit || item.tahun_terbit,
+              keterangan: keterangan || item.keterangan,
+              jumlah: jumlah || item.jumlah,
+              cover_buku: cover_buku?.files[0]?.name || item.cover_buku,
+              file_ebook: file_ebook?.files[0]?.name || item.file_ebook,
+            };
           }
           console.log(item);
           return item;
-        
+
         });
       });
 
@@ -132,8 +134,8 @@ const AdminDaftarPustaka = () => {
       setJumlah("");
       setCover_buku(null);
       setfile_ebook(null);
-    } 
-     catch (error) {
+    }
+    catch (error) {
       console.error(error);
     }
   };
@@ -158,11 +160,18 @@ const AdminDaftarPustaka = () => {
   try {
     return (
       <>
-        <PageHeader title="Daftar Pustaka" icon={<cilBook />} />
+        <PageHeader
+          title="Daftar Pustaka"
+          icon={<CIcon icon={cilBook} size='xl' />} />
         <div className="cardLayout">
-          <Button color="primary" onClick={toggleModalTambah}>
-            Tambah Data
-          </Button>
+          <CButton
+            color="primary"
+            size="lg"
+            className="btnModal"
+            onClick={toggleModalTambah}
+          >
+            Tambah Buku
+          </CButton>
 
           <Modal isOpen={modalTambah} toggle={toggleModalTambah}>
             <ModalHeader toggle={toggleModalTambah}>Tambah Data</ModalHeader>
@@ -302,7 +311,7 @@ const AdminDaftarPustaka = () => {
                   <td>{item.keterangan}</td>
                   <td>{item.jumlah}</td>
                   <td>
-                    <img className="photo"
+                    <img alt='cover buku' className="photo"
                       src={`http://localhost:3005/${item.cover_buku}`}
                     ></img>
                   </td>

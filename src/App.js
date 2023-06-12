@@ -14,7 +14,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<AdminLayout />}>
-        <Route path="/" element={<AdminDashboard />} />
+        <Route path="/dashboard" element={<AdminDashboard />} />
         <Route path="/daftarpustaka" element={<AdminDaftarPustaka />} />
         <Route path="/peminjaman" element={<AdminPeminjaman />} />
         <Route path="/dataAnggota" element={<AdminDataAnggota />} />

@@ -1,11 +1,62 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./AdminDashboard.scss";
 import { CWidgetStatsA, CCol, CDropdownToggle, CDropdown, CDropdownMenu, CDropdownItem, CWidgetStatsE, CWidgetStatsF } from "@coreui/react";
 import { cilArrowTop, cilBook, cilOptions } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import { CChartLine, CChartBar } from "@coreui/react-chartjs";
+import axios from 'axios';
+import jwtDecode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminDashboard() {
+  const [token, setToken] = useState('');
+  const [expire, setExpire] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    refreshToken();
+    // getAdmin();
+  }, []);
+
+  const refreshToken = async () => {
+    try {
+      const response = await axios.get('http://localhost:3005/token');
+      setToken(response.data.accessToken);
+      const decoded = jwtDecode(response.data.accessToken);
+      console.log(decoded);
+      setExpire(decoded.exp);
+    } catch (err) {
+      if (err.response) {
+        navigate('/login')
+      }
+      console.log(err)
+    }
+  }
+
+  const axiosJWT = axios.create();
+
+  axiosJWT.interceptors.request.use(async (config) => {
+    const currentDate = new Date();
+    if (expire * 1000 < currentDate.getTime()) {
+      const response = await axios.get('http://localhost:5000/token');
+      config.headers.Authorization = `Bearer ${response.data.accessToken}`;
+      setToken(response.data.accessToken);
+      const decoded = jwtDecode(response.data.accessToken);
+      setExpire(decoded.exp);
+    } return config;
+  }, (error) => {
+    return Promise.reject(error);
+  });
+
+  const getAdmin = async () => {
+    const response = await axiosJWT.get('http://localhost:3005/admin', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    console.log(response.data)
+  }
+
   return (
     <div className="cardLayout">
       <h2 className="dashboardTitle">Perpustakaan Digital SMA Yuppentek 1 Kota Tangerang</h2>

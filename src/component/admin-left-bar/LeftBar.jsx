@@ -1,13 +1,25 @@
 import React from 'react'
 import './leftBar.scss'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios';
 
 export default function LeftBar() {
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    try {
+      await axios.delete('http://localhost:3005/logout')
+      navigate('/login')
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
     <div className="leftBar">
       <div className="menu">
         <ul>
-          <Link to="/">
+          <Link to="/dashboard">
             <li>Dashboard</li>
           </Link>
           <Link to="/daftarpustaka">
@@ -19,9 +31,9 @@ export default function LeftBar() {
           <Link to='/dataAnggota'>
             <li>Data Anggota</li>
           </Link>
-          <Link to='/login'>
-            <li>Logout</li>
-          </Link>
+          <li>
+            <a href='/login' onClick={logout}>Logout</a>
+          </li>
         </ul>
       </div>
     </div>

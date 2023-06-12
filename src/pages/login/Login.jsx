@@ -1,10 +1,31 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './login.scss';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import logo from '../../assets/logoSMA.png';
-
+import { CFormInput } from '@coreui/react-pro';
+import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [msg, setMsg] = useState('');
+  const navigate = useNavigate();
+
+  const Auth = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post('http://localhost:3005/login', {
+        username: username,
+        password: password
+      });
+      navigate("/dashboard");
+    } catch (error) {
+      if (error.response) {
+        setMsg(error.response.data.message);
+      }
+    }
+  }
   return (
     <div className="login">
       <div className="cardLogin">
@@ -21,16 +42,32 @@ const Login = () => {
             <img src={logo} alt="" />
             <p>SMA Yuppentek 1 Kota Tangerang</p>
           </div>
-          <div className="loginContainer">
+          <form onSubmit={Auth} className="loginContainer">
             <h1>Login</h1>
             <div className='formLogin'>
-              <input type="email" placeholder="Email" />
-              <input type="password" placeholder="Password" />
-              <Link to='/'>
-                <button>Masuk </button>
-              </Link>
+              <CFormInput
+                type="text"
+                id="floatingInput"
+                floatingClassName="mb-3"
+                floatingLabel="Username"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <CFormInput
+                type="password"
+                id="floatingPassword"
+                floatingLabel="Password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              {/* <Link to='/dashboard'> */}
+              <button>Masuk </button>
+              {/* </Link> */}
             </div>
-          </div>
+            <p>{msg}</p>
+          </form>
           {/* <div className="toRegister">
             <span>Belum Memiliki Akun?</span>
             <Link to='/register'>

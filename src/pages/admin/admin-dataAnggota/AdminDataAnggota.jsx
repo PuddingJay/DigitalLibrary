@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../admin-dataAnggota/AdminDataAnggota.scss";
-import { nanoid } from "nanoid";
 import { CButton } from "@coreui/react";
 import { PageHeader } from "../../../component/admin-page-heaader/PageHeader";
 import CIcon from "@coreui/icons-react";
-import { cilBook } from "@coreui/icons";
+import { cilPeople } from "@coreui/icons";
 import axios from "axios";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.css";
 
 const AdminDataAnggota = () => {
-  const [openModal, setOpenModal] = useState(false);
+  // const [openModal, setOpenModal] = useState(false);
   const [DataAnggota, setDataAnggota] = useState([]);
   const [NIS, setNIS] = useState([]);
   const [Nama, setNama] = useState([]);
@@ -41,7 +40,7 @@ const AdminDataAnggota = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3005/BookRoute/siswa");
+      const response = await axios.get("http://localhost:3005/siswa");
       setDataAnggota(response.data.data);
     } catch (error) {
       console.error(error);
@@ -54,7 +53,7 @@ const AdminDataAnggota = () => {
     const formData = { NIS, Nama, Kelas, Jurusan };
 
     axios
-      .post("http://localhost:3005/BookRoute/siswa", formData)
+      .post("http://localhost:3005/siswa", formData)
       .then(() => {
         toggleModalTambah();
         fetchData();
@@ -66,7 +65,7 @@ const AdminDataAnggota = () => {
 
   const handleDelete = async (NIS) => {
     try {
-      await axios.delete(`http://localhost:3005/BookRoute/siswa/${NIS}`);
+      await axios.delete(`http://localhost:3005/siswa/${NIS}`);
       fetchData();
     } catch (error) {
       console.log(error);
@@ -77,9 +76,9 @@ const AdminDataAnggota = () => {
     const formData = { NIS, Nama, Kelas, Jurusan };
 
     try {
-      console.log(`http://localhost:3005/BookRoute/siswa/${NIS}`);
+      console.log(`http://localhost:3005/siswa/${NIS}`);
       console.log(formData);
-      await axios.put(`http://localhost:3005/BookRoute/siswa/${currentAnggotaId}`, formData);
+      await axios.put(`http://localhost:3005/siswa/${currentAnggotaId}`, formData);
       toggleModalUpdate();
       fetchData();
 
@@ -124,11 +123,16 @@ const AdminDataAnggota = () => {
   try {
     return (
       <>
-        <PageHeader title="Data Anggota" icon={<CIcon icon={cilBook} size="xl" />} />
+        <PageHeader title="Data Anggota" icon={<CIcon icon={cilPeople} size="xl" />} />
         <div className="cardLayout">
-          <Button color="primary" onClick={toggleModalTambah}>
-            Tambah Data
-          </Button>
+          <CButton
+            color="primary"
+            size="lg"
+            className="btnModal"
+            onClick={toggleModalTambah}
+          >
+            Tambah Data Anggota
+          </CButton>
 
           <Modal isOpen={modalTambah} toggle={toggleModalTambah}>
             <ModalHeader toggle={toggleModalTambah}>Tambah Anggota</ModalHeader>

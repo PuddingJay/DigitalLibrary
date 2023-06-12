@@ -15,24 +15,23 @@
       gap: 40px;
       padding: 80px 0;
 
+      li,
       a {
         text-decoration: none;
+        list-style-type: none;
+        text-align: left;
+        color: white;
+        // font-weight: bold;
+        font-size: 20px;
+        padding-left: 15px;
+      }
 
-        li {
-          list-style-type: none;
-          text-align: left;
-          color: white;
-          // font-weight: bold;
-          font-size: 20px;
-          padding-left: 30px;
-        }
-
-        li:hover,
-        li::marker {
-          color: #ffbe17;
-          text-decoration: underline;
-        }
+      li:hover,
+      a:hover {
+        color: #ffbe17;
+        text-decoration: underline;
       }
     }
+
   }
 }
