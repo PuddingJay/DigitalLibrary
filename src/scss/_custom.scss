@@ -60,6 +60,7 @@
     justify-content: center;
     padding: 0;
   }
+
   .sidebar-toggler {
     display: none;
   }
@@ -73,7 +74,7 @@
       border: 0 !important; // stylelint-disable-line
     }
 
-    .nav-group-toggle::after{
+    .nav-group-toggle::after {
       filter: invert(1) grayscale(100%) brightness(200%);
     }
   }

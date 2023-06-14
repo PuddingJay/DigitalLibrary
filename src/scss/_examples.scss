@@ -8,30 +8,30 @@
     background-color: var(--#{$prefix}tertiary-bg) !important;
   }
 
-  & + p {
+  &+p {
     margin-top: 1.5rem;
   }
 
   // Components examples
   .preview {
-    + p {
+    +p {
       margin-top: 2rem;
     }
 
-    > .form-control {
-      + .form-control {
+    >.form-control {
+      +.form-control {
         margin-top: .5rem;
       }
     }
 
-    > .nav + .nav,
-    > .alert + .alert,
-    > .navbar + .navbar,
-    > .progress + .progress {
+    >.nav+.nav,
+    >.alert+.alert,
+    >.navbar+.navbar,
+    >.progress+.progress {
       margin-top: 1rem;
     }
 
-    > .dropdown-menu {
+    >.dropdown-menu {
       position: static;
       display: block;
     }
@@ -41,26 +41,27 @@
     }
 
     // Images
-    > svg + svg,
-    > img + img {
+    >svg+svg,
+    >img+img {
       margin-left: .5rem;
     }
 
     // Buttons
-    > .btn,
-    > .btn-group {
+    >.btn,
+    >.btn-group {
       margin: .25rem .125rem;
     }
-    > .btn-toolbar + .btn-toolbar {
+
+    >.btn-toolbar+.btn-toolbar {
       margin-top: .5rem;
     }
 
     // List groups
-    > .list-group {
+    >.list-group {
       max-width: 400px;
     }
 
-    > [class*="list-group-horizontal"] {
+    >[class*="list-group-horizontal"] {
       max-width: 100%;
     }
 
@@ -77,10 +78,12 @@
     }
 
     @include media-breakpoint-up(sm) {
+
       .fixed-top,
       .sticky-top {
         margin: -1.5rem -1.5rem 1rem;
       }
+
       .fixed-bottom {
         margin: 1rem -1.5rem -1.5rem;
       }

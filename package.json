@@ -1,31 +1,13 @@
 {
-  "name": "@coreui/coreui-pro-react-admin-template",
-  "version": "4.7.0-alpha.0",
-  "description": "CoreUI PRO React Admin Template",
-  "homepage": ".",
-  "bugs": {
-    "url": "https://github.com/coreui/coreui-pro-react-admin-template/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:coreui/coreui-pro-react-admin-template.git"
-  },
-  "license": "SEE LICENSE IN LICENSE",
-  "author": "The CoreUI Team (https://github.com/orgs/coreui/people)",
-  "scripts": {
-    "build": "react-scripts build",
-    "eject": "react-scripts eject",
-    "lint": "eslint \"src/**/*.js\"",
-    "start": "react-scripts start",
-    "test": "react-scripts test",
-    "test:cov": "npm test -- --coverage --watchAll=false",
-    "test:debug": "react-scripts --inspect-brk test --runInBand"
-  },
+  "name": "digi-lib",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "@coreui/chartjs": "^3.1.1",
+    "@coreui/coreui": "^4.2.6",
     "@coreui/coreui-pro": "^4.6.0-alpha.1",
     "@coreui/icons": "^3.0.1",
     "@coreui/icons-react": "^2.1.0",
+    "@coreui/react": "^4.8.0",
     "@coreui/react-chartjs": "^2.1.3",
     "@coreui/react-pro": "^4.12.0-alpha.0",
     "@coreui/utils": "^2.0.1",
@@ -34,31 +16,58 @@
     "@fullcalendar/react": "^5.11.3",
     "@fullcalendar/timegrid": "^5.11.3",
     "@react-google-maps/api": "^2.18.1",
+    "@react-pdf-viewer/core": "^3.12.0",
+    "@react-pdf-viewer/default-layout": "^3.12.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.4.0",
+    "bootstrap": "^5.2.3",
     "chart.js": "^3.9.1",
     "classnames": "^2.3.2",
     "core-js": "^3.30.2",
+    "express": "^4.18.2",
+    "jwt-decode": "^3.1.2",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.22",
+    "pdfjs-dist": "^3.4.120",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-app-polyfill": "^3.0.0",
+    "react-bootstrap": "^2.7.4",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
-    "react-router-dom": "^6.11.1",
+    "react-router-dom": "^6.12.1",
+    "react-scripts": "5.0.1",
+    "reactstrap": "^9.1.10",
     "redux": "4.2.1",
-    "simplebar-react": "^2.4.3"
+    "sass": "^1.63.3",
+    "simplebar-react": "^2.4.3",
+    "web-vitals": "^2.1.4"
   },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": ".eslintrc.js",
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^14.0.0",
-    "@testing-library/user-event": "^14.4.3",
+    "css-loader": "^6.8.1",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "2.8.8",
-    "react-scripts": "5.0.1",
-    "sass": "^1.62.1",
-    "web-vitals": "^3.3.1"
+    "postcss-loader": "^7.3.3",
+    "prettier": "^2.8.8",
+    "resolve-url-loader": "^5.0.0",
+    "sass-loader": "^13.3.2"
   },
-  "engines": {
-    "node": ">=10",
-    "npm": ">=6"
-  }
+  "author": "",
+  "license": "ISC"
 }

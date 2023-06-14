@@ -1,0 +1,25 @@
+html {
+  scroll-behavior: smooth;
+}
+
+.cardLayout {
+  box-shadow: 0px 0px 10px rgb(192, 192, 192);
+  background-color: white;
+  padding: 20px 20px 60px;
+  margin: 40px;
+  border-radius: 5px;
+}
+
+.photo {
+  height: 100px;
+  width: 100px;
+}
+
+.action {
+  width: 2rem;
+}
+.action .buttonWrapper {
+  display: flex;
+  padding: 0;
+  gap: 10px;
+}/*# sourceMappingURL=AdminDaftarPustaka.css.map */

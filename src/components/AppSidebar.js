@@ -2,12 +2,8 @@ import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { CSidebar, CSidebarBrand, CSidebarNav, CSidebarToggler } from '@coreui/react-pro'
-import CIcon from '@coreui/icons-react'
-
 import { AppSidebarNav } from './AppSidebarNav'
-
-import { logoNegative } from 'src/assets/brand/logo-negative'
-import { sygnet } from 'src/assets/brand/sygnet'
+import logo from '../assets/logoSMA.png'
 
 import SimpleBar from 'simplebar-react'
 import 'simplebar/dist/simplebar.min.css'
@@ -31,8 +27,34 @@ const AppSidebar = () => {
       }}
     >
       <CSidebarBrand className="d-none d-md-flex" to="/">
-        <CIcon className="sidebar-brand-full ms-3" icon={logoNegative} height={35} />
-        <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
+        <img
+          className="sidebar-brand-narrow"
+          src={logo}
+          height={35}
+          alt="Logo SMA Yuppentek 1 Kota Tangerang"
+        />
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <img
+            className="sidebar-brand-full ms-2"
+            src={logo}
+            height={35}
+            alt="Logo SMA Yuppentek 1 Kota Tangerang"
+          />
+          <h5
+            className="sidebar-brand-full ms-2"
+            style={{
+              margin: 'auto 10px',
+              fontFamily: 'Poppins',
+              fontWeight: 'bold',
+              fontSize: '18px',
+              letterSpacing: '0.5px',
+            }}
+          >
+            SMA YUPPENTEK 1
+          </h5>
+        </div>
+        {/* <CIcon className="sidebar-brand-full ms-3" icon={logoNegative} height={35} /> */}
+        {/* <CIcon className="sidebar-brand-narrow" icon={logo} height={35} /> */}
         <CSidebarToggler
           onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
         />
