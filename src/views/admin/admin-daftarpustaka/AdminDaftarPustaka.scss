@@ -1,0 +1,17 @@
+@import "../../../scss/style";
+
+.photo {
+  height: 80px;
+  width: 80px;
+}
+
+.action {
+  width: 2rem;
+
+  .buttonWrapper {
+    display: flex;
+    padding: 0;
+    gap: 10px;
+  }
+
+}

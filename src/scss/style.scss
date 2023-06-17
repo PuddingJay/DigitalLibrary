@@ -1,0 +1,76 @@
+@import "@coreui/coreui-pro/scss/functions";
+
+// If you want to override variables do it here
+@import "variables";
+@import "variables-dark";
+
+// Import styles
+@import "@coreui/coreui-pro/scss/coreui";
+
+
+// Import Chart.js custom tooltips styles
+@import "@coreui/chartjs/scss/coreui-chartjs";
+
+@import "examples";
+@import "layout";
+
+// Plugins
+@import "calendar";
+
+// If you want to add custom CSS you can put it here.
+@import "custom";
+
+html {
+  scroll-behavior: smooth;
+}
+
+.cardLayout {
+  box-shadow: 0px 0px 10px rgb(192, 192, 192);
+  background-color: white;
+  padding: 20px 20px;
+  border-radius: 5px;
+}
+
+@mixin mobile {
+  @media (min-width: 576px) {
+    @content;
+  }
+}
+
+
+@mixin tablet {
+  @media (min-width: 768px) {
+    @content;
+  }
+}
+
+
+@mixin laptop-s {
+  @media (min-width: 992px) {
+    @content;
+  }
+}
+
+@mixin laptop-m {
+  @media (min-width: 1200px) {
+    @content;
+  }
+}
+
+@mixin laptop-l {
+  @media (min-width: 1400px) {
+    @content;
+  }
+}
+
+@mixin laptop-xl {
+  @media (min-width: 1900px) {
+    @content;
+  }
+}
+
+@mixin laptop-xxl {
+  @media (min-width: 2500px) {
+    @content;
+  }
+}
