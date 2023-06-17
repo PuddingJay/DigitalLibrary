@@ -2,15 +2,16 @@
 import React, { useEffect, useState } from 'react'
 import './AdminPeminjaman.scss'
 import {
+  CBadge,
   CButton,
+  CCard,
+  CCardBody,
   CCol,
-  CDropdown,
-  CDropdownItem,
-  CDropdownMenu,
-  CDropdownToggle,
+  CCollapse,
   CForm,
   CFormInput,
   CFormSelect,
+  CSmartTable,
 } from '@coreui/react-pro'
 import axios from 'axios'
 import {
@@ -21,8 +22,11 @@ import {
   CModalTitle,
   CModalFooter,
 } from '@coreui/react-pro'
+import CIcon from '@coreui/icons-react'
+import { cilCloudDownload } from '@coreui/icons'
 
 const AdminPeminjaman = () => {
+  const [loading, setLoading] = useState()
   const [openModal, setOpenModal] = useState(false)
   const [openModalUpdate, setOpenModalUpdate] = useState(false)
   const [peminjaman, setPeminjaman] = useState([])
@@ -46,6 +50,7 @@ const AdminPeminjaman = () => {
 
   useEffect(() => {
     fetchData()
+    setLoading(false)
   }, [])
 
   const fetchData = async () => {
@@ -217,213 +222,270 @@ const AdminPeminjaman = () => {
     console.log(currentId)
   }
 
-  const [postPerPage] = useState(5)
-  const [currentPage, setcurrentPage] = useState(1)
-  const indexOfLastPage = currentPage * postPerPage
-  const indexOfFirstPage = indexOfLastPage - postPerPage
-  const currentPosts = peminjaman.slice(indexOfFirstPage, indexOfLastPage)
-
-  const showPagination = () => {
-    const pageNumbers = []
-    const totalPosts = peminjaman.length
-
-    for (let i = 1; i <= Math.ceil(totalPosts / postPerPage); i++) {
-      pageNumbers.push(i)
+  const [details, setDetails] = useState([])
+  const columns = [
+    {
+      key: 'idBuku',
+      _style: { width: '12%' },
+    },
+    { key: 'namaPeminjam', _style: { width: '17%' } },
+    { key: 'judulBuku', _style: { width: '20%' } },
+    { key: 'tglPinjam', _style: { width: '10%' } },
+    { key: 'batasPinjam', _style: { width: '10%' } },
+    { key: 'tglKembali', _style: { width: '10%' } },
+    { key: 'status', _style: { width: '12%' } },
+    { key: 'denda', _style: { width: '13%' } },
+    {
+      key: 'show_details',
+      label: '',
+      _style: { width: '1%' },
+      filter: false,
+      sorter: false,
+    },
+  ]
+  const getBadge = (status) => {
+    switch (status) {
+      case 'Dikembalikan':
+        return 'success'
+      case '-':
+        return 'secondary'
+      case 'Pending':
+        return 'warning'
+      case 'Belum Dikembalikan':
+        return 'danger'
+      default:
+        return 'primary'
     }
-
-    const pagination = (pageNumbers) => {
-      setcurrentPage(pageNumbers)
-    }
-
-    return (
-      <nav>
-        <ul className="pagination">
-          {pageNumbers.map((number) => (
-            <li key={number} className={currentPage === number ? 'page-item active' : 'page-item'}>
-              <button onClick={() => pagination(number)}> {number} </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    )
   }
+  const toggleDetails = (index) => {
+    const position = details.indexOf(index)
+    let newDetails = details.slice()
+    if (position !== -1) {
+      newDetails.splice(position, 1)
+    } else {
+      newDetails = [...details, index]
+    }
+    setDetails(newDetails)
+  }
+
+  // buat download
+  const csvContent = peminjaman.map((item) => Object.values(item).join(',')).join('\n')
+  const csvCode = 'data:text/csv;charset=utf-8,SEP=,%0A' + encodeURIComponent(csvContent)
 
   try {
     return (
       <>
-        <div className="cardLayout">
-          <CButton
-            color="primary"
-            size="lg"
-            className="btnModal"
-            onClick={() => {
-              setOpenModal(!openModal)
-            }}
-          >
-            Tambah Data Pinjam
-          </CButton>
+        <CCard>
+          <CCardBody>
+            <CButton
+              color="primary"
+              size="lg"
+              className="btnModal"
+              onClick={() => {
+                setOpenModal(!openModal)
+              }}
+            >
+              Tambah Data Pinjam
+            </CButton>
 
-          <CModal
-            allignment="center"
-            size="lg"
-            scrollable
-            visible={openModal}
-            onClose={() => batalHandler()}
-          >
-            <CModalHeader>
-              <CModalTitle> Tambah Data Peminjaman</CModalTitle>
-            </CModalHeader>
-            <CModalBody>
-              <CForm className="row g-3" onSubmit={formOnSubmitHandler}>
-                <CCol md={6}>
-                  <CFormInput
-                    name="namaPeminjam"
-                    type="text"
-                    id="inputNamaPeminjam"
-                    label="Nama Peminjam"
-                    onChange={formOnChangeHandler}
-                  />
-                </CCol>
-                <CCol md={6}>
-                  <CFormInput
-                    name="idBuku"
-                    type="text"
-                    id="inputIdBuku"
-                    label="ID Buku"
-                    onChange={formOnChangeHandler}
-                  />
-                </CCol>
-                <CCol xs={12}>
-                  <CFormInput
-                    name="judulBuku"
-                    id="inputJudulBuku"
-                    label="Judul Buku"
-                    placeholder="Si Kancil Bandel Banget"
-                    onChange={formOnChangeHandler}
-                  />
-                </CCol>
-                <CCol md={4}>
-                  <CDatePicker
-                    name="tglPinjam"
-                    footer
-                    locale="en-US"
-                    id="tglPinjam"
-                    label="Tanggal Pinjam"
-                    onDateChange={formOnChangeTglPinjam}
-                  />
-                </CCol>
-                <CCol md={4}>
-                  <CDatePicker
-                    name="batasPinjam"
-                    footer
-                    locale="en-US"
-                    id="batasPinjam"
-                    label="Batas Pinjam"
-                    onDateChange={formOnChangeBatasPinjam}
-                  />
-                </CCol>
-                <CCol md={4}>
-                  <CDatePicker
-                    name="tglKembali"
-                    footer
-                    locale="en-US"
-                    id="tglKembali"
-                    label="Tanggal Kembali"
-                    onDateChange={formOnChangeTglKembali}
-                  />
-                </CCol>
-                <CCol md={8}>
-                  <CFormSelect
-                    name="status"
-                    id="inputStatus"
-                    label="Status"
-                    onChange={formOnChangeHandler}
-                  >
-                    <option>-</option>
-                    <option>Belum Dikembalikan</option>
-                    <option>Dikembalikan</option>
-                  </CFormSelect>
-                </CCol>
-                <CCol md={4}>
-                  <CFormInput
-                    name="denda"
-                    id="inputDenda"
-                    label="Denda"
-                    onChange={formOnChangeHandler}
-                  />
-                </CCol>
-                <CModalFooter>
-                  <CButton type="submit"> Tambah </CButton>
-                  <CButton
-                    color="light"
-                    onClick={() => {
-                      batalHandler()
-                    }}
-                  >
-                    {' '}
-                    Kembali{' '}
-                  </CButton>
-                </CModalFooter>
-              </CForm>
-            </CModalBody>
-          </CModal>
+            <CModal
+              allignment="center"
+              size="lg"
+              scrollable
+              visible={openModal}
+              onClose={() => batalHandler()}
+            >
+              <CModalHeader>
+                <CModalTitle>Tambah Data Peminjaman</CModalTitle>
+              </CModalHeader>
+              <CModalBody>
+                <CForm className="row g-3" onSubmit={formOnSubmitHandler}>
+                  <CCol md={6}>
+                    <CFormInput
+                      name="namaPeminjam"
+                      type="text"
+                      id="inputNamaPeminjam"
+                      label="Nama Peminjam"
+                      onChange={formOnChangeHandler}
+                    />
+                  </CCol>
+                  <CCol md={6}>
+                    <CFormInput
+                      name="idBuku"
+                      type="text"
+                      id="inputIdBuku"
+                      label="ID Buku"
+                      onChange={formOnChangeHandler}
+                    />
+                  </CCol>
+                  <CCol xs={12}>
+                    <CFormInput
+                      name="judulBuku"
+                      id="inputJudulBuku"
+                      label="Judul Buku"
+                      placeholder="Judul Buku"
+                      onChange={formOnChangeHandler}
+                    />
+                  </CCol>
+                  <CCol md={4}>
+                    <CDatePicker
+                      name="tglPinjam"
+                      footer
+                      locale="en-US"
+                      id="tglPinjam"
+                      label="Tanggal Pinjam"
+                      onDateChange={formOnChangeTglPinjam}
+                    />
+                  </CCol>
+                  <CCol md={4}>
+                    <CDatePicker
+                      name="batasPinjam"
+                      footer
+                      locale="en-US"
+                      id="batasPinjam"
+                      label="Batas Pinjam"
+                      onDateChange={formOnChangeBatasPinjam}
+                    />
+                  </CCol>
+                  <CCol md={4}>
+                    <CDatePicker
+                      name="tglKembali"
+                      footer
+                      locale="en-US"
+                      id="tglKembali"
+                      label="Tanggal Kembali"
+                      onDateChange={formOnChangeTglKembali}
+                    />
+                  </CCol>
+                  <CCol md={8}>
+                    <CFormSelect
+                      name="status"
+                      id="inputStatus"
+                      label="Status"
+                      onChange={formOnChangeHandler}
+                    >
+                      <option>Belum Dikembalikan</option>
+                      <option>Dikembalikan</option>
+                    </CFormSelect>
+                  </CCol>
+                  <CCol md={4}>
+                    <CFormInput
+                      name="denda"
+                      id="inputDenda"
+                      label="Denda"
+                      onChange={formOnChangeHandler}
+                    />
+                  </CCol>
+                  <CModalFooter>
+                    <CButton type="submit"> Tambah </CButton>
+                    <CButton
+                      color="light"
+                      onClick={() => {
+                        batalHandler()
+                      }}
+                    >
+                      {' '}
+                      Kembali{' '}
+                    </CButton>
+                  </CModalFooter>
+                </CForm>
+              </CModalBody>
+            </CModal>
 
-          <table className="tableData">
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>ID Buku</th>
-                <th>Peminjam</th>
-                <th>Judul Buku</th>
-                <th>Tanggal Pinjam</th>
-                <th>Batas Pinjam</th>
-                <th>Tanggal Kembali</th>
-                <th>Status</th>
-                <th>Denda</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentPosts.map((peminjaman, index) => (
-                <tr key={peminjaman.idPeminjaman}>
-                  <td>{postPerPage * (currentPage - 1) + index + 1}</td>
-                  <td>{peminjaman.idBuku}</td>
-                  <td>{peminjaman.namaPeminjam}</td>
-                  <td>{peminjaman.judulBuku}</td>
-                  <td>{peminjaman.tglPinjam}</td>
-                  <td>{peminjaman.batasPinjam}</td>
-                  <td>{peminjaman.tglKembali}</td>
-                  <td>{peminjaman.status}</td>
-                  <td>{peminjaman.denda}</td>
-                  <td className="action">
-                    <div className="buttonWrapper">
-                      <CDropdown>
-                        <CDropdownToggle color="primary">Status</CDropdownToggle>
-                        <CDropdownMenu>
-                          <CDropdownItem onClick={() => OnChangeKembali(peminjaman.idPeminjaman)}>
-                            Kembalikan Buku
-                          </CDropdownItem>
-                          <CDropdownItem
-                            onClick={() => {
-                              toggleUpdate(peminjaman.idPeminjaman)
-                            }}
-                          >
-                            Edit
-                          </CDropdownItem>
-                        </CDropdownMenu>
-                      </CDropdown>
-                      <CButton color="danger" onClick={() => handleDelete(peminjaman.idPeminjaman)}>
-                        Hapus
-                      </CButton>
-                    </div>
+            <CButton
+              color="primary"
+              className="mb-2 download"
+              href={csvCode}
+              download="data-peminjaman.csv"
+              target="_blank"
+              size="lg"
+            >
+              <CIcon icon={cilCloudDownload} size="lg" />
+              {/* Download data peminjaman (.csv) */}
+            </CButton>
+
+            <CSmartTable
+              className="mt-3"
+              activePage={3}
+              cleaner
+              footer
+              clickableRows
+              columns={columns}
+              loading={loading}
+              columnSorter
+              items={peminjaman}
+              itemsPerPageSelect
+              itemsPerPage={5}
+              pagination
+              scopedColumns={{
+                status: (item) => (
+                  <td>
+                    <CBadge color={getBadge(item.status)}>{item.status}</CBadge>
                   </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <div className="paginationContainer">{showPagination()}</div>
-        </div>
+                ),
+                show_details: (item) => {
+                  return (
+                    <td className="py-2">
+                      <CButton
+                        color="primary"
+                        variant="outline"
+                        shape="square"
+                        size="sm"
+                        onClick={() => {
+                          toggleDetails(item.idPeminjaman)
+                        }}
+                      >
+                        {details.includes(item.idPeminjaman) ? 'Hide' : 'Show'}
+                      </CButton>
+                    </td>
+                  )
+                },
+                details: (item) => {
+                  return (
+                    <CCollapse visible={details.includes(item.idPeminjaman)}>
+                      <CCardBody className="p-3">
+                        <h4>Buku {item.judulBuku}</h4>
+                        <p className="text-muted">Dipinjam dari: {item.tglPinjam}</p>
+                        <CButton
+                          size="sm"
+                          color="primary"
+                          onClick={() => {
+                            toggleUpdate(item.idPeminjaman)
+                          }}
+                        >
+                          Edit
+                        </CButton>
+                        <CButton
+                          size="sm"
+                          color="dark"
+                          onClick={() => OnChangeKembali(item.idPeminjaman)}
+                        >
+                          Dikembalikan
+                        </CButton>
+                        <CButton
+                          size="sm"
+                          color="danger"
+                          onClick={() => handleDelete(item.idPeminjaman)}
+                        >
+                          Delete
+                        </CButton>
+                      </CCardBody>
+                    </CCollapse>
+                  )
+                },
+              }}
+              sorterValue={{ column: 'name', state: 'asc' }}
+              tableFilter
+              tableHeadProps={{
+                color: 'info',
+              }}
+              tableProps={{
+                // striped: true,
+                hover: true,
+              }}
+            />
+          </CCardBody>
+        </CCard>
 
         <CModal
           allignment="center"

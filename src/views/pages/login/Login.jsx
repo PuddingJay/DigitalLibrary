@@ -6,7 +6,8 @@ import { CFormInput } from '@coreui/react-pro'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 
-const Login = () => {
+// eslint-disable-next-line react/prop-types
+const Login = ({ loginSuccess }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [msg, setMsg] = useState('')
@@ -15,11 +16,12 @@ const Login = () => {
   const Auth = async (e) => {
     e.preventDefault()
     try {
-      await axios.post('http://localhost:3005/login', {
+      const response = await axios.post('http://localhost:3005/login', {
         username: username,
         password: password,
       })
       navigate('/dashboard')
+      loginSuccess(response)
     } catch (error) {
       if (error.response) {
         setMsg(error.response.data.message)

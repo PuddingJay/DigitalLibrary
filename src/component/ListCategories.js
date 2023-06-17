@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { Col } from "react-bootstrap";
-import axios from "axios";
+import React, { useState, useEffect } from 'react'
+import { Col } from 'react-bootstrap'
+import axios from 'axios'
 
-import ListGroup from "react-bootstrap/ListGroup";
+import ListGroup from 'react-bootstrap/ListGroup'
 
 const ListCategories = () => {
-  const [DaftarPustaka, setDaftarPustaka] = useState([]);
+  const [DaftarPustaka, setDaftarPustaka] = useState([])
 
   useEffect(() => {
-    fetchData();
-    console.log(DaftarPustaka);
-  }, []);
+    fetchData()
+    console.log(DaftarPustaka)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3005/BookRoute/book");
-      setDaftarPustaka(response.data.data);
+      const response = await axios.get('http://localhost:3005/book')
+      setDaftarPustaka(response.data.data)
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  };
+  }
 
   return (
     <Col md={2} mt={-3}>
@@ -36,7 +37,7 @@ const ListCategories = () => {
         ))}
       </ListGroup>
     </Col>
-  );
-};
+  )
+}
 
-export default ListCategories;
+export default ListCategories

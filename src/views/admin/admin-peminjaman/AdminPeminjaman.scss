@@ -1,45 +1,14 @@
 @import "../../../scss/style.scss";
 
-.tableData {
-  height: 550px;
+
+.download {
+  position: absolute;
+  right: 20px;
+  top: 20px;
 }
 
-.paginationContainer {
-  position: relative;
-  float: right;
-  margin-top: 5px;
-
-  nav {
-
-    ul {
-      display: flex;
-      box-shadow: 0 0 5px #7e7d8c;
-      padding: 0;
-
-      li {
-        list-style-type: none;
-
-        button {
-          font-size: 20px;
-          border: none;
-          font-weight: bold;
-          padding: 5px 12px;
-          background-color: transparent;
-          color: black;
-        }
-      }
-    }
-  }
-
-  .page-item {
-    background-color: #d6d5e7;
-  }
-
-  .active {
-    background-color: #29266a;
-  }
-
-  .active button {
-    color: white;
+.p-3 {
+  button {
+    margin-right: 5px;
   }
 }

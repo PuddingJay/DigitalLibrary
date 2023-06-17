@@ -4,42 +4,22 @@ import classNames from 'classnames'
 
 import {
   CContainer,
-  CForm,
-  CFormInput,
   CDropdown,
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
   CHeader,
-  CHeaderBrand,
   CHeaderNav,
   CHeaderToggler,
-  CInputGroup,
-  CInputGroupText,
 } from '@coreui/react-pro'
 import CIcon from '@coreui/icons-react'
-import {
-  cilContrast,
-  cilApplicationsSettings,
-  cilMenu,
-  cilMoon,
-  cilSearch,
-  cilSun,
-} from '@coreui/icons'
+import { cilContrast, cilMenu, cilMoon, cilSun } from '@coreui/icons'
 
-import {
-  AppHeaderDropdown,
-  AppHeaderDropdownMssg,
-  AppHeaderDropdownNotif,
-  AppHeaderDropdownTasks,
-} from './header/index'
-
-import { logoNegative } from 'src/assets/brand/logo-negative'
+import { AppHeaderDropdown } from './header/index'
 
 const AppHeader = () => {
   const dispatch = useDispatch()
 
-  const asideShow = useSelector((state) => state.asideShow)
   const sidebarShow = useSelector((state) => state.sidebarShow)
   const theme = useSelector((state) => state.theme)
 
@@ -54,26 +34,10 @@ const AppHeader = () => {
         >
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
-        <CHeaderBrand className="mx-auto d-md-none text-white" to="/">
+        {/* <CHeaderBrand className="mx-auto d-md-none text-white" to="/">
           <CIcon icon={logoNegative} height={34} alt="Logo" />
-        </CHeaderBrand>
-        <CForm className="d-none d-md-flex">
-          <CInputGroup>
-            <CInputGroupText id="search-addon" className="bg-body-secondary border-0 px-1">
-              <CIcon icon={cilSearch} size="lg" className="my-1 mx-2 text-disabled" />
-            </CInputGroupText>
-            <CFormInput
-              placeholder="Search..."
-              aria-label="Search"
-              aria-describedby="search-addon"
-              className="bg-body-secondary border-0"
-            />
-          </CInputGroup>
-        </CForm>
+        </CHeaderBrand> */}
         <CHeaderNav className="d-none d-sm-flex ms-auto me-3">
-          <AppHeaderDropdownNotif />
-          <AppHeaderDropdownTasks />
-          <AppHeaderDropdownMssg />
           <li className="nav-item py-2 py-lg-1">
             <div className="vr h-100 mx-2 text-white text-opacity-50"></div>
           </li>
@@ -124,12 +88,6 @@ const AppHeader = () => {
         <CHeaderNav className="ms-auto ms-sm-0 me-sm-4">
           <AppHeaderDropdown />
         </CHeaderNav>
-        <CHeaderToggler
-          className="px-md-0 me-md-3"
-          onClick={() => dispatch({ type: 'set', asideShow: !asideShow })}
-        >
-          <CIcon icon={cilApplicationsSettings} size="lg" />
-        </CHeaderToggler>
       </CContainer>
     </CHeader>
   )

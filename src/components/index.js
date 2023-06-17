@@ -1,4 +1,3 @@
-import AppAside from './AppAside'
 import AppBreadcrumb from './AppBreadcrumb'
 import AppContent from './AppContent'
 import AppFooter from './AppFooter'
@@ -10,7 +9,6 @@ import DocsExample from './DocsExample'
 import ProBadge from './ProBadge'
 
 export {
-  AppAside,
   AppBreadcrumb,
   AppContent,
   AppFooter,

@@ -1,41 +1,40 @@
-import React, { useState, useEffect, } from "react";
-import Card from "react-bootstrap/Card";
-import { Col, Row } from "react-bootstrap";
-import "../../index.scss";
-import { Link } from "react-router-dom";
-import "./books.scss";
-import axios from "axios";
+import React, { useState, useEffect } from 'react'
+import Card from 'react-bootstrap/Card'
+import { Col, Row } from 'react-bootstrap'
+import '../../index.scss'
+import { Link } from 'react-router-dom'
+import './books.scss'
+import axios from 'axios'
 
 const Books = () => {
-  const [DaftarPustaka, setDaftarPustaka] = useState([]);
+  const [DaftarPustaka, setDaftarPustaka] = useState([])
 
   const getSearch = (keyword) => {
     axios
-      .get(`http://localhost:3005/BookRoute/book?search=${keyword}`)
+      .get(`http://localhost:3005/book?search=${keyword}`)
       .then((response) => {
-        setDaftarPustaka(response.data.data);
+        setDaftarPustaka(response.data.data)
       })
       .catch((error) => {
-        console.error('Gagal melakukan pencarian:', error);
-      });
-  };
-
+        console.error('Gagal melakukan pencarian:', error)
+      })
+  }
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3005/BookRoute/book");
-      setDaftarPustaka(response.data.data);
+      const response = await axios.get('http://localhost:3005/book')
+      setDaftarPustaka(response.data.data)
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  };
+  }
   return (
     <Col className="ml-3">
-      <Row className="mb-4">
+      <Row className="mb-4 katalog">
         {DaftarPustaka.map((item) => (
           // <Card className="shadow">
           //   <Link to={`/Detail/${item.kode_buku}`} key={item.kode_buku}>
@@ -64,7 +63,7 @@ const Books = () => {
         ))}
       </Row>
     </Col>
-  );
-};
+  )
+}
 
-export default Books;
+export default Books
