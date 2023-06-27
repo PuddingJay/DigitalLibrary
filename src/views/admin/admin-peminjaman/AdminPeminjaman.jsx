@@ -30,16 +30,17 @@ const AdminPeminjaman = () => {
   const [openModal, setOpenModal] = useState(false)
   const [openModalUpdate, setOpenModalUpdate] = useState(false)
   const [peminjaman, setPeminjaman] = useState([])
+  const [books, setBooks] = useState([])
   const [peminjamanDatas, setPeminjamanDatas] = useState(peminjaman)
   const [addFormData, setAddFormData] = useState({
-    idBuku: null,
+    kodeBuku: null,
     namaPeminjam: null,
     judulBuku: null,
     tglKembali: null,
     tglPinjam: null,
     batasPinjam: null,
-    status: null,
-    denda: null,
+    status: "Belum Dikembalikan",
+    denda: '',
   })
   const [currentId, setCurrentId] = useState('')
   const batalHandler = () => {
@@ -50,8 +51,19 @@ const AdminPeminjaman = () => {
 
   useEffect(() => {
     fetchData()
+    fetchBooks()
     setLoading(false)
   }, [])
+
+  const fetchJudulBuku = async () => {
+    const book = books.find((item) => item.kodeBuku === addFormData.kodeBuku);
+    const judulBuku = book ? book.judul : null;
+
+    setAddFormData((prevFormData) => ({
+      ...prevFormData,
+      judulBuku: judulBuku,
+    }));
+  };
 
   const fetchData = async () => {
     try {
@@ -62,18 +74,50 @@ const AdminPeminjaman = () => {
     }
   }
 
+  const fetchBooks = async () => {
+    try {
+      const responseBook = await axios.get('http://localhost:3005/book');
+      setBooks(responseBook.data?.data ?? []);
+      console.log(responseBook)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   const formOnChangeHandler = (event) => {
     const fieldName = event.target.getAttribute('name')
     const fieldValue = event.target.value
 
-    const newFormData = { ...addFormData }
-    newFormData[fieldName] = fieldValue
-    console.log(fieldName)
-    console.log(fieldValue)
+    let newFormData;
+    if (fieldName === 'kodeBuku') {
+      const book = books.find((item) => item.kodeBuku === fieldValue);
+      const judulBuku = book ? book.judul : null;
+
+      newFormData = {
+        ...addFormData,
+        kodeBuku: fieldValue,
+        judulBuku: judulBuku,
+      };
+    } else if (fieldName === 'status') {
+      newFormData = {
+        ...addFormData,
+        [fieldName]: fieldValue,
+      };
+    } else {
+      newFormData = {
+        ...addFormData,
+        [fieldName]: fieldValue,
+      };
+    }
+
+    // newFormData[fieldName] = fieldValue
+    console.log(fieldName, fieldValue)
+    console.log(newFormData)
 
     setAddFormData(newFormData)
     console.log(addFormData)
-  }
+  };
 
   const formOnChangeTglPinjam = (value) => {
     value !== null
@@ -115,7 +159,7 @@ const AdminPeminjaman = () => {
     event.preventDefault()
 
     const newDataPeminjaman = {
-      idBuku: addFormData.idBuku,
+      kodeBuku: addFormData.kodeBuku,
       namaPeminjam: addFormData.namaPeminjam,
       judulBuku: addFormData.judulBuku,
       tglKembali: addFormData.tglKembali,
@@ -153,6 +197,7 @@ const AdminPeminjaman = () => {
 
   const OnChangeKembali = async (idPeminjaman) => {
     const siswa = peminjaman.find((item) => item.idPeminjaman === idPeminjaman)
+
     const totalDenda = (tglKembaliDenda, batasPinjamDenda) => {
       const start = new Date(tglKembaliDenda)
       const end = new Date(batasPinjamDenda)
@@ -225,7 +270,7 @@ const AdminPeminjaman = () => {
   const [details, setDetails] = useState([])
   const columns = [
     {
-      key: 'idBuku',
+      key: 'kodeBuku',
       _style: { width: '12%' },
     },
     { key: 'namaPeminjam', _style: { width: '17%' } },
@@ -311,11 +356,12 @@ const AdminPeminjaman = () => {
                   </CCol>
                   <CCol md={6}>
                     <CFormInput
-                      name="idBuku"
+                      name="kodeBuku"
                       type="text"
                       id="inputIdBuku"
                       label="ID Buku"
                       onChange={formOnChangeHandler}
+                      onBlur={fetchJudulBuku}
                     />
                   </CCol>
                   <CCol xs={12}>
@@ -323,8 +369,9 @@ const AdminPeminjaman = () => {
                       name="judulBuku"
                       id="inputJudulBuku"
                       label="Judul Buku"
+                      value={addFormData.judulBuku || ''}
                       placeholder="Judul Buku"
-                      onChange={formOnChangeHandler}
+                      readOnly
                     />
                   </CCol>
                   <CCol md={4}>
@@ -362,7 +409,9 @@ const AdminPeminjaman = () => {
                       name="status"
                       id="inputStatus"
                       label="Status"
+                      value={addFormData.status}
                       onChange={formOnChangeHandler}
+                      text="* Pilih Status"
                     >
                       <option>Belum Dikembalikan</option>
                       <option>Dikembalikan</option>
@@ -511,8 +560,8 @@ const AdminPeminjaman = () => {
               </CCol>
               <CCol md={6}>
                 <CFormInput
-                  value={currentId.idBuku}
-                  name="idBuku"
+                  value={currentId.kodeBuku}
+                  name="kodeBuku"
                   type="text"
                   id="inputIdBuku"
                   label="ID Buku"
@@ -575,8 +624,8 @@ const AdminPeminjaman = () => {
                   id="inputStatus"
                   label="Status"
                   onChange={formUpdateChangeHandler}
+                  text="* Pilih Status"
                 >
-                  <option>-</option>
                   <option>Belum Dikembalikan</option>
                   <option>Dikembalikan</option>
                 </CFormSelect>

@@ -22,7 +22,7 @@ import { cilCloudDownload } from '@coreui/icons'
 const AdminDaftarPustaka = () => {
   const [loading, setLoading] = useState()
   const [DaftarPustaka, setDaftarPustaka] = useState([])
-  const [kode_buku, setKode_buku] = useState('')
+  const [kodeBuku, setKodeBuku] = useState('')
   const [judul, setJudul] = useState('')
   const [penulis, setPenulis] = useState('')
   const [Kategori, setKategori] = useState('')
@@ -43,7 +43,7 @@ const AdminDaftarPustaka = () => {
   }, [])
 
   const toggleModalTambah = () => {
-    setKode_buku('')
+    setKodeBuku('')
     setJudul('')
     setPenulis('')
     setKategori('')
@@ -91,9 +91,9 @@ const AdminDaftarPustaka = () => {
     console.log(formData)
   }
 
-  const handleDelete = async (kode_buku) => {
+  const handleDelete = async (kodeBuku) => {
     try {
-      await axios.delete(`http://localhost:3005/book/${kode_buku}`)
+      await axios.delete(`http://localhost:3005/book/${kodeBuku}`)
       fetchData()
     } catch (error) {
       console.log(error)
@@ -114,10 +114,10 @@ const AdminDaftarPustaka = () => {
       // Perbarui data buku yang sudah dirubah dengan data baru
       setDaftarPustaka((prevData) => {
         return prevData.map((item) => {
-          if (item.kode_buku === currentBookId) {
+          if (item.kodeBuku === currentBookId) {
             return {
               ...item,
-              kode_buku: kode_buku || item.kode_buku,
+              kodeBuku: kodeBuku || item.kodeBuku,
               judul: judul || item.judul,
               penulis: penulis || item.penulis,
               Kategori: Kategori || item.Kategori,
@@ -134,7 +134,7 @@ const AdminDaftarPustaka = () => {
       })
 
       // Setel ulang nilai input menjadi kosong atau nilai default
-      setKode_buku('')
+      setKodeBuku('')
       setJudul('')
       setPenulis('')
       setKategori('')
@@ -148,10 +148,10 @@ const AdminDaftarPustaka = () => {
     }
   }
 
-  const toggleModal = (kode_buku) => {
-    const book = DaftarPustaka.find((item) => item.kode_buku === kode_buku)
+  const toggleModal = (kodeBuku) => {
+    const book = DaftarPustaka.find((item) => item.kodeBuku === kodeBuku)
     setCurrentBookId(book)
-    setKode_buku(book.kode_buku)
+    setKodeBuku(book.kodeBuku)
     setJudul(book.judul)
     setPenulis(book.penulis)
     setKategori(book.Kategori)
@@ -166,7 +166,7 @@ const AdminDaftarPustaka = () => {
   const [details, setDetails] = useState([])
   const columns = [
     {
-      key: 'kode_buku',
+      key: 'kodeBuku',
       _style: { width: '12%' },
     },
     { key: 'judul', _style: { width: '17%' } },
@@ -223,13 +223,13 @@ const AdminDaftarPustaka = () => {
               <ModalBody>
                 <Form innerRef={formRef} onSubmit={handleAdd}>
                   <FormGroup>
-                    <Label for="kode_buku">Kode Buku</Label>
+                    <Label for="kodeBuku">Kode Buku</Label>
                     <Input
                       type="text"
-                      name="kode_buku"
-                      id="kode_buku"
-                      value={kode_buku}
-                      onChange={(e) => setKode_buku(e.target.value)}
+                      name="kodeBuku"
+                      id="kodeBuku"
+                      value={kodeBuku}
+                      onChange={(e) => setKodeBuku(e.target.value)}
                     />
                   </FormGroup>
                   <FormGroup>
@@ -329,13 +329,13 @@ const AdminDaftarPustaka = () => {
               <ModalBody>
                 <Form innerRef={formRef}>
                   <FormGroup>
-                    <Label for="kode_buku">Kode Buku</Label>
+                    <Label for="kodeBuku">Kode Buku</Label>
                     <Input
                       type="text"
-                      name="kode_buku"
-                      id="kode_buku"
-                      value={kode_buku}
-                      onChange={(e) => setKode_buku(e.target.value)}
+                      name="kodeBuku"
+                      id="kodeBuku"
+                      value={kodeBuku}
+                      onChange={(e) => setKodeBuku(e.target.value)}
                     />
                   </FormGroup>
                   <FormGroup>
@@ -477,17 +477,17 @@ const AdminDaftarPustaka = () => {
                         shape="square"
                         size="sm"
                         onClick={() => {
-                          toggleDetails(item.kode_buku)
+                          toggleDetails(item.kodeBuku)
                         }}
                       >
-                        {details.includes(item.kode_buku) ? 'Hide' : 'Show'}
+                        {details.includes(item.kodeBuku) ? 'Hide' : 'Show'}
                       </CButton>
                     </td>
                   )
                 },
                 details: (item) => {
                   return (
-                    <CCollapse visible={details.includes(item.kode_buku)}>
+                    <CCollapse visible={details.includes(item.kodeBuku)}>
                       <CCardBody className="p-3">
                         <h4>Buku {item.judul}</h4>
                         <p className="text-muted">Ditulis oleh {item.penulis}</p>
@@ -495,7 +495,7 @@ const AdminDaftarPustaka = () => {
                           size="sm"
                           color="primary"
                           onClick={() => {
-                            toggleModal(item.kode_buku)
+                            toggleModal(item.kodeBuku)
                           }}
                         >
                           Edit
@@ -503,7 +503,7 @@ const AdminDaftarPustaka = () => {
                         <CButton
                           size="sm"
                           color="danger"
-                          onClick={() => handleDelete(item.kode_buku)}
+                          onClick={() => handleDelete(item.kodeBuku)}
                         >
                           Delete
                         </CButton>
@@ -542,9 +542,9 @@ const AdminDaftarPustaka = () => {
 
               <tbody>
                 {DaftarPustaka.map((item, index) => (
-                  <tr key={item.kode_buku}>
+                  <tr key={item.kodeBuku}>
                     <td>{index + 1}</td>
-                    <td>{item.kode_buku}</td>
+                    <td>{item.kodeBuku}</td>
                     <td>{item.judul}</td>
                     <td>{item.penulis}</td>
                     <td>{item.Kategori}</td>
@@ -561,10 +561,10 @@ const AdminDaftarPustaka = () => {
                     <td>{item.file_ebook}</td>
                     <td className="action">
                       <div className="buttonWrapper">
-                        <CButton onClick={() => handleDelete(item.kode_buku)} color="danger">
+                        <CButton onClick={() => handleDelete(item.kodeBuku)} color="danger">
                           Hapus
                         </CButton>
-                        <CButton onClick={() => toggleModal(item.kode_buku)} color="dark">
+                        <CButton onClick={() => toggleModal(item.kodeBuku)} color="dark">
                           Edit
                         </CButton>
                       </div>
