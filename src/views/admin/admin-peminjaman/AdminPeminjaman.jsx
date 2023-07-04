@@ -31,9 +31,11 @@ const AdminPeminjaman = () => {
   const [openModalUpdate, setOpenModalUpdate] = useState(false)
   const [peminjaman, setPeminjaman] = useState([])
   const [books, setBooks] = useState([])
+  const [siswas, setSiswas] = useState([])
   const [peminjamanDatas, setPeminjamanDatas] = useState(peminjaman)
   const [addFormData, setAddFormData] = useState({
     kodeBuku: null,
+    NIS: null,
     namaPeminjam: null,
     judulBuku: null,
     tglKembali: null,
@@ -52,16 +54,27 @@ const AdminPeminjaman = () => {
   useEffect(() => {
     fetchData()
     fetchBooks()
+    fetchSisws()
     setLoading(false)
   }, [])
 
-  const fetchJudulBuku = async () => {
-    const book = books.find((item) => item.kodeBuku === addFormData.kodeBuku);
-    const judulBuku = book ? book.judul : null;
+  // const fetchJudulBuku = async () => {
+  //   const book = books.find((item) => item.kodeBuku === addFormData.kodeBuku);
+  //   const judulBuku = book ? book.judul : null;
+
+  //   setAddFormData((prevFormData) => ({
+  //     ...prevFormData,
+  //     judulBuku: judulBuku,
+  //   }));
+  // };
+
+  const fetchNamaSiswa = async () => {
+    const sisw = siswas.find((item) => item.NIS === addFormData.NIS);
+    const NISSiswa = sisw ? sisw.NIS : null;
 
     setAddFormData((prevFormData) => ({
       ...prevFormData,
-      judulBuku: judulBuku,
+      NIS: NISSiswa,
     }));
   };
 
@@ -84,6 +97,16 @@ const AdminPeminjaman = () => {
     }
   };
 
+  const fetchSisws = async () => {
+    try {
+      const responseSiswa = await axios.get('http://localhost:3005/siswa');
+      setSiswas(responseSiswa.data?.data ?? []);
+      console.log(responseSiswa.data.data[1].Nama)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
 
   const formOnChangeHandler = (event) => {
     const fieldName = event.target.getAttribute('name')
@@ -99,6 +122,16 @@ const AdminPeminjaman = () => {
         kodeBuku: fieldValue,
         judulBuku: judulBuku,
       };
+    } else if (fieldName === 'NIS') {
+      const nisValue = parseInt(fieldValue);
+      const sisw = siswas.find((item) => item.NIS === nisValue);
+      const namaSiswa = sisw ? sisw.Nama : null;
+
+      newFormData = {
+        ...addFormData,
+        NIS: nisValue,
+        namaPeminjam: namaSiswa,
+      };
     } else if (fieldName === 'status') {
       newFormData = {
         ...addFormData,
@@ -111,12 +144,10 @@ const AdminPeminjaman = () => {
       };
     }
 
-    // newFormData[fieldName] = fieldValue
     console.log(fieldName, fieldValue)
     console.log(newFormData)
 
     setAddFormData(newFormData)
-    console.log(addFormData)
   };
 
   const formOnChangeTglPinjam = (value) => {
@@ -156,10 +187,13 @@ const AdminPeminjaman = () => {
   }
 
   const formOnSubmitHandler = (event) => {
-    event.preventDefault()
+    event.preventDefault();
+
+    fetchNamaSiswa(); // Fetch the namaSiswa value based on the NIS
 
     const newDataPeminjaman = {
       kodeBuku: addFormData.kodeBuku,
+      NIS: addFormData.NIS,
       namaPeminjam: addFormData.namaPeminjam,
       judulBuku: addFormData.judulBuku,
       tglKembali: addFormData.tglKembali,
@@ -167,24 +201,24 @@ const AdminPeminjaman = () => {
       tglPinjam: addFormData.tglPinjam,
       status: addFormData.status,
       denda: addFormData.denda,
-    }
+    };
 
-    console.log(newDataPeminjaman)
-    const newDataPeminjamans = [...peminjamanDatas, newDataPeminjaman]
-    setPeminjamanDatas(newDataPeminjamans)
+    console.log(newDataPeminjaman);
+    const newDataPeminjamans = [...peminjamanDatas, newDataPeminjaman];
+    setPeminjamanDatas(newDataPeminjamans);
 
     axios
       .post('http://localhost:3005/peminjaman', newDataPeminjaman)
       .then((res) => {
-        console.log(res)
-        setOpenModal(false)
-        fetchData()
-        setAddFormData({})
+        console.log(res);
+        setOpenModal(false);
+        fetchData();
+        setAddFormData({});
       })
       .catch((err) => {
-        console.log(err)
-      })
-  }
+        console.log(err);
+      });
+  };
 
   const handleDelete = async (idPeminjaman) => {
     try {
@@ -234,13 +268,33 @@ const AdminPeminjaman = () => {
   }
 
   const formUpdateChangeHandler = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setCurrentId((prevState) => ({
       ...prevState,
       [name]: value,
-    }))
-    console.log(currentId)
-  }
+    }));
+
+    if (name === 'NIS') {
+      const nisValue = parseInt(value);
+      const sisw = siswas.find((item) => item.NIS === nisValue);
+      if (sisw) {
+        setCurrentId((prevState) => ({
+          ...prevState,
+          namaPeminjam: sisw.Nama,
+        }));
+      }
+    } else if (name === 'kodeBuku') {
+      const book = books.find((item) => item.kodeBuku === value);
+      if (book) {
+        setCurrentId((prevState) => ({
+          ...prevState,
+          judulBuku: book.judul,
+        }));
+      }
+    }
+
+    console.log(currentId);
+  };
 
   const formOnChangeDateHandler = (name, date) => {
     date !== null
@@ -345,26 +399,37 @@ const AdminPeminjaman = () => {
               </CModalHeader>
               <CModalBody>
                 <CForm className="row g-3" onSubmit={formOnSubmitHandler}>
-                  <CCol md={6}>
+                  <CCol md={3}>
+                    <CFormInput
+                      name="NIS"
+                      type="text"
+                      id="inputNIS"
+                      label="NIS"
+                      onChange={formOnChangeHandler}
+                    />
+                  </CCol>
+                  <CCol md={9}>
                     <CFormInput
                       name="namaPeminjam"
                       type="text"
                       id="inputNamaPeminjam"
                       label="Nama Peminjam"
-                      onChange={formOnChangeHandler}
+                      value={addFormData.namaPeminjam || ''}
+                      // onChange={formOnChangeHandler}
+                      readOnly
                     />
                   </CCol>
-                  <CCol md={6}>
+                  <CCol md={2}>
                     <CFormInput
                       name="kodeBuku"
                       type="text"
-                      id="inputIdBuku"
-                      label="ID Buku"
+                      id="inputKodeBuku"
+                      label="Kode Buku"
                       onChange={formOnChangeHandler}
-                      onBlur={fetchJudulBuku}
+                    // onBlur={fetchJudulBuku}
                     />
                   </CCol>
-                  <CCol xs={12}>
+                  <CCol xs={10}>
                     <CFormInput
                       name="judulBuku"
                       id="inputJudulBuku"
@@ -494,7 +559,7 @@ const AdminPeminjaman = () => {
                     <CCollapse visible={details.includes(item.idPeminjaman)}>
                       <CCardBody className="p-3">
                         <h4>Buku {item.judulBuku}</h4>
-                        <p className="text-muted">Dipinjam dari: {item.tglPinjam}</p>
+                        <p className="text-muted">Dipinjam Sejak: {item.tglPinjam}</p>
                         <CButton
                           size="sm"
                           color="primary"
@@ -548,7 +613,17 @@ const AdminPeminjaman = () => {
           </CModalHeader>
           <CModalBody>
             <CForm className="row g-3" onSubmit={formUpdateHandler}>
-              <CCol md={6}>
+              <CCol md={3}>
+                <CFormInput
+                  value={currentId.NIS}
+                  name="NIS"
+                  type="text"
+                  id="inputNIS"
+                  label="NIS"
+                  onChange={formUpdateChangeHandler}
+                />
+              </CCol>
+              <CCol md={9}>
                 <CFormInput
                   value={currentId.namaPeminjam}
                   name="namaPeminjam"
@@ -558,23 +633,23 @@ const AdminPeminjaman = () => {
                   onChange={formUpdateChangeHandler}
                 />
               </CCol>
-              <CCol md={6}>
+              <CCol md={2}>
                 <CFormInput
                   value={currentId.kodeBuku}
                   name="kodeBuku"
                   type="text"
                   id="inputIdBuku"
-                  label="ID Buku"
+                  label="Kode Buku"
                   onChange={formUpdateChangeHandler}
                 />
               </CCol>
-              <CCol xs={12}>
+              <CCol xs={10}>
                 <CFormInput
                   value={currentId.judulBuku}
                   name="judulBuku"
                   id="inputJudulBuku"
                   label="Judul Buku"
-                  placeholder="Si Kancil Bandel Banget"
+                  placeholder="Judul Buku"
                   onChange={formUpdateChangeHandler}
                 />
               </CCol>
