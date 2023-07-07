@@ -173,7 +173,8 @@ const AdminDaftarPustaka = () => {
     { key: 'penulis', _style: { width: '20%' } },
     { key: 'Kategori', _style: { width: '10%' } },
     { key: 'keterangan', _style: { width: '10%' } },
-    { key: 'jumlah', _style: { width: '10%' } },
+    { key: 'jumlah', _style: { width: '5%' } },
+    { key: 'tersedia', _style: { width: '5%' } },
     {
       key: 'cover_buku',
       _style: { width: '10%' },
@@ -187,7 +188,7 @@ const AdminDaftarPustaka = () => {
     },
     {
       key: 'show_details',
-      label: '',
+      label: 'Aksi',
       _style: { width: '1%' },
       filter: false,
       sorter: false,
