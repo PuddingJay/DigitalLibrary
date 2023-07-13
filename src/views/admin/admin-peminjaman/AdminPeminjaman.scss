@@ -12,3 +12,25 @@
     margin-right: 5px;
   }
 }
+
+.actionPeminjaman {
+  display: flex;
+  justify-content: space-between;
+
+  .form-container {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+  }
+
+  .download-container {
+    display: flex;
+    align-items: stretch;
+    margin-left: 10px;
+
+    .download-button {
+      display: flex;
+      align-items: center;
+    }
+  }
+}

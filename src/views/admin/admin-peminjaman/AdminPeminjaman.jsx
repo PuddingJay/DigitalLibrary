@@ -45,6 +45,11 @@ const AdminPeminjaman = () => {
     denda: '',
   })
   const [currentId, setCurrentId] = useState('')
+  const [hargaDenda, setHargaDenda] = useState(() => {
+    const storedHargaDenda = localStorage.getItem('hargaDenda');
+    return storedHargaDenda ? parseInt(storedHargaDenda) : 500;
+  });
+
   const batalHandler = () => {
     setAddFormData({})
     setOpenModal(false)
@@ -52,21 +57,15 @@ const AdminPeminjaman = () => {
   }
 
   useEffect(() => {
+    localStorage.setItem('hargaDenda', hargaDenda.toString());
+  }, [hargaDenda]);
+
+  useEffect(() => {
     fetchData()
     fetchBooks()
     fetchSisws()
     setLoading(false)
   }, [])
-
-  // const fetchJudulBuku = async () => {
-  //   const book = books.find((item) => item.kodeBuku === addFormData.kodeBuku);
-  //   const judulBuku = book ? book.judul : null;
-
-  //   setAddFormData((prevFormData) => ({
-  //     ...prevFormData,
-  //     judulBuku: judulBuku,
-  //   }));
-  // };
 
   const fetchNamaSiswa = async () => {
     const sisw = siswas.find((item) => item.NIS === addFormData.NIS);
@@ -91,7 +90,6 @@ const AdminPeminjaman = () => {
     try {
       const responseBook = await axios.get('http://localhost:3005/book');
       setBooks(responseBook.data?.data ?? []);
-      console.log(responseBook)
     } catch (error) {
       console.log(error);
     }
@@ -106,7 +104,22 @@ const AdminPeminjaman = () => {
       console.log(error);
     }
   };
+  const hargaDendaOnChangeHandler = (event) => {
+    const fieldValue = event.target.value;
+    setHargaDenda(fieldValue);
+  };
 
+  const calculateDenda = (tglKembali, batasPinjam) => {
+    const start = new Date(tglKembali);
+    const end = new Date(batasPinjam);
+
+    const difference = start.getTime() - end.getTime();
+    const days = Math.ceil(difference / (1000 * 60 * 60 * 24));
+    const chargePerDay = hargaDenda;
+    const totalCharge = chargePerDay * days;
+
+    return totalCharge > 0 ? 'Rp. ' + totalCharge : 0;
+  };
 
   const formOnChangeHandler = (event) => {
     const fieldName = event.target.getAttribute('name')
@@ -133,10 +146,24 @@ const AdminPeminjaman = () => {
         namaPeminjam: namaSiswa,
       };
     } else if (fieldName === 'status') {
-      newFormData = {
-        ...addFormData,
-        [fieldName]: fieldValue,
-      };
+      if (fieldValue === 'Dikembalikan') {
+        const denda = calculateDenda(
+          addFormData.tglKembali,
+          addFormData.batasPinjam
+        );
+
+        newFormData = {
+          ...addFormData,
+          [fieldName]: fieldValue,
+          denda: denda,
+        };
+      } else {
+        newFormData = {
+          ...addFormData,
+          [fieldName]: fieldValue,
+          denda: 0,
+        };
+      }
     } else {
       newFormData = {
         ...addFormData,
@@ -216,6 +243,9 @@ const AdminPeminjaman = () => {
         setAddFormData({});
       })
       .catch((err) => {
+        if (err.response && err.response.status === 404) {
+          alert('Buku Tidak Tersedia');
+        }
         console.log(err);
       });
   };
@@ -232,28 +262,17 @@ const AdminPeminjaman = () => {
   const OnChangeKembali = async (idPeminjaman) => {
     const siswa = peminjaman.find((item) => item.idPeminjaman === idPeminjaman)
 
-    const totalDenda = (tglKembaliDenda, batasPinjamDenda) => {
-      const start = new Date(tglKembaliDenda)
-      const end = new Date(batasPinjamDenda)
-
-      const difference = start.getTime() - end.getTime()
-      const days = Math.ceil(difference / (1000 * 60 * 60 * 24))
-      const chargePerDay = 3000
-      const totalCharge = chargePerDay * days
-
-      return totalCharge > 0 ? 'Rp. ' + totalCharge : '-'
-    }
-
     const editedDataPeminjaman = {
       ...siswa,
-      tglKembali: new Date().toISOString().split('T')[0],
+      tglKembali: siswa.tglKembali === null ? new Date().toISOString().split('T')[0] : siswa.tglKembali,
       status: 'Dikembalikan',
-      denda: totalDenda(siswa.tglKembali, siswa.batasPinjam),
+      denda: calculateDenda(siswa.tglKembali, siswa.batasPinjam),
     }
-
     try {
       await axios.put(`http://localhost:3005/peminjaman/${idPeminjaman}`, editedDataPeminjaman)
       fetchData()
+      setAddFormData(siswa);
+      console.log(editedDataPeminjaman);
     } catch (err) {
       console.error(err)
     }
@@ -291,6 +310,23 @@ const AdminPeminjaman = () => {
           judulBuku: book.judul,
         }));
       }
+    } else if (name === 'status') {
+      if (value === 'Dikembalikan') {
+        const denda = calculateDenda(
+          currentId.tglKembali,
+          currentId.batasPinjam
+        );
+
+        setCurrentId((prevState) => ({
+          ...prevState,
+          denda: denda,
+        }));
+      } else {
+        setCurrentId((prevState) => ({
+          ...prevState,
+          denda: 0,
+        }))
+      }
     }
 
     console.log(currentId);
@@ -321,6 +357,28 @@ const AdminPeminjaman = () => {
     console.log(currentId)
   }
 
+  const handleDibayar = async (idPeminjaman) => {
+    const peminjamanData = peminjaman.find(
+      (item) => item.idPeminjaman === idPeminjaman
+    );
+
+    const editedDataPeminjaman = {
+      ...peminjamanData,
+      status: "Lunas",
+      denda: 0,
+    };
+
+    try {
+      await axios.put(
+        `http://localhost:3005/peminjaman/${idPeminjaman}`,
+        editedDataPeminjaman
+      );
+      fetchData();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const [details, setDetails] = useState([])
   const columns = [
     {
@@ -336,7 +394,7 @@ const AdminPeminjaman = () => {
     { key: 'denda', _style: { width: '13%' } },
     {
       key: 'show_details',
-      label: '',
+      label: 'Aksi',
       _style: { width: '1%' },
       filter: false,
       sorter: false,
@@ -345,11 +403,11 @@ const AdminPeminjaman = () => {
   const getBadge = (status) => {
     switch (status) {
       case 'Dikembalikan':
-        return 'success'
-      case '-':
+        return 'primary'
+      case 0:
         return 'secondary'
-      case 'Pending':
-        return 'warning'
+      case 'Lunas':
+        return 'success'
       case 'Belum Dikembalikan':
         return 'danger'
       default:
@@ -376,16 +434,46 @@ const AdminPeminjaman = () => {
       <>
         <CCard>
           <CCardBody>
-            <CButton
-              color="primary"
-              size="lg"
-              className="btnModal"
-              onClick={() => {
-                setOpenModal(!openModal)
-              }}
-            >
-              Tambah Data Pinjam
-            </CButton>
+            <div className="actionPeminjaman">
+              <div className="form-container">
+                <CButton
+                  color="primary"
+                  size="lg"
+                  className="btnModal"
+                  onClick={() => {
+                    setOpenModal(!openModal);
+                  }}
+                >
+                  Tambah Data Pinjam
+                </CButton>
+                <CForm>
+                  {/* <CInputGroup> */}
+                  <CFormInput
+                    name="hargaDenda"
+                    type="number"
+                    size="lg"
+                    id="inputHargaDenda"
+                    floatingLabel="Harga Denda"
+                    value={hargaDenda}
+                    onChange={hargaDendaOnChangeHandler}
+                  />
+                  {/* </CInputGroup> */}
+                </CForm>
+              </div>
+              <div className="download-container">
+                <CButton
+                  className="download-button"
+                  color="primary"
+                  href={csvCode}
+                  download="data-peminjaman.csv"
+                  target="_blank"
+                  size="lg"
+                >
+                  <CIcon icon={cilCloudDownload} size="lg" />
+                  {/* Download data peminjaman (.csv) */}
+                </CButton>
+              </div>
+            </div>
 
             <CModal
               allignment="center"
@@ -506,18 +594,6 @@ const AdminPeminjaman = () => {
               </CModalBody>
             </CModal>
 
-            <CButton
-              color="primary"
-              className="mb-2 download"
-              href={csvCode}
-              download="data-peminjaman.csv"
-              target="_blank"
-              size="lg"
-            >
-              <CIcon icon={cilCloudDownload} size="lg" />
-              {/* Download data peminjaman (.csv) */}
-            </CButton>
-
             <CSmartTable
               className="mt-3"
               activePage={3}
@@ -562,7 +638,7 @@ const AdminPeminjaman = () => {
                         <p className="text-muted">Dipinjam Sejak: {item.tglPinjam}</p>
                         <CButton
                           size="sm"
-                          color="primary"
+                          color="dark"
                           onClick={() => {
                             toggleUpdate(item.idPeminjaman)
                           }}
@@ -571,10 +647,17 @@ const AdminPeminjaman = () => {
                         </CButton>
                         <CButton
                           size="sm"
-                          color="dark"
+                          color="primary"
                           onClick={() => OnChangeKembali(item.idPeminjaman)}
                         >
                           Dikembalikan
+                        </CButton>
+                        <CButton
+                          size="sm"
+                          color="success"
+                          onClick={() => handleDibayar(item.idPeminjaman)}
+                        >
+                          Dibayar
                         </CButton>
                         <CButton
                           size="sm"
@@ -596,6 +679,7 @@ const AdminPeminjaman = () => {
               tableProps={{
                 // striped: true,
                 hover: true,
+                responsive: true,
               }}
             />
           </CCardBody>

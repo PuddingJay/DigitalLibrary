@@ -1,5 +1,16 @@
 @import "../../../scss/style.scss";
 
+.p-3 {
+  button {
+    margin-right: 5px;
+  }
+}
+
+.actionDataAnggota {
+  display: flex;
+  justify-content: space-between;
+}
+
 // .modalBg {
 //   top: 0px;
 //   left: 0px;

@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react'
-
+import React, { useEffect, useRef, useState } from 'react'
+import axios from 'axios'
+import moment from 'moment'
 import {
   CAvatar,
   CButton,
@@ -26,33 +27,99 @@ import { CChartBar, CChartLine } from '@coreui/react-chartjs'
 import { getStyle } from '@coreui/utils'
 import CIcon from '@coreui/icons-react'
 import {
-  cibGoogle,
-  cibFacebook,
-  cibLinkedin,
-  cifBr,
-  cifEs,
-  cifFr,
-  cifIn,
-  cifPl,
-  cifUs,
-  cibTwitter,
+  // cibGoogle,
+  // cibFacebook,
+  // cibLinkedin,
+  // cibTwitter,
+  // cilUser,
+  // cilUserFemale,
   cilPeople,
-  cilUser,
-  cilUserFemale,
   cilArrowBottom,
-  cilCart,
+  cilBook,
   cilArrowTop,
   cilUserPlus,
   cilOptions,
 } from '@coreui/icons'
 
-import avatar1 from 'src/assets/logoSMA.png'
-import avatar2 from 'src/assets/logoSMA.png'
-import avatar3 from 'src/assets/logoSMA.png'
-import avatar4 from 'src/assets/logoSMA.png'
-import avatar5 from 'src/assets/logoSMA.png'
-import avatar6 from 'src/assets/logoSMA.png'
 const Dashboard = () => {
+  const [totalBooks, setTotalBooks] = useState(0)
+  const [totalUsers, setTotalUsers] = useState(0)
+  const [peminjaman, setPeminjaman] = useState([])
+  const [siswa, setSiswa] = useState([])
+
+  useEffect(() => {
+    // Fetch total number of books
+    axios
+      .get('http://localhost:3005/book')
+      .then((response) => {
+        setTotalBooks(response.data.data.length)
+      })
+      .catch((error) => {
+        console.error('Error fetching total number of books:', error)
+      })
+
+    // Fetch total number of users
+    axios
+      .get('http://localhost:3005/siswa')
+      .then((response) => {
+        setTotalUsers(response.data.data.length)
+        setSiswa(response.data.data)
+        console.log(response.data.data)
+      })
+      .catch((error) => {
+        console.error('Error fetching Siswa data::', error)
+      })
+
+    // Fetch chartData from peminjaman
+    axios
+      .get('http://localhost:3005/peminjaman')
+      .then((response) => {
+        setPeminjaman(response.data.data)
+        console.log(response.data.chartData)
+      })
+      .catch((error) => {
+        console.error('Error fetching Siswa data::', error)
+      })
+  }, [])
+
+  const sortedData = siswa.sort((a, b) => b.jumlahPinjam - a.jumlahPinjam)
+  const filteredData = sortedData.slice(0, 6)
+
+  const formatWaktuPinjam = (waktuPinjam) => {
+    if (waktuPinjam === null) {
+      return 'Belum Pinjam'
+    }
+    const now = moment() // Get the current time
+    const pinjamTime = moment(waktuPinjam) // Convert the waktuPinjam to a Moment object
+
+    // Calculate the difference in minutes between now and pinjamTime
+    const diffInMinutes = now.diff(pinjamTime, 'minutes')
+
+    if (diffInMinutes < 1) {
+      return 'Just now'
+    } else if (diffInMinutes < 60) {
+      return `${diffInMinutes} minutes ago`
+    } else if (diffInMinutes < 1440) {
+      const diffInHours = Math.floor(diffInMinutes / 60)
+      return `${diffInHours} ${diffInHours === 1 ? 'hour' : 'hours'} ago`
+    } else {
+      const diffInDays = Math.floor(diffInMinutes / 1440)
+      return `${diffInDays} ${diffInDays === 1 ? 'day' : 'days'} ago`
+    }
+  }
+
+  const calculateTotalDenda = (peminjaman) => {
+    let totalDenda = 0
+    peminjaman.forEach((item) => {
+      const dendaValue = item.denda
+        ? parseFloat(item.denda.replace('Rp. ', '').replace(',', ''))
+        : 0
+      totalDenda += dendaValue
+    })
+    const formattedDenda = 'Rp ' + totalDenda.toFixed(2)
+    return formattedDenda
+  }
+
   const chartBartRef = useRef(null)
   const chartLineRef = useRef(null)
 
@@ -81,112 +148,27 @@ const Dashboard = () => {
     })
   }, [chartBartRef, chartLineRef])
 
-  const progressGroupExample1 = [
-    { title: 'Monday', value1: 34, value2: 78 },
-    { title: 'Tuesday', value1: 56, value2: 94 },
-    { title: 'Wednesday', value1: 12, value2: 67 },
-    { title: 'Thursday', value1: 43, value2: 91 },
-    { title: 'Friday', value1: 22, value2: 73 },
-    { title: 'Saturday', value1: 53, value2: 82 },
-    { title: 'Sunday', value1: 9, value2: 69 },
-  ]
+  // const progressGroupExample1 = [
+  //   { title: 'Monday', value1: 34, value2: 78 },
+  //   { title: 'Tuesday', value1: 56, value2: 94 },
+  //   { title: 'Wednesday', value1: 12, value2: 67 },
+  //   { title: 'Thursday', value1: 43, value2: 91 },
+  //   { title: 'Friday', value1: 22, value2: 73 },
+  //   { title: 'Saturday', value1: 53, value2: 82 },
+  //   { title: 'Sunday', value1: 9, value2: 69 },
+  // ]
 
-  const progressGroupExample2 = [
-    { title: 'Male', icon: cilUser, value: 53 },
-    { title: 'Female', icon: cilUserFemale, value: 43 },
-  ]
+  // const progressGroupExample2 = [
+  //   { title: 'Male', icon: cilUser, value: 53 },
+  //   { title: 'Female', icon: cilUserFemale, value: 43 },
+  // ]
 
-  const progressGroupExample3 = [
-    { title: 'Organic Search', icon: cibGoogle, percent: 56, value: '191,235' },
-    { title: 'Facebook', icon: cibFacebook, percent: 15, value: '51,223' },
-    { title: 'Twitter', icon: cibTwitter, percent: 11, value: '37,564' },
-    { title: 'LinkedIn', icon: cibLinkedin, percent: 8, value: '27,319' },
-  ]
-
-  const tableExample = [
-    {
-      avatar: { src: avatar1, status: 'success' },
-      user: {
-        name: 'Yiorgos Avraamu',
-        new: true,
-        registered: 'Jan 1, 2021',
-      },
-      country: { name: 'USA', flag: cifUs },
-      usage: {
-        value: 50,
-        period: 'Jun 11, 2021 - Jul 10, 2021',
-        color: 'success',
-      },
-      activity: '10 sec ago',
-    },
-    {
-      avatar: { src: avatar2, status: 'danger' },
-      user: {
-        name: 'Avram Tarasios',
-        new: false,
-        registered: 'Jan 1, 2021',
-      },
-      country: { name: 'Brazil', flag: cifBr },
-      usage: {
-        value: 22,
-        period: 'Jun 11, 2021 - Jul 10, 2021',
-        color: 'info',
-      },
-      activity: '5 minutes ago',
-    },
-    {
-      avatar: { src: avatar3, status: 'warning' },
-      user: { name: 'Quintin Ed', new: true, registered: 'Jan 1, 2021' },
-      country: { name: 'India', flag: cifIn },
-      usage: {
-        value: 74,
-        period: 'Jun 11, 2021 - Jul 10, 2021',
-        color: 'warning',
-      },
-      activity: '1 hour ago',
-    },
-    {
-      avatar: { src: avatar4, status: 'secondary' },
-      user: { name: 'Enéas Kwadwo', new: true, registered: 'Jan 1, 2021' },
-      country: { name: 'France', flag: cifFr },
-      usage: {
-        value: 98,
-        period: 'Jun 11, 2021 - Jul 10, 2021',
-        color: 'danger',
-      },
-      activity: 'Last month',
-    },
-    {
-      avatar: { src: avatar5, status: 'success' },
-      user: {
-        name: 'Agapetus Tadeáš',
-        new: true,
-        registered: 'Jan 1, 2021',
-      },
-      country: { name: 'Spain', flag: cifEs },
-      usage: {
-        value: 22,
-        period: 'Jun 11, 2021 - Jul 10, 2021',
-        color: 'primary',
-      },
-      activity: 'Last week',
-    },
-    {
-      avatar: { src: avatar6, status: 'danger' },
-      user: {
-        name: 'Friderik Dávid',
-        new: true,
-        registered: 'Jan 1, 2021',
-      },
-      country: { name: 'Poland', flag: cifPl },
-      usage: {
-        value: 43,
-        period: 'Jun 11, 2021 - Jul 10, 2021',
-        color: 'success',
-      },
-      activity: 'Last week',
-    },
-  ]
+  // const progressGroupExample3 = [
+  //   { title: 'Organic Search', icon: cibGoogle, percent: 56, value: '191,235' },
+  //   { title: 'Facebook', icon: cibFacebook, percent: 15, value: '51,223' },
+  //   { title: 'Twitter', icon: cibTwitter, percent: 11, value: '37,564' },
+  //   { title: 'LinkedIn', icon: cibLinkedin, percent: 8, value: '27,319' },
+  // ]
 
   return (
     <>
@@ -198,12 +180,14 @@ const Dashboard = () => {
                 <CCardBody className="p-4">
                   <CRow>
                     <CCol>
-                      <CCardTitle className="fs-4 fw-semibold">Sale</CCardTitle>
+                      <CCardTitle className="fs-4 fw-semibold">Denda</CCardTitle>
                       <CCardSubtitle className="fw-normal text-disabled">
-                        January - July 2022
+                        January - July 2023
                       </CCardSubtitle>
                     </CCol>
-                    <CCol className="text-end text-primary fs-4 fw-semibold">$613.200</CCol>
+                    <CCol className="text-end text-primary fs-4 fw-semibold">
+                      {calculateTotalDenda(peminjaman)}
+                    </CCol>
                   </CRow>
                 </CCardBody>
                 <CChartLine
@@ -257,15 +241,15 @@ const Dashboard = () => {
               <CCard className="mb-4">
                 <CCardBody>
                   <div className="d-flex justify-content-between">
-                    <CCardTitle className="text-disabled">Customers</CCardTitle>
+                    <CCardTitle className="text-disabled">Anggota</CCardTitle>
                     <div className="bg-primary bg-opacity-25 text-primary p-2 rounded">
                       <CIcon icon={cilPeople} size="xl" />
                     </div>
                   </div>
-                  <div className="fs-4 fw-semibold pb-3">44.725</div>
-                  <small className="text-danger">
+                  <div className="fs-4 fw-semibold pb-3">{totalUsers}</div>
+                  {/* <small className="text-danger">
                     (-12.4% <CIcon icon={cilArrowBottom} />)
-                  </small>
+                  </small> */}
                 </CCardBody>
               </CCard>
             </CCol>
@@ -273,15 +257,15 @@ const Dashboard = () => {
               <CCard className="mb-4">
                 <CCardBody>
                   <div className="d-flex justify-content-between">
-                    <CCardTitle className="text-disabled">Orders</CCardTitle>
+                    <CCardTitle className="text-disabled">Jumlah Buku</CCardTitle>
                     <div className="bg-primary bg-opacity-25 text-primary p-2 rounded">
-                      <CIcon icon={cilCart} size="xl" />
+                      <CIcon icon={cilBook} size="xl" />
                     </div>
                   </div>
-                  <div className="fs-4 fw-semibold pb-3">385</div>
-                  <small className="text-success">
+                  <div className="fs-4 fw-semibold pb-3">{totalBooks}</div>
+                  {/* <small className="text-success">
                     (17.2% <CIcon icon={cilArrowTop} />)
-                  </small>
+                  </small> */}
                 </CCardBody>
               </CCard>
             </CCol>
@@ -390,15 +374,15 @@ const Dashboard = () => {
             <CCardBody className="p-4">
               <CRow>
                 <CCol>
-                  <CCardTitle className="fs-4 fw-semibold">Users</CCardTitle>
+                  <CCardTitle className="fs-4 fw-semibold">Peminjam Terbanyak</CCardTitle>
                   <CCardSubtitle className="fw-normal text-disabled mb-4">
-                    1.232.150 registered users
+                    dari {siswa.length} anggota terdaftar
                   </CCardSubtitle>
                 </CCol>
                 <CCol xs="auto" className="ms-auto">
-                  <CButton color="secondary">
+                  <CButton color="secondary" href="/dataPeminjaman">
                     <CIcon icon={cilUserPlus} className="me-2" />
-                    Add new user
+                    Tambah Data Peminjaman
                   </CButton>
                 </CCol>
               </CRow>
@@ -408,44 +392,48 @@ const Dashboard = () => {
                     <CTableHeaderCell className="text-center">
                       <CIcon icon={cilPeople} />
                     </CTableHeaderCell>
-                    <CTableHeaderCell>User</CTableHeaderCell>
-                    <CTableHeaderCell className="text-center">Country</CTableHeaderCell>
-                    <CTableHeaderCell>Usage</CTableHeaderCell>
+                    <CTableHeaderCell>Nama</CTableHeaderCell>
+                    <CTableHeaderCell /*className="text-center"*/>Kelas</CTableHeaderCell>
+                    <CTableHeaderCell>Jumlah Pinjam</CTableHeaderCell>
                     <CTableHeaderCell>Activity</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {tableExample.map((item, index) => (
-                    <CTableRow v-for="item in tableItems" key={index}>
+                  {filteredData.map((item) => (
+                    <CTableRow key={item.NIS}>
                       <CTableDataCell className="text-center">
-                        <CAvatar size="md" src={item.avatar.src} status={item.avatar.status} />
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div>{item.user.name}</div>
-                        <div className="small text-disabled text-nowrap">
-                          <span>{item.user.new ? 'New' : 'Recurring'}</span> | Registered:{' '}
-                          {item.user.registered}
-                        </div>
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        <CIcon size="xl" icon={item.country.flag} title={item.country.name} />
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div className="d-flex justify-content-between mb-1">
-                          <div className="fw-semibold">{item.usage.value}%</div>
-                          <div className="small text-disabled ms-1 text-nowrap">
-                            {item.usage.period}
-                          </div>
-                        </div>
-                        <CProgress
-                          thin
-                          color={`${item.usage.color}-gradient`}
-                          value={item.usage.value}
+                        <CAvatar
+                          size="md"
+                          // eslint-disable-next-line prettier/prettier
+                          src={`https://ui-avatars.com/api/?name=${item.Nama ? item.Nama : undefined
+                            // eslint-disable-next-line prettier/prettier
+                            }&background=random`}
+                          status="success"
                         />
                       </CTableDataCell>
                       <CTableDataCell>
-                        <div className="small text-disabled">Last login</div>
-                        <div className="fw-semibold text-nowrap">{item.activity}</div>
+                        <div>{item.Nama}</div>
+                        <div className="small text-disabled text-nowrap"> NIS: {item.NIS}</div>
+                      </CTableDataCell>
+                      <CTableDataCell /*className="text-center"*/>
+                        <div>
+                          {item.Kelas} {item.Jurusan}
+                        </div>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <div className="d-flex justify-content-between mb-1">
+                          <div className="fw-semibold">{item.jumlahPinjam}</div>
+                          <div className="small text-disabled ms-1 text-nowrap">
+                            {/* {item.usage.period} */}
+                          </div>
+                        </div>
+                        <CProgress thin color="#29266a" value={item.jumlahPinjam} />
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <div className="small text-disabled">Terakhir Pinjam</div>
+                        <div className="fw-semibold text-nowrap">
+                          {formatWaktuPinjam(item.waktuPinjam)}
+                        </div>
                       </CTableDataCell>
                     </CTableRow>
                   ))}
@@ -711,7 +699,7 @@ const Dashboard = () => {
           </CRow>
         </CCol>
       </CRow>
-      <CRow>
+      {/* <CRow>
         <CCol xs>
           <CCard className="mb-4">
             <CCardBody className="p-4">
@@ -801,7 +789,7 @@ const Dashboard = () => {
             </CCardBody>
           </CCard>
         </CCol>
-      </CRow>
+      </CRow> */}
     </>
   )
 }
