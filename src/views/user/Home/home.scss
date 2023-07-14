@@ -1,0 +1,44 @@
+@import '../../../scss/style.scss';
+
+.mb-4 {
+  display: grid !important;
+  @include mobile {
+    grid-template-columns: repeat(3, 1fr);
+    marginbottom: '2px';
+  }
+
+  @include tablet {
+    grid-template-columns: repeat(4, 1fr);
+    marginbottom: '3px';
+  }
+
+  @include laptop-s {
+    grid-template-columns: repeat(5, 1fr);
+    marginbottom: '5px';
+  }
+
+  @include laptop-m {
+    grid-template-columns: repeat(6, 1fr);
+    marginbottom: '5px';
+  }
+
+  @include laptop-xl {
+    grid-template-columns: repeat(8, 1fr);
+    marginbottom: '5px';
+  }
+
+  @include laptop-xxl {
+    grid-template-columns: repeat(9, 1fr);
+    marginbottom: '5px';
+  }
+}
+
+.logo {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  margin: 10px;
+  width: 100px;
+  height: auto;
+  z-index: 9999;
+}

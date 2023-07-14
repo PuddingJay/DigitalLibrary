@@ -1,0 +1,111 @@
+@import '../../../style.scss';
+
+.bookDetailContainer {
+  display: grid;
+  padding: 32px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1100px;
+  grid-template-columns: 1fr;
+  gap: 18px 16px;
+
+  @include tablet {
+    grid-template-columns: auto 1fr;
+  }
+
+  .bookPosterAction {
+    display: flex;
+    flex-direction: column;
+
+    .bookPoster {
+      width: 100%;
+      max-width: 400px;
+
+      @include tablet {
+        height: 500px;
+        max-width: 400px;
+      }
+    }
+
+    button {
+      margin-top: 20px;
+    }
+  }
+
+  .bookInfo h4 {
+    margin: 8px 0;
+  }
+
+  .bookInfo h3,
+  .bookTitle,
+  .bookDescription h3 {
+    font-weight: bold;
+  }
+
+  .bookInfo {
+
+    .bookTitle,
+    .bookDescription {
+      grid-column-start: 2;
+      grid-column-end: 3;
+    }
+
+    .bookLabel {
+      display: flex;
+      gap: 10px;
+
+      .card {
+        background-color: $primary;
+        color: white;
+
+        .card-body {
+          padding: 10px;
+        }
+      }
+    }
+
+    .bookCreated {
+      margin: 30px 0;
+    }
+  }
+}
+
+
+// .product {
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+
+//   border: 1px solid #1220e2;
+// }
+
+// .product img {
+//   margin-top: 40px;
+//   object-fit: contain;
+//   margin-bottom: 20px;
+// }
+
+// .product h2 {
+//   font-size: 24px;
+//   margin-bottom: 10px;
+// }
+
+// .product p {
+//   font-size: 18px;
+//   margin-bottom: 10px;
+// }
+
+// .product button {
+//   font-size: 18px;
+//   margin-top: 10px;
+//   margin-left: 10px;
+//   background-color: #c5840b;
+//   color: #7716c7;
+//   border: none;
+//   border-radius: 5px;
+//   cursor: pointer;
+// }
+
+// .product button:hover {
+//   background-color: #063e7a;
+// }

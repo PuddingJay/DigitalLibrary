@@ -1,0 +1,137 @@
+html {
+  scroll-behavior: smooth;
+}
+
+.cardLayout {
+  box-shadow: 0px 0px 10px rgb(192, 192, 192);
+  background-color: white;
+  padding: 20px 20px 60px;
+  margin: 40px;
+  border-radius: 5px;
+}
+
+.login {
+  height: 100vh;
+  background-color: #29266a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login .cardLogin {
+  display: flex;
+  flex-direction: row-reverse;
+  width: 80%;
+  background-color: white;
+  border-radius: 10px;
+  min-height: 500px;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .login .cardLogin {
+    width: 80%;
+  }
+}
+@media (min-width: 992px) {
+  .login .cardLogin {
+    width: 70%;
+  }
+}
+@media (min-width: 1200px) {
+  .login .cardLogin {
+    width: 40%;
+  }
+}
+.login .cardLogin .left {
+  display: none;
+}
+@media (min-width: 768px) {
+  .login .cardLogin .left {
+    flex: 1;
+    background: linear-gradient(rgba(41, 38, 106, 0.5607843137), rgba(0, 0, 0, 0.5)), url("../../../public/images/perpus.jpg") center;
+    background-size: cover;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+  }
+}
+.login .cardLogin .left .greeter {
+  margin: auto;
+  text-align: center;
+}
+.login .cardLogin .left .greeter .divider {
+  height: 10px;
+  width: 75px;
+  border-radius: 15px;
+  margin: 20px auto;
+  background-color: white;
+}
+.login .cardLogin .left .greeter h1 {
+  font-size: 4em;
+  font-weight: bolder;
+  line-height: 70px;
+}
+.login .cardLogin .left span {
+  color: white;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+.login .cardLogin .left button {
+  min-height: 44px;
+  font-size: 16px;
+  width: 36%;
+  padding: 10px;
+  border: none;
+  background-color: rgb(255, 255, 255);
+  color: #29266a;
+  font-weight: bold;
+  cursor: pointer;
+}
+.login .cardLogin .right {
+  display: flex;
+  flex: 1;
+  padding: 50px;
+  flex-direction: column;
+  gap: 10px;
+}
+@media (min-width: 576px) {
+  .login .cardLogin .right {
+    padding: 35px;
+  }
+}
+.login .cardLogin .right .logo {
+  display: flex;
+  gap: 10px;
+  flex-direction: row;
+}
+.login .cardLogin .right .logo img {
+  height: 20px;
+  width: 20px;
+}
+.login .cardLogin .right .logo p {
+  font-weight: 600;
+}
+.login .cardLogin .right .loginContainer h1 {
+  margin: 0 0 60px 0;
+  color: #333;
+}
+.login .cardLogin .right .loginContainer .formLogin {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.login .cardLogin .right .loginContainer .formLogin input {
+  border: 1px solid lightgrey;
+}
+.login .cardLogin .right .loginContainer .formLogin button {
+  width: 50%;
+  padding: 10px;
+  border: none;
+  background-color: #29266a;
+  color: white;
+  font-weight: bold;
+}
+.login .cardLogin .right .loginContainer p {
+  text-align: center;
+  margin-top: 20px;
+}/*# sourceMappingURL=login.css.map */
