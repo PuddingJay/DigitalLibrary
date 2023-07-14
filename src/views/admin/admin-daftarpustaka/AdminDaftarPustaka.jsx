@@ -173,7 +173,8 @@ const AdminDaftarPustaka = () => {
     { key: 'penulis', _style: { width: '20%' } },
     { key: 'Kategori', _style: { width: '10%' } },
     { key: 'keterangan', _style: { width: '10%' } },
-    { key: 'jumlah', _style: { width: '10%' } },
+    { key: 'jumlah', _style: { width: '5%' } },
+    { key: 'tersedia', _style: { width: '5%' } },
     {
       key: 'cover_buku',
       _style: { width: '10%' },
@@ -187,7 +188,7 @@ const AdminDaftarPustaka = () => {
     },
     {
       key: 'show_details',
-      label: '',
+      label: 'Aksi',
       _style: { width: '1%' },
       filter: false,
       sorter: false,
@@ -214,10 +215,21 @@ const AdminDaftarPustaka = () => {
       <>
         <CCard>
           <CCardBody>
-            <CButton color="primary" size="lg" className="btnModal" onClick={toggleModalTambah}>
-              Tambah Buku
-            </CButton>
-
+            <div className="actionDaftarPustaka">
+              <CButton color="primary" size="lg" className="btnModal" onClick={toggleModalTambah}>
+                Tambah Buku
+              </CButton>
+              <CButton
+                color="primary"
+                href={csvCode}
+                download="data-daftar-pustaka.csv"
+                target="_blank"
+                size="lg"
+              >
+                <CIcon icon={cilCloudDownload} size="lg" />
+                {/* Download data peminjaman (.csv) */}
+              </CButton>
+            </div>
             <Modal isOpen={modalTambah} toggle={toggleModalTambah}>
               <ModalHeader toggle={toggleModalTambah}>Tambah Data</ModalHeader>
               <ModalBody>
@@ -441,18 +453,6 @@ const AdminDaftarPustaka = () => {
               </ModalFooter>
             </Modal>
 
-            <CButton
-              color="primary"
-              className="mb-2 download"
-              href={csvCode}
-              download="data-daftar-pustaka.csv"
-              target="_blank"
-              size="lg"
-            >
-              <CIcon icon={cilCloudDownload} size="lg" />
-              {/* Download data peminjaman (.csv) */}
-            </CButton>
-
             <CSmartTable
               className="mt-3"
               activePage={3}
@@ -518,8 +518,8 @@ const AdminDaftarPustaka = () => {
                 color: 'info',
               }}
               tableProps={{
-                // striped: true,
                 hover: true,
+                responsive: true,
               }}
             />
             {/* 

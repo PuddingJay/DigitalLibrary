@@ -31,9 +31,11 @@ const AdminPeminjaman = () => {
   const [openModalUpdate, setOpenModalUpdate] = useState(false)
   const [peminjaman, setPeminjaman] = useState([])
   const [books, setBooks] = useState([])
+  const [siswas, setSiswas] = useState([])
   const [peminjamanDatas, setPeminjamanDatas] = useState(peminjaman)
   const [addFormData, setAddFormData] = useState({
     kodeBuku: null,
+    NIS: null,
     namaPeminjam: null,
     judulBuku: null,
     tglKembali: null,
@@ -43,6 +45,11 @@ const AdminPeminjaman = () => {
     denda: '',
   })
   const [currentId, setCurrentId] = useState('')
+  const [hargaDenda, setHargaDenda] = useState(() => {
+    const storedHargaDenda = localStorage.getItem('hargaDenda');
+    return storedHargaDenda ? parseInt(storedHargaDenda) : 500;
+  });
+
   const batalHandler = () => {
     setAddFormData({})
     setOpenModal(false)
@@ -50,27 +57,49 @@ const AdminPeminjaman = () => {
   }
 
   useEffect(() => {
+    localStorage.setItem('hargaDenda', hargaDenda.toString());
+  }, [hargaDenda]);
+
+  useEffect(() => {
     fetchData()
     fetchBooks()
+    fetchSisws()
     setLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const fetchJudulBuku = async () => {
-    const book = books.find((item) => item.kodeBuku === addFormData.kodeBuku);
-    const judulBuku = book ? book.judul : null;
+  const fetchNamaSiswa = async () => {
+    const sisw = siswas.find((item) => item.NIS === addFormData.NIS);
+    const NISSiswa = sisw ? sisw.NIS : null;
 
     setAddFormData((prevFormData) => ({
       ...prevFormData,
-      judulBuku: judulBuku,
+      NIS: NISSiswa,
     }));
   };
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/peminjaman')
-      setPeminjaman(response.data.data)
+      const response = await axios.get('http://localhost:3005/peminjaman');
+      const updatedPeminjaman = response.data.data.map((item) => {
+        if (
+          item.status === 'Belum Dikembalikan' &&
+          new Date(item.batasPinjam) < new Date()
+        ) {
+          const startDate = new Date(item.batasPinjam);
+          const endDate = new Date();
+          const differenceInDays = Math.ceil(
+            (endDate - startDate) / (1000 * 60 * 60 * 24)
+          );
+          item.denda = `Rp. ${differenceInDays * hargaDenda}`
+
+          axios.put(`http://localhost:3005/peminjaman/${item.idPeminjaman}`, item);
+        }
+        return item;
+      });
+      setPeminjaman(updatedPeminjaman);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
@@ -78,12 +107,36 @@ const AdminPeminjaman = () => {
     try {
       const responseBook = await axios.get('http://localhost:3005/book');
       setBooks(responseBook.data?.data ?? []);
-      console.log(responseBook)
     } catch (error) {
       console.log(error);
     }
   };
 
+  const fetchSisws = async () => {
+    try {
+      const responseSiswa = await axios.get('http://localhost:3005/siswa');
+      setSiswas(responseSiswa.data?.data ?? []);
+      console.log(responseSiswa.data.data[1].Nama)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const hargaDendaOnChangeHandler = (event) => {
+    const fieldValue = event.target.value;
+    setHargaDenda(fieldValue);
+  };
+
+  const calculateDenda = (tglKembali, batasPinjam) => {
+    const start = new Date(tglKembali);
+    const end = new Date(batasPinjam);
+
+    const difference = start.getTime() - end.getTime();
+    const days = Math.ceil(difference / (1000 * 60 * 60 * 24));
+    const chargePerDay = hargaDenda;
+    const totalCharge = chargePerDay * days;
+
+    return totalCharge > 0 ? 'Rp. ' + totalCharge : 0;
+  };
 
   const formOnChangeHandler = (event) => {
     const fieldName = event.target.getAttribute('name')
@@ -99,11 +152,35 @@ const AdminPeminjaman = () => {
         kodeBuku: fieldValue,
         judulBuku: judulBuku,
       };
-    } else if (fieldName === 'status') {
+    } else if (fieldName === 'NIS') {
+      const nisValue = parseInt(fieldValue);
+      const sisw = siswas.find((item) => item.NIS === nisValue);
+      const namaSiswa = sisw ? sisw.Nama : null;
+
       newFormData = {
         ...addFormData,
-        [fieldName]: fieldValue,
+        NIS: nisValue,
+        namaPeminjam: namaSiswa,
       };
+    } else if (fieldName === 'status') {
+      if (fieldValue === 'Dikembalikan') {
+        const denda = calculateDenda(
+          addFormData.tglKembali,
+          addFormData.batasPinjam
+        );
+
+        newFormData = {
+          ...addFormData,
+          [fieldName]: fieldValue,
+          denda: denda,
+        };
+      } else {
+        newFormData = {
+          ...addFormData,
+          [fieldName]: fieldValue,
+          denda: 0,
+        };
+      }
     } else {
       newFormData = {
         ...addFormData,
@@ -111,12 +188,10 @@ const AdminPeminjaman = () => {
       };
     }
 
-    // newFormData[fieldName] = fieldValue
     console.log(fieldName, fieldValue)
     console.log(newFormData)
 
     setAddFormData(newFormData)
-    console.log(addFormData)
   };
 
   const formOnChangeTglPinjam = (value) => {
@@ -156,10 +231,13 @@ const AdminPeminjaman = () => {
   }
 
   const formOnSubmitHandler = (event) => {
-    event.preventDefault()
+    event.preventDefault();
+
+    fetchNamaSiswa(); // Fetch the namaSiswa value based on the NIS
 
     const newDataPeminjaman = {
       kodeBuku: addFormData.kodeBuku,
+      NIS: addFormData.NIS,
       namaPeminjam: addFormData.namaPeminjam,
       judulBuku: addFormData.judulBuku,
       tglKembali: addFormData.tglKembali,
@@ -167,24 +245,27 @@ const AdminPeminjaman = () => {
       tglPinjam: addFormData.tglPinjam,
       status: addFormData.status,
       denda: addFormData.denda,
-    }
+    };
 
-    console.log(newDataPeminjaman)
-    const newDataPeminjamans = [...peminjamanDatas, newDataPeminjaman]
-    setPeminjamanDatas(newDataPeminjamans)
+    console.log(newDataPeminjaman);
+    const newDataPeminjamans = [...peminjamanDatas, newDataPeminjaman];
+    setPeminjamanDatas(newDataPeminjamans);
 
     axios
       .post('http://localhost:3005/peminjaman', newDataPeminjaman)
       .then((res) => {
-        console.log(res)
-        setOpenModal(false)
-        fetchData()
-        setAddFormData({})
+        console.log(res);
+        setOpenModal(false);
+        fetchData();
+        setAddFormData({});
       })
       .catch((err) => {
-        console.log(err)
-      })
-  }
+        if (err.response && err.response.status === 404) {
+          alert('Buku Tidak Tersedia');
+        }
+        console.log(err);
+      });
+  };
 
   const handleDelete = async (idPeminjaman) => {
     try {
@@ -198,28 +279,17 @@ const AdminPeminjaman = () => {
   const OnChangeKembali = async (idPeminjaman) => {
     const siswa = peminjaman.find((item) => item.idPeminjaman === idPeminjaman)
 
-    const totalDenda = (tglKembaliDenda, batasPinjamDenda) => {
-      const start = new Date(tglKembaliDenda)
-      const end = new Date(batasPinjamDenda)
-
-      const difference = start.getTime() - end.getTime()
-      const days = Math.ceil(difference / (1000 * 60 * 60 * 24))
-      const chargePerDay = 3000
-      const totalCharge = chargePerDay * days
-
-      return totalCharge > 0 ? 'Rp. ' + totalCharge : '-'
-    }
-
     const editedDataPeminjaman = {
       ...siswa,
-      tglKembali: new Date().toISOString().split('T')[0],
+      tglKembali: siswa.tglKembali === null ? new Date().toISOString().split('T')[0] : siswa.tglKembali,
       status: 'Dikembalikan',
-      denda: totalDenda(siswa.tglKembali, siswa.batasPinjam),
+      denda: calculateDenda(siswa.tglKembali, siswa.batasPinjam),
     }
-
     try {
       await axios.put(`http://localhost:3005/peminjaman/${idPeminjaman}`, editedDataPeminjaman)
       fetchData()
+      setAddFormData(siswa);
+      console.log(editedDataPeminjaman);
     } catch (err) {
       console.error(err)
     }
@@ -234,13 +304,50 @@ const AdminPeminjaman = () => {
   }
 
   const formUpdateChangeHandler = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setCurrentId((prevState) => ({
       ...prevState,
       [name]: value,
-    }))
-    console.log(currentId)
-  }
+    }));
+
+    if (name === 'NIS') {
+      const nisValue = parseInt(value);
+      const sisw = siswas.find((item) => item.NIS === nisValue);
+      if (sisw) {
+        setCurrentId((prevState) => ({
+          ...prevState,
+          namaPeminjam: sisw.Nama,
+        }));
+      }
+    } else if (name === 'kodeBuku') {
+      const book = books.find((item) => item.kodeBuku === value);
+      if (book) {
+        setCurrentId((prevState) => ({
+          ...prevState,
+          judulBuku: book.judul,
+        }));
+      }
+    } else if (name === 'status') {
+      if (value === 'Dikembalikan') {
+        const denda = calculateDenda(
+          currentId.tglKembali,
+          currentId.batasPinjam
+        );
+
+        setCurrentId((prevState) => ({
+          ...prevState,
+          denda: denda,
+        }));
+      } else {
+        setCurrentId((prevState) => ({
+          ...prevState,
+          denda: 0,
+        }))
+      }
+    }
+
+    console.log(currentId);
+  };
 
   const formOnChangeDateHandler = (name, date) => {
     date !== null
@@ -267,6 +374,28 @@ const AdminPeminjaman = () => {
     console.log(currentId)
   }
 
+  const handleDibayar = async (idPeminjaman) => {
+    const peminjamanData = peminjaman.find(
+      (item) => item.idPeminjaman === idPeminjaman
+    );
+
+    const editedDataPeminjaman = {
+      ...peminjamanData,
+      status: "Lunas",
+      denda: 0,
+    };
+
+    try {
+      await axios.put(
+        `http://localhost:3005/peminjaman/${idPeminjaman}`,
+        editedDataPeminjaman
+      );
+      fetchData();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const [details, setDetails] = useState([])
   const columns = [
     {
@@ -282,7 +411,7 @@ const AdminPeminjaman = () => {
     { key: 'denda', _style: { width: '13%' } },
     {
       key: 'show_details',
-      label: '',
+      label: 'Aksi',
       _style: { width: '1%' },
       filter: false,
       sorter: false,
@@ -291,11 +420,11 @@ const AdminPeminjaman = () => {
   const getBadge = (status) => {
     switch (status) {
       case 'Dikembalikan':
-        return 'success'
-      case '-':
+        return 'primary'
+      case 0:
         return 'secondary'
-      case 'Pending':
-        return 'warning'
+      case 'Lunas':
+        return 'success'
       case 'Belum Dikembalikan':
         return 'danger'
       default:
@@ -322,16 +451,46 @@ const AdminPeminjaman = () => {
       <>
         <CCard>
           <CCardBody>
-            <CButton
-              color="primary"
-              size="lg"
-              className="btnModal"
-              onClick={() => {
-                setOpenModal(!openModal)
-              }}
-            >
-              Tambah Data Pinjam
-            </CButton>
+            <div className="actionPeminjaman">
+              <div className="form-container">
+                <CButton
+                  color="primary"
+                  size="lg"
+                  className="btnModal"
+                  onClick={() => {
+                    setOpenModal(!openModal);
+                  }}
+                >
+                  Tambah Data Pinjam
+                </CButton>
+                <CForm>
+                  {/* <CInputGroup> */}
+                  <CFormInput
+                    name="hargaDenda"
+                    type="number"
+                    size="lg"
+                    id="inputHargaDenda"
+                    floatingLabel="Harga Denda"
+                    value={hargaDenda}
+                    onChange={hargaDendaOnChangeHandler}
+                  />
+                  {/* </CInputGroup> */}
+                </CForm>
+              </div>
+              <div className="download-container">
+                <CButton
+                  className="download-button"
+                  color="primary"
+                  href={csvCode}
+                  download="data-peminjaman.csv"
+                  target="_blank"
+                  size="lg"
+                >
+                  <CIcon icon={cilCloudDownload} size="lg" />
+                  {/* Download data peminjaman (.csv) */}
+                </CButton>
+              </div>
+            </div>
 
             <CModal
               allignment="center"
@@ -345,26 +504,37 @@ const AdminPeminjaman = () => {
               </CModalHeader>
               <CModalBody>
                 <CForm className="row g-3" onSubmit={formOnSubmitHandler}>
-                  <CCol md={6}>
+                  <CCol md={3}>
+                    <CFormInput
+                      name="NIS"
+                      type="text"
+                      id="inputNIS"
+                      label="NIS"
+                      onChange={formOnChangeHandler}
+                    />
+                  </CCol>
+                  <CCol md={9}>
                     <CFormInput
                       name="namaPeminjam"
                       type="text"
                       id="inputNamaPeminjam"
                       label="Nama Peminjam"
-                      onChange={formOnChangeHandler}
+                      value={addFormData.namaPeminjam || ''}
+                      // onChange={formOnChangeHandler}
+                      readOnly
                     />
                   </CCol>
-                  <CCol md={6}>
+                  <CCol md={2}>
                     <CFormInput
                       name="kodeBuku"
                       type="text"
-                      id="inputIdBuku"
-                      label="ID Buku"
+                      id="inputKodeBuku"
+                      label="Kode Buku"
                       onChange={formOnChangeHandler}
-                      onBlur={fetchJudulBuku}
+                    // onBlur={fetchJudulBuku}
                     />
                   </CCol>
-                  <CCol xs={12}>
+                  <CCol xs={10}>
                     <CFormInput
                       name="judulBuku"
                       id="inputJudulBuku"
@@ -441,18 +611,6 @@ const AdminPeminjaman = () => {
               </CModalBody>
             </CModal>
 
-            <CButton
-              color="primary"
-              className="mb-2 download"
-              href={csvCode}
-              download="data-peminjaman.csv"
-              target="_blank"
-              size="lg"
-            >
-              <CIcon icon={cilCloudDownload} size="lg" />
-              {/* Download data peminjaman (.csv) */}
-            </CButton>
-
             <CSmartTable
               className="mt-3"
               activePage={3}
@@ -494,10 +652,10 @@ const AdminPeminjaman = () => {
                     <CCollapse visible={details.includes(item.idPeminjaman)}>
                       <CCardBody className="p-3">
                         <h4>Buku {item.judulBuku}</h4>
-                        <p className="text-muted">Dipinjam dari: {item.tglPinjam}</p>
+                        <p className="text-muted">Dipinjam Sejak: {item.tglPinjam}</p>
                         <CButton
                           size="sm"
-                          color="primary"
+                          color="dark"
                           onClick={() => {
                             toggleUpdate(item.idPeminjaman)
                           }}
@@ -506,10 +664,17 @@ const AdminPeminjaman = () => {
                         </CButton>
                         <CButton
                           size="sm"
-                          color="dark"
+                          color="primary"
                           onClick={() => OnChangeKembali(item.idPeminjaman)}
                         >
                           Dikembalikan
+                        </CButton>
+                        <CButton
+                          size="sm"
+                          color="success"
+                          onClick={() => handleDibayar(item.idPeminjaman)}
+                        >
+                          Dibayar
                         </CButton>
                         <CButton
                           size="sm"
@@ -531,6 +696,7 @@ const AdminPeminjaman = () => {
               tableProps={{
                 // striped: true,
                 hover: true,
+                responsive: true,
               }}
             />
           </CCardBody>
@@ -548,7 +714,17 @@ const AdminPeminjaman = () => {
           </CModalHeader>
           <CModalBody>
             <CForm className="row g-3" onSubmit={formUpdateHandler}>
-              <CCol md={6}>
+              <CCol md={3}>
+                <CFormInput
+                  value={currentId.NIS}
+                  name="NIS"
+                  type="text"
+                  id="inputNIS"
+                  label="NIS"
+                  onChange={formUpdateChangeHandler}
+                />
+              </CCol>
+              <CCol md={9}>
                 <CFormInput
                   value={currentId.namaPeminjam}
                   name="namaPeminjam"
@@ -558,23 +734,23 @@ const AdminPeminjaman = () => {
                   onChange={formUpdateChangeHandler}
                 />
               </CCol>
-              <CCol md={6}>
+              <CCol md={2}>
                 <CFormInput
                   value={currentId.kodeBuku}
                   name="kodeBuku"
                   type="text"
                   id="inputIdBuku"
-                  label="ID Buku"
+                  label="Kode Buku"
                   onChange={formUpdateChangeHandler}
                 />
               </CCol>
-              <CCol xs={12}>
+              <CCol xs={10}>
                 <CFormInput
                   value={currentId.judulBuku}
                   name="judulBuku"
                   id="inputJudulBuku"
                   label="Judul Buku"
-                  placeholder="Si Kancil Bandel Banget"
+                  placeholder="Judul Buku"
                   onChange={formUpdateChangeHandler}
                 />
               </CCol>

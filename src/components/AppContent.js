@@ -10,7 +10,7 @@ import jwtDecode from 'jwt-decode'
 
 const AppContent = () => {
   const [, setToken] = useState('')
-  const [expire, setExpire] = useState('')
+  const [setExpire] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {

@@ -85,8 +85,6 @@ const AdminDataAnggota = () => {
     const formData = { NIS, Nama, Kelas, Jurusan }
 
     try {
-      console.log(`http://localhost:3005/siswa/${NIS}`)
-      console.log(formData)
       await axios.put(`http://localhost:3005/siswa/${currentAnggotaId}`, formData)
       toggleModalUpdate()
       fetchData()
@@ -119,9 +117,7 @@ const AdminDataAnggota = () => {
 
   const toggleModal = (NIS) => {
     const siswa = DataAnggota.find((item) => item.NIS === NIS)
-    console.log('siswa =' + siswa)
-    console.log('Nama siswa =' + siswa.Nama)
-    setCurrentAnggotaId(siswa)
+    setCurrentAnggotaId(siswa.NIS) // Set the NIS value as the currentAnggotaId
     setNIS(siswa.NIS)
     setNama(siswa.Nama)
     setKelas(siswa.Kelas)
@@ -140,7 +136,7 @@ const AdminDataAnggota = () => {
     { key: 'Jurusan', _style: { width: '18%' } },
     {
       key: 'show_details',
-      label: '',
+      label: 'Aksi',
       _style: { width: '1%' },
       filter: false,
       sorter: false,
@@ -166,10 +162,21 @@ const AdminDataAnggota = () => {
       <>
         <CCard>
           <CCardBody>
-            <CButton color="primary" size="lg" className="btnModal" onClick={toggleModalTambah}>
-              Tambah Data Anggota
-            </CButton>
-
+            <div className="actionDataAnggota">
+              <CButton color="primary" size="lg" className="btnModal" onClick={toggleModalTambah}>
+                Tambah Data Anggota
+              </CButton>
+              <CButton
+                color="primary"
+                href={csvCode}
+                download="data-anggota.csv"
+                target="_blank"
+                size="lg"
+              >
+                <CIcon icon={cilCloudDownload} size="lg" />
+                {/* Download data peminjaman (.csv) */}
+              </CButton>
+            </div>
             <Modal isOpen={modalTambah} toggle={toggleModalTambah}>
               <ModalHeader toggle={toggleModalTambah}>Tambah Anggota</ModalHeader>
               <ModalBody>
@@ -234,7 +241,16 @@ const AdminDataAnggota = () => {
               </ModalHeader>
               <ModalBody>
                 <Form innerRef={formRef}>
-                  <FormGroup></FormGroup>
+                  <FormGroup>
+                    <Label for="NIS">NIS</Label>
+                    <Input
+                      type="text"
+                      name="NIS"
+                      id="NIS"
+                      value={NIS}
+                      onChange={(e) => setNIS(e.target.value)}
+                    />
+                  </FormGroup>
                   <FormGroup>
                     <Label for="Nama">Nama Lengkap</Label>
                     <Input
@@ -282,18 +298,6 @@ const AdminDataAnggota = () => {
                 </Button>
               </ModalFooter>
             </Modal>
-
-            <CButton
-              color="primary"
-              className="mb-2 download"
-              href={csvCode}
-              download="data-anggota.csv"
-              target="_blank"
-              size="lg"
-            >
-              <CIcon icon={cilCloudDownload} size="lg" />
-              {/* Download data peminjaman (.csv) */}
-            </CButton>
 
             <CSmartTable
               className="mt-3"
@@ -358,6 +362,7 @@ const AdminDataAnggota = () => {
               }}
               tableProps={{
                 hover: true,
+                responsive: true,
               }}
             />
           </CCardBody>

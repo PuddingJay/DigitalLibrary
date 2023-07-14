@@ -1,9 +1,9 @@
 {
-  "short_name": "CoreUI-React",
-  "name": "CoreUI-React sample",
+  "short_name": "SMA 1 Yuppentek",
+  "name": "SMA 1 Yuppentek Kota Tangerang",
   "icons": [
     {
-      "src": "./images/logoSMA.png",
+      "src": "../../src/assets/logoSMA.png",
       "sizes": "100x100",
       "type": "image/png"
     }
