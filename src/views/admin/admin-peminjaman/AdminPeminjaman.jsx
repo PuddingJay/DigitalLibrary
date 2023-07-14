@@ -65,6 +65,7 @@ const AdminPeminjaman = () => {
     fetchBooks()
     fetchSisws()
     setLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchNamaSiswa = async () => {
@@ -79,10 +80,26 @@ const AdminPeminjaman = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/peminjaman')
-      setPeminjaman(response.data.data)
+      const response = await axios.get('http://localhost:3005/peminjaman');
+      const updatedPeminjaman = response.data.data.map((item) => {
+        if (
+          item.status === 'Belum Dikembalikan' &&
+          new Date(item.batasPinjam) < new Date()
+        ) {
+          const startDate = new Date(item.batasPinjam);
+          const endDate = new Date();
+          const differenceInDays = Math.ceil(
+            (endDate - startDate) / (1000 * 60 * 60 * 24)
+          );
+          item.denda = `Rp. ${differenceInDays * hargaDenda}`
+
+          axios.put(`http://localhost:3005/peminjaman/${item.idPeminjaman}`, item);
+        }
+        return item;
+      });
+      setPeminjaman(updatedPeminjaman);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 

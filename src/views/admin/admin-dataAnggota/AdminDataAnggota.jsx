@@ -85,8 +85,7 @@ const AdminDataAnggota = () => {
     const formData = { NIS, Nama, Kelas, Jurusan }
 
     try {
-      console.log(formData)
-      await axios.put(`http://localhost:3005/siswa/${currentAnggotaId.NIS}`, formData)
+      await axios.put(`http://localhost:3005/siswa/${currentAnggotaId}`, formData)
       toggleModalUpdate()
       fetchData()
 

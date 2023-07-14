@@ -27,12 +27,6 @@ import { CChartBar, CChartLine } from '@coreui/react-chartjs'
 import { getStyle } from '@coreui/utils'
 import CIcon from '@coreui/icons-react'
 import {
-  // cibGoogle,
-  // cibFacebook,
-  // cibLinkedin,
-  // cibTwitter,
-  // cilUser,
-  // cilUserFemale,
   cilPeople,
   cilArrowBottom,
   cilBook,
@@ -40,8 +34,10 @@ import {
   cilUserPlus,
   cilOptions,
 } from '@coreui/icons'
+import { useMemo } from 'react'
 
 const Dashboard = () => {
+  const [books, setBooks] = useState([])
   const [totalBooks, setTotalBooks] = useState(0)
   const [totalUsers, setTotalUsers] = useState(0)
   const [peminjaman, setPeminjaman] = useState([])
@@ -53,6 +49,7 @@ const Dashboard = () => {
       .get('http://localhost:3005/book')
       .then((response) => {
         setTotalBooks(response.data.data.length)
+        setBooks(response.data.data)
       })
       .catch((error) => {
         console.error('Error fetching total number of books:', error)
@@ -75,7 +72,6 @@ const Dashboard = () => {
       .get('http://localhost:3005/peminjaman')
       .then((response) => {
         setPeminjaman(response.data.data)
-        console.log(response.data.chartData)
       })
       .catch((error) => {
         console.error('Error fetching Siswa data::', error)
@@ -116,12 +112,90 @@ const Dashboard = () => {
         : 0
       totalDenda += dendaValue
     })
-    const formattedDenda = 'Rp ' + totalDenda.toFixed(2)
+    const formattedDenda = 'Rp ' + totalDenda.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    console.log(formattedDenda)
     return formattedDenda
   }
 
   const chartBartRef = useRef(null)
   const chartLineRef = useRef(null)
+
+  const calculateMonthlyDenda = (peminjaman) => {
+    const monthlyDenda = Array(12).fill(0)
+
+    peminjaman.forEach((item) => {
+      if (item.batasPinjam && item.denda) {
+        const monthIndex = new Date(item.batasPinjam).getMonth()
+        const dendaValue = parseFloat(item.denda.replace(/[^0-9-]+/g, ''))
+        monthlyDenda[monthIndex] += dendaValue
+      }
+    })
+
+    console.log(monthlyDenda)
+    return monthlyDenda
+  }
+
+  const chartData = useMemo(() => {
+    const monthlyDenda = calculateMonthlyDenda(peminjaman)
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ]
+
+    return {
+      labels: monthlyDenda.map((_, index) => months[index]),
+      datasets: [
+        {
+          label: 'Denda',
+          backgroundColor: `rgba(${getStyle('--cui-primary-rgb')}, .1)`,
+          borderColor: getStyle('--cui-primary'),
+          borderWidth: 3,
+          data: monthlyDenda,
+          fill: true,
+        },
+      ],
+    }
+  }, [peminjaman])
+
+  console.log(chartData)
+
+  const getPeminjamanDataByMonth = () => {
+    // Initialize an array to hold the monthly peminjaman data
+    const monthlyData = Array(12).fill(0)
+
+    // Iterate over the peminjaman data and count the occurrences by month
+    peminjaman.forEach((item) => {
+      const month = new Date(item.tglPinjam).getMonth()
+      monthlyData[month]++
+    })
+
+    return monthlyData
+  }
+
+  const getKembaliDataByMonth = () => {
+    // Initialize an array to hold the monthly peminjaman data
+    const monthlyData = Array(12).fill(0)
+
+    // Iterate over the peminjaman data and count the occurrences by month
+    peminjaman.forEach((item) => {
+      const month = new Date(item.tglKembali).getMonth()
+      if (item.status === 'Dikembalikan' || item.status === 'Lunas') {
+        monthlyData[month]++
+      }
+      console.log(month)
+    })
+    return monthlyData
+  }
 
   useEffect(() => {
     document.documentElement.addEventListener('ColorSchemeChange', () => {
@@ -148,28 +222,6 @@ const Dashboard = () => {
     })
   }, [chartBartRef, chartLineRef])
 
-  // const progressGroupExample1 = [
-  //   { title: 'Monday', value1: 34, value2: 78 },
-  //   { title: 'Tuesday', value1: 56, value2: 94 },
-  //   { title: 'Wednesday', value1: 12, value2: 67 },
-  //   { title: 'Thursday', value1: 43, value2: 91 },
-  //   { title: 'Friday', value1: 22, value2: 73 },
-  //   { title: 'Saturday', value1: 53, value2: 82 },
-  //   { title: 'Sunday', value1: 9, value2: 69 },
-  // ]
-
-  // const progressGroupExample2 = [
-  //   { title: 'Male', icon: cilUser, value: 53 },
-  //   { title: 'Female', icon: cilUserFemale, value: 43 },
-  // ]
-
-  // const progressGroupExample3 = [
-  //   { title: 'Organic Search', icon: cibGoogle, percent: 56, value: '191,235' },
-  //   { title: 'Facebook', icon: cibFacebook, percent: 15, value: '51,223' },
-  //   { title: 'Twitter', icon: cibTwitter, percent: 11, value: '37,564' },
-  //   { title: 'LinkedIn', icon: cibLinkedin, percent: 8, value: '27,319' },
-  // ]
-
   return (
     <>
       <CRow>
@@ -182,7 +234,7 @@ const Dashboard = () => {
                     <CCol>
                       <CCardTitle className="fs-4 fw-semibold">Denda</CCardTitle>
                       <CCardSubtitle className="fw-normal text-disabled">
-                        January - July 2023
+                        January - December
                       </CCardSubtitle>
                     </CCol>
                     <CCol className="text-end text-primary fs-4 fw-semibold">
@@ -193,19 +245,7 @@ const Dashboard = () => {
                 <CChartLine
                   className="mt-3"
                   style={{ height: '150px' }}
-                  data={{
-                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                    datasets: [
-                      {
-                        label: 'My First dataset',
-                        backgroundColor: `rgba(${getStyle('--cui-primary-rgb')}, .1)`,
-                        borderColor: getStyle('--cui-primary'),
-                        borderWidth: 3,
-                        data: [78, 81, 80, 45, 34, 22, 40],
-                        fill: true,
-                      },
-                    ],
-                  }}
+                  data={chartData}
                   options={{
                     plugins: {
                       legend: {
@@ -272,14 +312,13 @@ const Dashboard = () => {
           </CRow>
         </CCol>
         <CCol xl={8}>
-          <CCard className="mb-4">
+          <CCard>
             <CCardBody className="p-4">
-              <CCardTitle className="fs-4 fw-semibold">Traffic</CCardTitle>
+              <CCardTitle className="fs-4 fw-semibold">Traffic Peminjaman</CCardTitle>
               <CCardSubtitle className="fw-normal text-disabled">
                 January 01, 2021 - December 31, 2021
               </CCardSubtitle>
               <CChartBar
-                ref={chartBartRef}
                 data={{
                   labels: [
                     'Jan',
@@ -297,20 +336,20 @@ const Dashboard = () => {
                   ],
                   datasets: [
                     {
-                      label: 'Users',
+                      label: 'Buku Dipinjam',
                       backgroundColor: getStyle('--cui-primary'),
                       borderRadius: 6,
                       borderSkipped: false,
-                      data: [78, 81, 80, 45, 34, 12, 40, 85, 65, 23, 12, 98, 34, 84, 67, 82],
+                      data: getPeminjamanDataByMonth(),
                       barPercentage: 0.6,
                       categoryPercentage: 0.5,
                     },
                     {
-                      label: 'New users',
-                      backgroundColor: getStyle('--cui-gray-200'),
+                      label: 'Buku Dikembalikan',
+                      backgroundColor: getStyle('--cui-gray-400'),
                       borderRadius: 6,
                       borderSkipped: false,
-                      data: [78, 81, 80, 45, 34, 12, 40, 85, 65, 23, 12, 98, 34, 84, 67, 82],
+                      data: getKembaliDataByMonth(),
                       barPercentage: 0.6,
                       categoryPercentage: 0.5,
                     },
@@ -699,97 +738,6 @@ const Dashboard = () => {
           </CRow>
         </CCol>
       </CRow>
-      {/* <CRow>
-        <CCol xs>
-          <CCard className="mb-4">
-            <CCardBody className="p-4">
-              <CCardTitle className="fs-4 fw-semibold">Traffic</CCardTitle>
-              <CCardSubtitle className="fw-normal text-disabled border-bottom mb-3 pb-4">
-                Last Week
-              </CCardSubtitle>
-              <CRow>
-                <CCol xs={12} md={6} xl={6}>
-                  <CRow>
-                    <CCol sm={6}>
-                      <div className="border-start border-start-4 border-start-info py-1 px-3 mb-3">
-                        <div className="text-disabled small">New Clients</div>
-                        <div className="fs-5 fw-semibold">9,123</div>
-                      </div>
-                    </CCol>
-                    <CCol sm={6}>
-                      <div className="border-start border-start-4 border-start-danger py-1 px-3 mb-3">
-                        <div className="text-disabled small">Recurring Clients</div>
-                        <div className="fs-5 fw-semibold">22,643</div>
-                      </div>
-                    </CCol>
-                  </CRow>
-                  <div className="border-top mb-4" />
-                  {progressGroupExample1.map((item, index) => (
-                    <div className="progress-group mb-4" key={index}>
-                      <div className="progress-group-prepend">
-                        <span className="text-disabled small">{item.title}</span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <CProgress thin color="info-gradient" value={item.value1} />
-                        <CProgress thin color="danger-gradient" value={item.value2} />
-                      </div>
-                    </div>
-                  ))}
-                </CCol>
-                <CCol xs={12} md={6} xl={6}>
-                  <CRow>
-                    <CCol sm={6}>
-                      <div className="border-start border-start-4 border-start-warning py-1 px-3 mb-3">
-                        <div className="text-disabled small">Pageviews</div>
-                        <div className="fs-5 fw-semibold">78,623</div>
-                      </div>
-                    </CCol>
-                    <CCol sm={6}>
-                      <div className="border-start border-start-4 border-start-success py-1 px-3 mb-3">
-                        <div className="text-disabled small">Organic</div>
-                        <div className="fs-5 fw-semibold">49,123</div>
-                      </div>
-                    </CCol>
-                  </CRow>
-                  <div className="border-top mb-4" />
-                  {progressGroupExample2.map((item, index) => (
-                    <div className="progress-group mb-4" key={index}>
-                      <div className="progress-group-header">
-                        <CIcon className="me-2" icon={item.icon} size="lg" />
-                        <span>{item.title}</span>
-                        <span className="ms-auto fw-semibold">{item.value}%</span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <CProgress thin color="warning-gradient" value={item.value} />
-                      </div>
-                    </div>
-                  ))}
-
-                  <div className="mb-5"></div>
-
-                  {progressGroupExample3.map((item, index) => (
-                    <div className="progress-group" key={index}>
-                      <div className="progress-group-header">
-                        <CIcon className="me-2" icon={item.icon} size="lg" />
-                        <span>{item.title}</span>
-                        <span className="ms-auto fw-semibold">
-                          {item.value}{' '}
-                          <span className="text-disabled small">({item.percent}%)</span>
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <CProgress thin color="success-gradient" value={item.percent} />
-                      </div>
-                    </div>
-                  ))}
-                </CCol>
-              </CRow>
-
-              <br />
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow> */}
     </>
   )
 }
