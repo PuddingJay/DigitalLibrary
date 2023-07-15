@@ -315,9 +315,7 @@ const Dashboard = () => {
           <CCard>
             <CCardBody className="p-4">
               <CCardTitle className="fs-4 fw-semibold">Traffic Peminjaman</CCardTitle>
-              <CCardSubtitle className="fw-normal text-disabled">
-                January 01, 2021 - December 31, 2021
-              </CCardSubtitle>
+              <CCardSubtitle className="fw-normal text-disabled">January - December</CCardSubtitle>
               <CChartBar
                 data={{
                   labels: [
