@@ -374,7 +374,7 @@ const AdminDaftarPustaka = () => {
                       name="kodeBuku"
                       id="kodeBuku"
                       value={kodeBuku}
-                      onChange={(e) => setkodeBuku(e.target.value)}
+                      onChange={(e) => setKodeBuku(e.target.value)}
                     />
                   </FormGroup>
                   <FormGroup>

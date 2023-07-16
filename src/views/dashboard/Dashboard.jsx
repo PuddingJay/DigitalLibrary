@@ -278,7 +278,7 @@ const Dashboard = () => {
               </CCard>
             </CCol>
             <CCol lg={6}>
-              <CCard className="mb-4">
+              <CCard className="mb-4" style={{ height: '10em' }}>
                 <CCardBody>
                   <div className="d-flex justify-content-between">
                     <CCardTitle className="text-disabled">Anggota</CCardTitle>
@@ -294,7 +294,7 @@ const Dashboard = () => {
               </CCard>
             </CCol>
             <CCol lg={6}>
-              <CCard className="mb-4">
+              <CCard className="mb-4" style={{ height: '10em' }}>
                 <CCardBody>
                   <div className="d-flex justify-content-between">
                     <CCardTitle className="text-disabled">Jumlah Buku</CCardTitle>
@@ -312,7 +312,7 @@ const Dashboard = () => {
           </CRow>
         </CCol>
         <CCol xl={8}>
-          <CCard>
+          <CCard className="mb-4">
             <CCardBody className="p-4">
               <CCardTitle className="fs-4 fw-semibold">Traffic Peminjaman</CCardTitle>
               <CCardSubtitle className="fw-normal text-disabled">January - December</CCardSubtitle>

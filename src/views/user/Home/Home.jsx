@@ -1,4 +1,4 @@
-import { ListCategories, Books } from '../../../component'
+import { Books } from '../../../component'
 import { Col, Row, Container } from 'react-bootstrap'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
@@ -15,7 +15,7 @@ const Home = () => {
   const [searchKeyword, setSearchKeyword] = useState('')
   const booksComponentRef = useRef(null)
   const [searchResult, setSearchResult] = useState([])
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
   const handleSearch = (event) => {
     setSearchKeyword(event.target.value)

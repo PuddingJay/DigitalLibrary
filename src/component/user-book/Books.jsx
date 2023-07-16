@@ -9,17 +9,6 @@ import axios from 'axios'
 const Books = () => {
   const [DaftarPustaka, setDaftarPustaka] = useState([])
 
-  const getSearch = (keyword) => {
-    axios
-      .get(`http://localhost:3005/book?search=${keyword}`)
-      .then((response) => {
-        setDaftarPustaka(response.data.data)
-      })
-      .catch((error) => {
-        console.error('Gagal melakukan pencarian:', error)
-      })
-  }
-
   useEffect(() => {
     fetchData()
   }, [])
@@ -48,9 +37,9 @@ const Books = () => {
           //     </Card.Body>
           //   </Link>
           // </Card>
-          <Card className="shadow" key={item.kode_buku}>
+          <Card className="shadow" key={item.idBuku}>
             <Card.Body>
-              <Link to={`/Detail/${item.kode_buku}`}>
+              <Link to={`/Detail/${item.idBuku}`}>
                 <Card.Img variant="top" src={`http://localhost:3005/${item.cover_buku}`} />
               </Link>
               <Card.Title>{item.judul}</Card.Title>

@@ -76,6 +76,7 @@ const AdminPeminjaman = () => {
       ...prevFormData,
       NIS: NISSiswa,
     }));
+    console.log(sisw);
   };
 
   const fetchData = async () => {
@@ -116,7 +117,7 @@ const AdminPeminjaman = () => {
     try {
       const responseSiswa = await axios.get('http://localhost:3005/siswa');
       setSiswas(responseSiswa.data?.data ?? []);
-      console.log(responseSiswa.data.data[1].Nama)
+      console.log(responseSiswa.data.data)
     } catch (error) {
       console.log(error);
     }
