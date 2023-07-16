@@ -1,0 +1,29 @@
+.navbar-component {
+  // Tampilan default
+
+  font-size: 18px;
+
+  @media screen and (max-width: 767px) {
+    // Tampilan pada ukuran layar kecil (misalnya, smartphone)
+
+    padding: 10px;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  @media screen and (min-width: 768px) and (max-width: 991px) {
+    // Tampilan pada ukuran layar menengah (misalnya, tablet)
+
+    padding: 15px;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  @media screen and (min-width: 992px) {
+    // Tampilan pada ukuran layar besar (misalnya, desktop)
+
+    padding: 20px;
+    font-size: 18px;
+    text-align: left;
+  }
+}

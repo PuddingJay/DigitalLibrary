@@ -185,14 +185,14 @@ const AdminPeminjaman = () => {
       newFormData = {
         ...addFormData,
         [fieldName]: fieldValue,
-      };
+      }
     }
 
     console.log(fieldName, fieldValue)
     console.log(newFormData)
 
     setAddFormData(newFormData)
-  };
+  }
 
   const formOnChangeTglPinjam = (value) => {
     value !== null
@@ -304,23 +304,23 @@ const AdminPeminjaman = () => {
   }
 
   const formUpdateChangeHandler = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setCurrentId((prevState) => ({
       ...prevState,
       [name]: value,
-    }));
+    }))
 
     if (name === 'NIS') {
-      const nisValue = parseInt(value);
-      const sisw = siswas.find((item) => item.NIS === nisValue);
+      const nisValue = parseInt(value)
+      const sisw = siswas.find((item) => item.NIS === nisValue)
       if (sisw) {
         setCurrentId((prevState) => ({
           ...prevState,
           namaPeminjam: sisw.Nama,
-        }));
+        }))
       }
     } else if (name === 'kodeBuku') {
-      const book = books.find((item) => item.kodeBuku === value);
+      const book = books.find((item) => item.kodeBuku === value)
       if (book) {
         setCurrentId((prevState) => ({
           ...prevState,

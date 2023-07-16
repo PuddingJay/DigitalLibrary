@@ -1,24 +1,27 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/no-unknown-property */
 import NavbarComponent from '../../../component/NavbarComponent'
 import { Col, Row, Container } from 'react-bootstrap'
 
 import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { Link } from 'react-router-dom'
 
-const DetailBuku = ({ match }) => {
+// import { Link, useHistory } from "react-router-dom";
+
+const DetailBuku = () => {
   const [catalogItem, setCatalogItem] = useState(null)
-  const { kode_buku } = useParams()
+  const params = useParams()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchCatalogItem = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3005/BookRoute/book/${match.params.kode_buku}`,
-        )
-        console.log(response)
-        setCatalogItem(response.data)
+        console.log(params)
+        const url = `http://localhost:3005/book/${params.id}`
+        console.log(url)
+        const response = await axios.get(url)
+        console.log('response', response)
+        setCatalogItem(response.data.data[0])
       } catch (error) {
         console.error(error)
       }
@@ -29,6 +32,10 @@ const DetailBuku = ({ match }) => {
   console.log(catalogItem)
   if (!catalogItem) {
     return <div>Loading...</div>
+  }
+
+  const handleBacaBuku = () => {
+    navigate(`/PDF/${catalogItem.idBuku}`)
   }
 
   return (
@@ -42,16 +49,17 @@ const DetailBuku = ({ match }) => {
               <Row>
                 <div className="product">
                   <img
-                    src={catalogItem.cover_buku}
+                    src={`http://localhost:3005/${catalogItem.cover_buku}`}
                     alt={catalogItem.judul}
                     style={{ width: '20rem', height: '25rem' }}
                   />
                   <Row md={1}>
                     <br></br>
                     <br></br>
-                    <button variant="primary" style={{ width: '18rem', height: '2rem' }}>
-                      Baca
-                    </button>
+
+                    <Link to={`/PdfRead/${catalogItem.idBuku}`}>
+                      <button style={{ width: '18rem', height: '2rem' }}>Baca</button>
+                    </Link>
                   </Row>
                 </div>
               </Row>
@@ -63,10 +71,10 @@ const DetailBuku = ({ match }) => {
               <p>Penulis : {catalogItem.penulis}</p>
               <p>Tahun Terbit : {catalogItem.tahun_terbit}</p>
               <Row md={2}>
-                <button style={{ width: '6rem', height: '2rem' }}>{catalogItem.keterangan}</button>
+                <button style={{ width: '15rem', height: '2rem' }}>{catalogItem.keterangan}</button>
                 <br></br>
                 <br></br>
-                <button style={{ width: '9rem', height: '2rem' }}>{catalogItem.Kategori}</button>
+                <button style={{ width: '15rem', height: '2rem' }}>{catalogItem.Kategori}</button>
               </Row>
               <hr />
 

@@ -202,6 +202,16 @@ const AdminDataAnggota = () => {
                     />
                   </FormGroup>
                   <FormGroup>
+                    <Label for="password">Password</Label>
+                    <Input
+                      type="text"
+                      name="password"
+                      id="password"
+                      value={NIS}
+                      onChange={(e) => setNIS(e.target.value)}
+                    />
+                  </FormGroup>
+                  <FormGroup>
                     <Label for="Kelas">Kelas</Label>
                     <Input
                       type="text"

@@ -18,6 +18,7 @@ import {
 } from 'reactstrap'
 import CIcon from '@coreui/icons-react'
 import { cilCloudDownload } from '@coreui/icons'
+import { Link } from 'react-router-dom'
 
 const AdminDaftarPustaka = () => {
   const [loading, setLoading] = useState()
@@ -91,9 +92,9 @@ const AdminDaftarPustaka = () => {
     console.log(formData)
   }
 
-  const handleDelete = async (kodeBuku) => {
+  const handleDelete = async (idBuku) => {
     try {
-      await axios.delete(`http://localhost:3005/book/${kodeBuku}`)
+      await axios.delete(`http://localhost:3005/book/${idBuku}`)
       fetchData()
     } catch (error) {
       console.log(error)
@@ -179,7 +180,14 @@ const AdminDaftarPustaka = () => {
       key: 'cover_buku',
       _style: { width: '10%' },
       formatter: (item) => (
-        <img src={`http://localhost:3005/${item.cover_buku}`} alt="Cover Buku" />
+        // <img src={`http://localhost:3005/${item.cover_buku}`} alt="Cover Buku" />
+        <div>
+          <img
+            src={`http://localhost:3005/${item.cover_buku}`}
+            alt="Cover Buku"
+            style={{ width: '100px', height: 'auto' }}
+          />
+        </div>
       ),
     },
     {
@@ -265,14 +273,33 @@ const AdminDaftarPustaka = () => {
                     />
                   </FormGroup>
                   <FormGroup>
-                    <Label for="penerbit">Kategori</Label>
+                    <Label for="Kategori">Kategori</Label>
                     <Input
-                      type="text"
+                      type="select"
                       name="Kategori"
                       id="Kategori"
                       value={Kategori}
                       onChange={(e) => setKategori(e.target.value)}
-                    />
+                    >
+                      <option value="">Pilih Kategori</option>
+                      <option value="PKN">PKN</option>
+                      <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                      <option value="Bahasa Inggris">Bahasa Inggris</option>
+                      <option value="Sejarah">Sejarah</option>
+                      <option value="Matematika">Matematika</option>
+                      <option value="Penjas">Penjas</option>
+                      <option value="Seni Budaya">Seni Budaya</option>
+                      <option value="Agama">Agama</option>
+                      <option value="TIK">TIK</option>
+                      <option value="Fisika">Fisika</option>
+                      <option value="Biologi">Biologi</option>
+                      <option value="Kimia">Kimia</option>
+                      <option value="Ekonomi">Ekonomi</option>
+                      <option value="Geografi">Geografi</option>
+                      <option value="Sosiologi">Sosiologi</option>
+                      <option value="Lainnya">Lainnya</option>
+                      {/* Tambahkan opsi tipe file lainnya sesuai kebutuhan */}
+                    </Input>
                   </FormGroup>
                   <FormGroup>
                     <Label for="tahun_terbit">Tahun Terbit</Label>
@@ -347,7 +374,7 @@ const AdminDaftarPustaka = () => {
                       name="kodeBuku"
                       id="kodeBuku"
                       value={kodeBuku}
-                      onChange={(e) => setKodeBuku(e.target.value)}
+                      onChange={(e) => setkodeBuku(e.target.value)}
                     />
                   </FormGroup>
                   <FormGroup>
@@ -371,14 +398,33 @@ const AdminDaftarPustaka = () => {
                     />
                   </FormGroup>
                   <FormGroup>
-                    <Label for="penerbit">Penerbit</Label>
+                    <Label for="Kategori">Kategori</Label>
                     <Input
-                      type="text"
-                      name="penerbit"
-                      id="penerbit"
+                      type="select"
+                      name="Kategori"
+                      id="Kategori"
                       value={Kategori}
                       onChange={(e) => setKategori(e.target.value)}
-                    />
+                    >
+                      <option value="">Pilih Kategori</option>
+                      <option value="PKN">PKN</option>
+                      <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                      <option value="Bahasa Inggris">Bahasa Inggris</option>
+                      <option value="Sejarah">Sejarah</option>
+                      <option value="Matematika">Matematika</option>
+                      <option value="Penjas">Penjas</option>
+                      <option value="Seni Budaya">Seni Budaya</option>
+                      <option value="Agama">Agama</option>
+                      <option value="TIK">TIK</option>
+                      <option value="Fisika">Fisika</option>
+                      <option value="Biologi">Biologi</option>
+                      <option value="Kimia">Kimia</option>
+                      <option value="Ekonomi">Ekonomi</option>
+                      <option value="Geografi">Geografi</option>
+                      <option value="Sosiologi">Sosiologi</option>
+                      <option value="Lainnya">Lainnya</option>
+                      {/* Tambahkan opsi tipe file lainnya sesuai kebutuhan */}
+                    </Input>
                   </FormGroup>
                   <FormGroup>
                     <Label for="tahun_terbit">Tahun Terbit</Label>
@@ -477,17 +523,17 @@ const AdminDaftarPustaka = () => {
                         shape="square"
                         size="sm"
                         onClick={() => {
-                          toggleDetails(item.kodeBuku)
+                          toggleDetails(item.idBuku)
                         }}
                       >
-                        {details.includes(item.kodeBuku) ? 'Hide' : 'Show'}
+                        {details.includes(item.idBuku) ? 'Hide' : 'Show'}
                       </CButton>
                     </td>
                   )
                 },
                 details: (item) => {
                   return (
-                    <CCollapse visible={details.includes(item.kodeBuku)}>
+                    <CCollapse visible={details.includes(item.idBuku)}>
                       <CCardBody className="p-3">
                         <h4>Buku {item.judul}</h4>
                         <p className="text-muted">Ditulis oleh {item.penulis}</p>
@@ -500,13 +546,14 @@ const AdminDaftarPustaka = () => {
                         >
                           Edit
                         </CButton>
-                        <CButton
-                          size="sm"
-                          color="danger"
-                          onClick={() => handleDelete(item.kodeBuku)}
-                        >
+                        <CButton size="sm" color="danger" onClick={() => handleDelete(item.idBuku)}>
                           Delete
                         </CButton>
+                        <Link to={`/ShowPdf/${item.idBuku}`}>
+                          <CButton size="sm" color="primary">
+                            Show Ebook
+                          </CButton>
+                        </Link>
                       </CCardBody>
                     </CCollapse>
                   )

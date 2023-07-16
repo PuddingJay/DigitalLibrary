@@ -32,18 +32,16 @@ html {
 }
 
 @mixin mobile {
-  @media (min-width: 576px) {
+  @media (min-width: 400px) {
     @content;
   }
 }
-
 
 @mixin tablet {
   @media (min-width: 768px) {
     @content;
   }
 }
-
 
 @mixin laptop-s {
   @media (min-width: 992px) {
