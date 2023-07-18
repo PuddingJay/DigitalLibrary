@@ -37,7 +37,7 @@ import {
 import { useMemo } from 'react'
 
 const Dashboard = () => {
-  const [books, setBooks] = useState([])
+  const [, setBooks] = useState([])
   const [totalBooks, setTotalBooks] = useState(0)
   const [totalUsers, setTotalUsers] = useState(0)
   const [peminjaman, setPeminjaman] = useState([])

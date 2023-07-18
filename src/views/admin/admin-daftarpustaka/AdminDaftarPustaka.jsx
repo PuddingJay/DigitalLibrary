@@ -314,12 +314,16 @@ const AdminDaftarPustaka = () => {
                   <FormGroup>
                     <Label for="Keterangan">Tipe file</Label>
                     <Input
-                      type="text"
+                      type="select"
                       name="keterangan"
                       id="keterangan"
                       value={keterangan}
                       onChange={(e) => setKeterangan(e.target.value)}
-                    />
+                    >
+                      <option value="">Pilih Kategori</option>
+                      <option value="Buku Fisik">Buku Fisik</option>
+                      <option value="Buku Digital">Buku Digital</option>
+                    </Input>
                   </FormGroup>
                   <FormGroup>
                     <Label for="Jumlah">Jumlah</Label>
@@ -439,12 +443,16 @@ const AdminDaftarPustaka = () => {
                   <FormGroup>
                     <Label for="Keterangan">Tipe file</Label>
                     <Input
-                      type="text"
+                      type="select"
                       name="keterangan"
                       id="keterangan"
                       value={keterangan}
                       onChange={(e) => setKeterangan(e.target.value)}
-                    />
+                    >
+                      <option value="">Pilih Kategori</option>
+                      <option value="Buku Fisik">Buku Fisik</option>
+                      <option value="Buku Digital">Buku Digital</option>
+                    </Input>
                   </FormGroup>
                   <FormGroup>
                     <Label for="Jumlah">Jumlah</Label>
@@ -550,7 +558,7 @@ const AdminDaftarPustaka = () => {
                           Delete
                         </CButton>
                         <Link to={`/ShowPdf/${item.idBuku}`}>
-                          <CButton size="sm" color="primary">
+                          <CButton size="sm" color="dark">
                             Show Ebook
                           </CButton>
                         </Link>
@@ -569,57 +577,6 @@ const AdminDaftarPustaka = () => {
                 responsive: true,
               }}
             />
-            {/* 
-            <table>
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>ID Buku</th>
-                  <th>Judul Buku</th>
-                  <th>Penulis</th>
-                  <th>Kategori</th>
-                  <th>Tahun Terbit</th>
-                  <th>Tipe</th>
-                  <th>Jumlah Buku</th>
-                  <th>Cover buku</th>
-                  <th>File buku</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {DaftarPustaka.map((item, index) => (
-                  <tr key={item.kodeBuku}>
-                    <td>{index + 1}</td>
-                    <td>{item.kodeBuku}</td>
-                    <td>{item.judul}</td>
-                    <td>{item.penulis}</td>
-                    <td>{item.Kategori}</td>
-                    <td>{item.tahun_terbit}</td>
-                    <td>{item.keterangan}</td>
-                    <td>{item.jumlah}</td>
-                    <td>
-                      <img
-                        alt="cover buku"
-                        className="photo"
-                        src={`http://localhost:3005/${item.cover_buku}`}
-                      ></img>
-                    </td>
-                    <td>{item.file_ebook}</td>
-                    <td className="action">
-                      <div className="buttonWrapper">
-                        <CButton onClick={() => handleDelete(item.kodeBuku)} color="danger">
-                          Hapus
-                        </CButton>
-                        <CButton onClick={() => toggleModal(item.kodeBuku)} color="dark">
-                          Edit
-                        </CButton>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table> */}
           </CCardBody>
         </CCard>
       </>

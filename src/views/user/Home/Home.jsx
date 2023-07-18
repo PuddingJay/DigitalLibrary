@@ -1,20 +1,21 @@
 import { Books } from '../../../component'
-import { Col, Row, Container } from 'react-bootstrap'
+import { Col, Container } from 'react-bootstrap'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import React, { useState, useRef } from 'react'
-import { API_URL } from '../../../utils/Constant'
 import axios from 'axios'
 import NavbarComponent from '../../../component/NavbarComponent'
 import { CImage } from '@coreui/react'
-
 import './home.scss'
 import { BookProvider } from '../../../component/BookContext'
+import { CFooter, CLink } from '@coreui/react-pro'
+import { CgSearch } from 'react-icons/cg'
 
 const Home = () => {
   const [searchKeyword, setSearchKeyword] = useState('')
   const booksComponentRef = useRef(null)
   const [searchResult, setSearchResult] = useState([])
+  const linkUper = 'https://universitaspertamina.ac.id/'
   // const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
   const handleSearch = (event) => {
@@ -29,7 +30,7 @@ const Home = () => {
 
   const getSearch = (keyword) => {
     axios
-      .get(`${API_URL}/book/search/${keyword}`)
+      .get(`http://localhost:3005/book/search/${keyword}`)
       .then((response) => {
         setSearchResult(response.data.data)
       })
@@ -41,94 +42,43 @@ const Home = () => {
   return (
     <div className="App">
       <NavbarComponent />
-      {/* <div className="mt-3"> */}
-      <Container fluid>
-        <Row className="mb-3">
-          <Col className="mb-2 ml-3">
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Container fluid style={{ minHeight: '100vh' }}>
+        <Col className="mb-2 ml-3">
+          <div className="searchContainer">
+            <div className="search">
+              <CgSearch />
               <Form className="d-flex ml-2">
                 <input
                   type="text"
-                  placeholder="Cari buku..."
+                  placeholder="Search"
                   value={searchKeyword}
                   onChange={handleSearch}
                 />
-                <Button onClick={handleSearchSubmit} variant="success">
-                  Search
-                </Button>
+                <Button onClick={handleSearchSubmit}>Search</Button>
               </Form>
             </div>
+          </div>
 
-            <div className="book-provider-container" style={{ marginBottom: '20px' }}>
-              <BookProvider>
-                {/* Komponen-komponen lain */}
-                <Books
-                  ref={booksComponentRef}
-                  searchResult={searchResult}
-                  fetchData={() => getSearch(searchKeyword)}
-                />
-              </BookProvider>
-            </div>
-          </Col>
-        </Row>
+          <div className="book-provider-container">
+            <BookProvider>
+              <Books
+                ref={booksComponentRef}
+                searchResult={searchResult}
+                fetchData={() => getSearch(searchKeyword)}
+              />
+            </BookProvider>
+          </div>
+        </Col>
       </Container>
-      <div className="logo">
-        <CImage rounded src="/images/logouper.png" width={200} height={150} />
-      </div>
-      {/* </div> */}
+      <CFooter>
+        <div>
+          <CImage href={linkUper} className="logo" rounded src="/images/logouper.png" />
+          <span>Colaborated with</span>
+          <CLink href={linkUper}>Universitas Pertamina</CLink>
+        </div>
+      </CFooter>
     </div>
   )
 }
 
 export default Home
-
-// Home.js
-
-// import React, { useEffect } from "react";
-// import { Col, Row, Container } from "react-bootstrap";
-// import Form from "react-bootstrap/Form";
-// import Button from "react-bootstrap/Button";
-// import { useBookContext } from "../../../component/BookContext";
-// import { ListCategories } from "../../../component";
-// import Books from "../../../component/user-book/Books"
-// import NavbarComponent from "../../../component/NavbarComponent";
-// import "./home.scss";
-
-// const Home = () => {
-//   const { searchKeyword, searchBooks } = useBookContext();
-
-//   const handleChange = (event) => {
-//     searchBooks(event.target.value);
-//   };
-
-//   useEffect(() => {
-//     searchBooks("");
-//   }, []);
-
-//   return (
-//     <div className="App">
-//       <NavbarComponent />
-//       <div className="mt-3">
-//         <Container fluid>
-//           <Row className="mb-3">
-//             <ListCategories />
-//             <Col className="mb-2 ml-3">
-//               <Form className="d-flex ml-2">
-//                 <input
-//                   type="text"
-//                   placeholder="Cari buku..."
-//                   value={searchKeyword}
-//                   onChange={handleChange}
-//                 />
-//                 <Button variant="success">Search</Button>
-//               </Form>
-//               <Books />
-//             </Col>
-//           </Row>
-//         </Container>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Home;

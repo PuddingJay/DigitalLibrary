@@ -1,45 +1,141 @@
 @import '../../../scss/style.scss';
 
-.mb-4 {
-  display: grid !important;
+.searchContainer {
+  display: flex;
+  justify-content: center;
 
-  @include mobile {
-    grid-template-columns: repeat(3, 1fr);
-    marginbottom: '2px';
+  .search {
+    margin: 20px;
+    padding-left: 5px;
+    height: 35px;
+    display: flex;
+    color: #555;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 0 2px grey;
+    background-color: #ffffff;
+    transition: all 0.2s ease-in-out;
+
+    @include mobile {
+      display: flex;
+      justify-content: center;
+    }
+
+    input {
+      width: 240px;
+      background-color: #ffffff;
+      color: #555;
+      border: none;
+
+      @include mobile {
+        width: 600px;
+      }
+    }
+
+    input:focus {
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #555;
+    }
+
+    button {
+      background-color: $primary;
+      box-shadow: 0 0 1px #f6f3f3;
+      border-radius: 0;
+      color: white;
+      border: none;
+      height: 35px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background: #258fce;
+      color: black;
+    }
   }
 
-  @include tablet {
-    grid-template-columns: repeat(4, 1fr);
-    marginbottom: '3px';
-  }
-
-  @include laptop-s {
-    grid-template-columns: repeat(5, 1fr);
-    marginbottom: '5px';
-  }
-
-  @include laptop-m {
-    grid-template-columns: repeat(6, 1fr);
-    marginbottom: '5px';
-  }
-
-  @include laptop-xl {
-    grid-template-columns: repeat(8, 1fr);
-    marginbottom: '5px';
-  }
-
-  @include laptop-xxl {
-    grid-template-columns: repeat(9, 1fr);
-    marginbottom: '5px';
+  .search:focus-within {
+    box-shadow: 0 0 0 2px $primary;
   }
 }
 
-.logo {
-  position: fixed;
+
+.katalog {
+  display: grid !important;
+  gap: 15px;
+  grid-template-columns: repeat(2, 1fr);
+
+
+  @include tablet {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include laptop-s {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @include laptop-m {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  @include laptop-l {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  @include laptop-xl {
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  @include laptop-xxl {
+    grid-template-columns: repeat(8, 1fr);
+  }
+
+  @include laptop-xxxl {
+    grid-template-columns: repeat(9, 1fr);
+  }
+}
+
+.footer {
+  position: sticky;
   bottom: 0;
   left: 0;
-  margin: 10px;
-  width: 100px;
+  width: 100%;
   height: auto;
-  z-index: 9999;
+  display: flex;
+  justify-content: center;
+
+  .logo {
+    width: 100px;
+    height: 70px;
+
+    @include mobile {
+      margin: 0 10px;
+      width: 130px;
+      height: 80px;
+    }
+
+    margin: 0;
+    z-index: 9999;
+  }
+
+  span {
+    font-size: 12px;
+
+    @include mobile {
+      font-size: 14px;
+    }
+
+    margin-right: 5px;
+  }
+
+  a {
+    font-size: 12px;
+
+    @include mobile {
+      font-size: 14px;
+    }
+  }
 }

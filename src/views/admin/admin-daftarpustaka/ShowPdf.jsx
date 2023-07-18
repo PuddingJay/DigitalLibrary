@@ -7,7 +7,7 @@ import pdfjsWorker from 'react-pdf/node_modules/pdfjs-dist/build/pdf.worker.entr
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 // import NavbarComponent from '../../component/NavbarComponent'
-import '../../user/pdf-viewer/pdfViewer.css'
+import '../../user/pdf-viewer/PdfViewer.scss'
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 function ShowPdf() {
@@ -59,27 +59,13 @@ function ShowPdf() {
     }
   }
 
-  const handleClickNext = () => {
+  const handleNextPage = () => {
     if (pageNumber < numPages) {
       setPageNumber(pageNumber + 1)
     }
   }
 
-  const handleClickPrevious = () => {
-    if (pageNumber > 1) {
-      setPageNumber(pageNumber - 1)
-    }
-  }
-
-  const handleTouchNext = (event) => {
-    event.preventDefault()
-    if (pageNumber < numPages) {
-      setPageNumber(pageNumber + 1)
-    }
-  }
-
-  const handleTouchPrevious = (event) => {
-    event.preventDefault()
+  const handlePreviousPage = () => {
     if (pageNumber > 1) {
       setPageNumber(pageNumber - 1)
     }
@@ -87,10 +73,8 @@ function ShowPdf() {
 
   const onPageLoadSuccess = () => {
     const canvasElement = document.querySelector('.react-pdf__Page canvas')
-    canvasElement.addEventListener('click', handleClickNext)
-    canvasElement.addEventListener('contextmenu', handleClickPrevious)
-    canvasElement.addEventListener('touchstart', handleTouchNext)
-    canvasElement.addEventListener('touchend', handleTouchPrevious)
+    canvasElement.addEventListener('click', handleNextPage)
+    canvasElement.addEventListener('click', handlePreviousPage)
   }
 
   return (
@@ -105,16 +89,33 @@ function ShowPdf() {
               <Document
                 file={pdfBlob}
                 onLoadSuccess={onDocumentLoadSuccess}
-                onContextMenu={handleContextMenu} // Tambahkan prop onContextMenu di sini
+                onContextMenu={handleContextMenu}
               >
                 <Page
                   pageNumber={pageNumber}
                   renderTextLayer={false}
                   renderAnnotationLayer={false}
-                  onLoadSuccess={onPageLoadSuccess} // Tambahkan prop onLoadSuccess di sini
+                  renderInteractiveForms={false}
+                  onLoadSuccess={onPageLoadSuccess}
                   className="pdf-page"
                 />
               </Document>
+              <div className="pdf-controls">
+                <button
+                  className="pdf-control-button"
+                  onClick={handlePreviousPage}
+                  disabled={pageNumber <= 1}
+                >
+                  Previous
+                </button>
+                <button
+                  className="pdf-control-button"
+                  onClick={handleNextPage}
+                  disabled={pageNumber >= numPages}
+                >
+                  Next
+                </button>
+              </div>
               <p>
                 Page {pageNumber} of {numPages}
               </p>

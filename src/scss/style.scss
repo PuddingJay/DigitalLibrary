@@ -1,3 +1,5 @@
+$deprecation-warnings: false !default;
+
 @import "@coreui/coreui-pro/scss/functions";
 
 // If you want to override variables do it here
@@ -62,12 +64,18 @@ html {
 }
 
 @mixin laptop-xl {
-  @media (min-width: 1900px) {
+  @media (min-width: 1700px) {
     @content;
   }
 }
 
 @mixin laptop-xxl {
+  @media (min-width: 1900px) {
+    @content;
+  }
+}
+
+@mixin laptop-xxxl {
   @media (min-width: 2500px) {
     @content;
   }

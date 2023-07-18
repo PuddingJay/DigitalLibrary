@@ -5,6 +5,7 @@ const AppFooter = () => {
   return (
     <CFooter>
       <div>
+        <span className="ms-1">Colaborated With </span>
         <a href="https://universitaspertamina.ac.id/" target="_blank" rel="noopener noreferrer">
           Universitas Pertamina
         </a>

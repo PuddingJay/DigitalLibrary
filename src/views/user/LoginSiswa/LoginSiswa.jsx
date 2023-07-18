@@ -4,7 +4,7 @@ import './login.scss'
 import logo from '../../../assets/logoSMA.png'
 import { CFormInput } from '@coreui/react-pro'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 // eslint-disable-next-line react/prop-types
 const Login = ({ loginSuccess }) => {
@@ -58,25 +58,17 @@ const Login = ({ loginSuccess }) => {
                 onChange={(e) => setNama(e.target.value)}
               />
               <CFormInput
-                type="text"
+                type="password"
                 id="floatingPassword"
                 floatingLabel="Password"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              {/* <Link to='/dashboard'> */}
               <button>Masuk </button>
-              {/* </Link> */}
+              <Link to="/login">Masuk sebagai Admin</Link>
             </div>
-            <p>{msg}</p>
           </form>
-          {/* <div className="toRegister">
-            <span>Belum Memiliki Akun?</span>
-            <Link to='/register'>
-              <span>Daftar Disini</span>
-            </Link>
-          </div> */}
         </div>
       </div>
     </div>

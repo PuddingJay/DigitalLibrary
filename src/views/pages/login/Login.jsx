@@ -5,6 +5,7 @@ import logo from '../../../assets/logoSMA.png'
 import { CFormInput } from '@coreui/react-pro'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 // eslint-disable-next-line react/prop-types
 const Login = ({ loginSuccess }) => {
@@ -67,6 +68,7 @@ const Login = ({ loginSuccess }) => {
               {/* <Link to='/dashboard'> */}
               <button>Masuk </button>
               {/* </Link> */}
+              <Link to="/siswa/login">Masuk sebagai Siswa</Link>
             </div>
             <p>{msg}</p>
           </form>

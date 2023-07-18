@@ -31,40 +31,14 @@ const AppContent = () => {
         navigate('/login')
       }
       console.log(err.message)
+    } finally {
+      try {
+        await axios.delete('http://localhost:3005/siswaLogout')
+      } catch (err) {
+        console.log(err.message)
+      }
     }
   }
-
-  // const getAdmin = async () => {
-  //   const response = await axiosJWT.get('http://localhost:3005/admin', {
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //   })
-  //   console.log(response.data)
-  // }
-
-  // const axiosJWT = axios.create()
-
-  // axiosJWT.interceptors.request.use(
-  //   async (config) => {
-  //     const currentDate = new Date()
-  //     if (expire * 1000 < currentDate.getTime()) {
-  //       try {
-  //         const response = await axios.get('http://localhost:3005/token')
-  //         config.headers.Authorization = `Bearer ${response.data.accessToken}`
-  //         setToken(response.data.accessToken)
-  //         const decoded = jwtDecode(response.data.accessToken)
-  //         setExpire(decoded.exp)
-  //       } catch (error) {
-  //         console.log(error)
-  //       }
-  //     }
-  //     return config
-  //   },
-  //   (error) => {
-  //     return Promise.reject(error)
-  //   },
-  // )
 
   return (
     <CContainer lg>

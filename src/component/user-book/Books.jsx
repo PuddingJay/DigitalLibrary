@@ -1,58 +1,61 @@
-import React, { useState, useEffect } from 'react'
+/* eslint-disable prettier/prettier */
+import React, { useImperativeHandle, useEffect } from 'react'
 import Card from 'react-bootstrap/Card'
 import { Col, Row } from 'react-bootstrap'
-import '../../index.scss'
 import { Link } from 'react-router-dom'
-import './books.scss'
-import axios from 'axios'
+import { useBookContext } from '../BookContext'
 
-const Books = () => {
-  const [DaftarPustaka, setDaftarPustaka] = useState([])
+import './books.scss'
+
+const Books = React.forwardRef((props, ref) => {
+  const { books, searchResult, fetchData, searchBooks } = useBookContext()
 
   useEffect(() => {
     fetchData()
   }, [])
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get('http://localhost:3005/book')
-      setDaftarPustaka(response.data.data)
-    } catch (error) {
-      console.error(error)
+  useEffect(() => {
+    if (searchResult.length > 0) {
+    } else {
+      fetchData()
     }
-  }
+  }, [searchResult])
+
+  useImperativeHandle(ref, () => ({
+    getSearch: (keyword) => {
+      searchBooks(keyword)
+    },
+  }))
+
   return (
-    <Col className="ml-3">
+    <Col className="ml-3 containerBook">
       <Row className="mb-4 katalog">
-        {DaftarPustaka.map((item) => (
-          // <Card className="shadow">
-          //   <Link to={`/Detail/${item.kode_buku}`} key={item.kode_buku}>
-          //     <Card.Img variant="top" src={`http://localhost:3005/${item.cover_buku}`} />
-          //     <Card.Body>
-          //       <Card.Title>{item.judul}</Card.Title>
-          //       <Card.Text>Tersedia : {item.jumlah}</Card.Text>
-          //       {/* <Button className='toDetail' onClick={() => navigate("/Detail")} variant="primary">
-          //               Detail Buku
-          //               </Button> */}
-          //     </Card.Body>
-          //   </Link>
-          // </Card>
-          <Card className="shadow" key={item.idBuku}>
-            <Card.Body>
-              <Link to={`/Detail/${item.idBuku}`}>
-                <Card.Img variant="top" src={`http://localhost:3005/${item.cover_buku}`} />
-              </Link>
-              <Card.Title>{item.judul}</Card.Title>
-              <Card.Text>Tersedia: {item.jumlah}</Card.Text>
-              {/* <Button className='toDetail' onClick={() => navigate("/Detail")} variant="primary">
-              Detail Buku
-            </Button> */}
-            </Card.Body>
-          </Card>
-        ))}
+        {searchResult.length > 0
+          ? searchResult.map((item) => (
+            <Card className="shadow" key={item.idBuku}>
+              <Card.Body>
+                <Link to={`/Detail/${item.idBuku}`}>
+                  <Card.Img variant="top" src={`http://localhost:3005/${item.cover_buku}`} />
+                  <Card.Title>{item.judul}</Card.Title>
+                  <Card.Text>Tersedia: {item.jumlah}</Card.Text>
+                </Link>
+              </Card.Body>
+            </Card>
+          ))
+          : books.map((item) => (
+            <Card className="shadow" key={item.idBuku}>
+              <Card.Body>
+                <Link to={`/Detail/${item.idBuku}`}>
+                  <Card.Img variant="top" src={`http://localhost:3005/${item.cover_buku}`} />
+                  <Card.Title>{item.judul}</Card.Title>
+                  <Card.Text>Tersedia: {item.jumlah}</Card.Text>
+                </Link>
+              </Card.Body>
+            </Card>
+          ))}
       </Row>
     </Col>
   )
-}
+})
 
 export default Books
