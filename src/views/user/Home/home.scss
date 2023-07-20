@@ -3,6 +3,9 @@
 .searchContainer {
   display: flex;
   justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 999;
 
   .search {
     margin: 20px;
@@ -15,6 +18,7 @@
     box-shadow: 0 0 2px grey;
     background-color: #ffffff;
     transition: all 0.2s ease-in-out;
+    position: sticky;
 
     @include mobile {
       display: flex;
@@ -26,8 +30,13 @@
       background-color: #ffffff;
       color: #555;
       border: none;
+      position: sticky;
 
       @include mobile {
+        width: 300px;
+      }
+
+      @include tablet {
         width: 600px;
       }
     }
@@ -49,6 +58,7 @@
       height: 35px;
       cursor: pointer;
       transition: all 0.2s ease-in-out;
+      position: sticky;
     }
 
     button:hover {
@@ -68,8 +78,7 @@
   gap: 15px;
   grid-template-columns: repeat(2, 1fr);
 
-
-  @include tablet {
+  @include mobile {
     grid-template-columns: repeat(3, 1fr);
   }
 
@@ -99,13 +108,20 @@
 }
 
 .footer {
-  position: sticky;
+  position: relative;
   bottom: 0;
   left: 0;
   width: 100%;
   height: auto;
   display: flex;
   justify-content: center;
+  z-index: 5;
+  flex-wrap: nowrap;
+  flex-direction: row;
+
+  @include mobile {
+    position: sticky;
+  }
 
   .logo {
     width: 100px;
@@ -113,8 +129,8 @@
 
     @include mobile {
       margin: 0 10px;
-      width: 130px;
-      height: 80px;
+      width: 150px;
+      height: auto;
     }
 
     margin: 0;
@@ -122,20 +138,28 @@
   }
 
   span {
-    font-size: 12px;
+    font-size: 10px;
 
     @include mobile {
-      font-size: 14px;
+      font-size: 15px;
     }
 
     margin-right: 5px;
   }
 
   a {
-    font-size: 12px;
+    font-size: 10px;
 
     @include mobile {
-      font-size: 14px;
+      font-size: 15px;
+    }
+  }
+
+  p {
+    font-size: 10px;
+
+    @include mobile {
+      font-size: 15px;
     }
   }
 }

@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import React, { useState, useRef } from 'react'
 import axios from 'axios'
-import NavbarComponent from '../../../component/NavbarComponent'
+import NavbarComponent from '../../../component/navbar/NavbarComponent'
 import { CImage } from '@coreui/react'
 import './home.scss'
 import { BookProvider } from '../../../component/BookContext'
@@ -16,7 +16,6 @@ const Home = () => {
   const booksComponentRef = useRef(null)
   const [searchResult, setSearchResult] = useState([])
   const linkUper = 'https://universitaspertamina.ac.id/'
-  // const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
   const handleSearch = (event) => {
     setSearchKeyword(event.target.value)
@@ -41,7 +40,8 @@ const Home = () => {
 
   return (
     <div className="App">
-      <NavbarComponent />
+      <NavbarComponent style={{ position: 'sticky' }} />
+
       <Container fluid style={{ minHeight: '100vh' }}>
         <Col className="mb-2 ml-3">
           <div className="searchContainer">
@@ -71,9 +71,9 @@ const Home = () => {
         </Col>
       </Container>
       <CFooter>
-        <div>
-          <CImage href={linkUper} className="logo" rounded src="/images/logouper.png" />
-          <span>Colaborated with</span>
+        <CImage href={linkUper} className="logo" rounded src="/images/logouper.png" />
+        <div style={{ fontFamily: 'Poppins' }}>
+          <span className="ms-1"> Copyright &copy; 2023 Pengabdian Kepada Masyarakat</span>
           <CLink href={linkUper}>Universitas Pertamina</CLink>
         </div>
       </CFooter>

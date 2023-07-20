@@ -14,6 +14,7 @@ function ShowPdf() {
   const [numPages, setNumPages] = useState(null)
   const [pageNumber, setPageNumber] = useState(1)
   const [pdfBlob, setPdfBlob] = useState(null)
+  const [jumpToPage, setJumpToPage] = useState(1)
 
   const params = useParams()
 
@@ -41,6 +42,7 @@ function ShowPdf() {
     loadPdf()
     // Panggil fungsi disableScreenshot setelah komponen dirender
     disableScreenshot()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleContextMenu = (event) => {
@@ -68,6 +70,11 @@ function ShowPdf() {
   const handlePreviousPage = () => {
     if (pageNumber > 1) {
       setPageNumber(pageNumber - 1)
+    }
+  }
+  const handleJumpToPage = () => {
+    if (jumpToPage >= 1 && jumpToPage <= numPages) {
+      setPageNumber(parseInt(jumpToPage, 10)) // Convert to integer before setting
     }
   }
 
@@ -99,6 +106,16 @@ function ShowPdf() {
                   onLoadSuccess={onPageLoadSuccess}
                   className="pdf-page"
                 />
+                <div className="pdf-jump-container">
+                  <input
+                    type="number"
+                    value={jumpToPage}
+                    onChange={(e) => setJumpToPage(e.target.value)}
+                    min={1}
+                    max={numPages}
+                  />
+                  <button onClick={handleJumpToPage}>Menuju ke halaman</button>
+                </div>
               </Document>
               <div className="pdf-controls">
                 <button

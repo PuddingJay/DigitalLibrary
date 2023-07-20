@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import './login.scss'
-// import { Link } from 'react-router-dom';
 import logo from '../../../assets/logoSMA.png'
 import { CFormInput } from '@coreui/react-pro'
 import axios from 'axios'
@@ -45,13 +44,11 @@ const Login = ({ loginSuccess }) => {
             <p>SMA Yuppentek 1 Kota Tangerang</p>
           </div>
           <form onSubmit={Auth} className="loginContainer">
-            <p>{msg}</p>
             <h1>Login</h1>
             <div className="formLogin">
               <CFormInput
                 type="text"
                 id="floatingInput"
-                floatingClassName="mb-3"
                 floatingLabel="Nama"
                 placeholder="Nama"
                 value={Nama}
@@ -66,8 +63,9 @@ const Login = ({ loginSuccess }) => {
                 onChange={(e) => setPassword(e.target.value)}
               />
               <button>Masuk </button>
-              <Link to="/login">Masuk sebagai Admin</Link>
             </div>
+            <Link to="/login">Masuk sebagai Admin</Link>
+            <p>{msg}</p>
           </form>
         </div>
       </div>

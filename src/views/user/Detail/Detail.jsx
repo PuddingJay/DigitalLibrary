@@ -1,4 +1,4 @@
-import NavbarComponent from '../../../component/NavbarComponent'
+import NavbarComponent from '../../../component/navbar/NavbarComponent'
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'

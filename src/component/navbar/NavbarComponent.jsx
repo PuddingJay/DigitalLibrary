@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
-import logo from '../assets/logoSMA.png'
+import logo from '../../assets/logoSMA.png'
 import {
   CImage, CContainer, CNavbar, CNavbarBrand, CNavbarToggler, CCollapse,
   CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem
@@ -17,6 +17,7 @@ const NavbarComponent = () => {
 
   useEffect(() => {
     fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchData = async () => {

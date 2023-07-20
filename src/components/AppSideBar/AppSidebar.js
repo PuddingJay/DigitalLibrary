@@ -1,15 +1,16 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
-import { CSidebar, CSidebarBrand, CSidebarNav, CSidebarToggler } from '@coreui/react-pro'
-import { AppSidebarNav } from './AppSidebarNav'
-import logo from '../assets/logoSMA.png'
+import { CSidebar, CSidebarBrand, CSidebarNav, CSidebarToggler, CImage } from '@coreui/react-pro'
+import { AppSidebarNav } from '../AppSidebarNav'
+import logo from '../../assets/logoSMA.png'
 
 import SimpleBar from 'simplebar-react'
 import 'simplebar/dist/simplebar.min.css'
+import './appSidebar.scss'
 
 // sidebar nav config
-import navigation from '../_nav'
+import navigation from '../../_nav'
 
 const AppSidebar = () => {
   const dispatch = useDispatch()
@@ -53,8 +54,6 @@ const AppSidebar = () => {
             SMA YUPPENTEK 1
           </h5>
         </div>
-        {/* <CIcon className="sidebar-brand-full ms-3" icon={logoNegative} height={35} /> */}
-        {/* <CIcon className="sidebar-brand-narrow" icon={logo} height={35} /> */}
         <CSidebarToggler
           onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
         />
@@ -64,6 +63,7 @@ const AppSidebar = () => {
           <AppSidebarNav items={navigation} />
         </SimpleBar>
       </CSidebarNav>
+      <CImage className="logo" fluid rounded src="/images/logouper.png" />
     </CSidebar>
   )
 }

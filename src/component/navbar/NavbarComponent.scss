@@ -1,9 +1,14 @@
-@import "../scss/style.scss";
+@import "../../scss/style.scss";
 
 .navBar {
   background-color: white;
 
   .container-fluid {
+
+    @include laptop-s {
+      width: 90%;
+    }
+
     .navContainer {
       width: 100%;
 
@@ -21,13 +26,13 @@
       .navPositionHandler {
         @include mobile {
           display: flex;
-          width: 65%;
+          width: 90%;
         }
 
         display: flex;
         align-items: center;
         width: 100%;
-        justify-content: space-around;
+        justify-content: space-between;
 
 
         .logoSekolah {

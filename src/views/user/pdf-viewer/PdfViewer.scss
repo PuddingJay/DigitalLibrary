@@ -1,4 +1,5 @@
 @import '../../../scss/style.scss';
+
 .pdf-container {
   background-color: #e4e4e4;
   overflow-y: auto;
@@ -9,7 +10,7 @@
   flex-direction: column;
 }
 
-.pdf-page > canvas {
+.pdf-page>canvas {
   max-width: 100%;
   height: auto !important;
 }
@@ -17,6 +18,7 @@
 .pdf-page {
   position: relative;
   margin-bottom: 20px;
+
   //   max-width: 100%;
   @include mobile {
     width: 100%;
@@ -49,6 +51,7 @@
     height: auto;
   }
 }
+
 .pdf-container {
   position: relative;
 }
@@ -59,8 +62,10 @@
   justify-content: space-between;
   width: 100%;
   padding: 0 10px;
-  top: 50%; /* Posisikan kontrol di tengah vertikal */
-  transform: translateY(-50%); /* Menyesuaikan posisi menggunakan transform */
+  top: 50%;
+  /* Posisikan kontrol di tengah vertikal */
+  transform: translateY(-50%);
+  /* Menyesuaikan posisi menggunakan transform */
   margin-top: -40px;
 }
 
@@ -75,4 +80,23 @@
 .pdf-control-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.pdf-jump-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+
+  input {
+    margin-right: 10px;
+  }
+
+  button {
+    padding: 5px 10px;
+    background-color: #ccc;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
 }

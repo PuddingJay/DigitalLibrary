@@ -1,6 +1,6 @@
-@import "../../../scss/style";
+@import "../../../scss/style.scss";
 
-.login {
+.register {
   height: 100vh;
   background-color: #29266a;
   display: flex;
@@ -22,7 +22,7 @@
     }
 
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
     width: 80%;
     background-color: white;
     border-radius: 10px;
@@ -44,7 +44,7 @@
       display: none;
 
       .greeter {
-        margin: auto auto 54px auto;
+        margin: auto;
         text-align: center;
 
         .divider {
@@ -62,30 +62,35 @@
         }
       }
 
-      span {
-        color: white;
-        font-size: 0.8em;
-        font-weight: bold;
-      }
+      .toLoginLaptop {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
 
-      button {
-        min-height: 44px;
-        font-size: 16px;
-        padding: 10px;
-        border: none;
-        background-color: rgb(255, 255, 255);
-        color: #29266a;
-        font-weight: bold;
-        cursor: pointer;
+        span {
+          font-size: 0.8em;
+          font-weight: bold;
+        }
+
+        button {
+          font-size: 16px;
+          background-color: #ffffff;
+          color: #29266a;
+          padding: 10px;
+          border: none;
+          font-weight: bold;
+          cursor: pointer;
+          width: 100%;
+        }
       }
     }
 
     .right {
-      @include mobile {
-        padding: 35px;
+      @include laptop-xl {
+        padding: 50px;
       }
 
-      padding: 50px;
+      padding: 35px;
       display: flex;
       flex: 1;
       flex-direction: column;
@@ -109,8 +114,12 @@
       .loginContainer {
 
         h1 {
-          margin: 0 0 60px 0;
+          margin: 0 0 10px 0;
           color: #333;
+
+          @include mobile {
+            margin: 0 0 40px 0;
+          }
         }
 
         .formLogin {
@@ -137,7 +146,7 @@
         p {
           text-align: center;
           color: $dark;
-          margin-top: 20px;
+          margin: 10px 0 0 0;
         }
       }
 
@@ -157,7 +166,6 @@
 
         a span:last-child {
           display: block;
-          margin-bottom: 20px;
           font-weight: 500;
           color: #29266a;
           font-size: 12px;

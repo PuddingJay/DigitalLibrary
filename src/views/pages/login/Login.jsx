@@ -38,6 +38,10 @@ const Login = ({ loginSuccess }) => {
             <div className="divider"></div>
             <p>Digital Library SMA Yuppentek 1 Kota Tangerang</p>
           </div>
+          <span>Belum Memiliki Akun?</span>
+          <Link to="/register">
+            <button>Daftar Disini</button>
+          </Link>
         </div>
 
         <div className="right">
@@ -51,7 +55,6 @@ const Login = ({ loginSuccess }) => {
               <CFormInput
                 type="text"
                 id="floatingInput"
-                floatingClassName="mb-3"
                 floatingLabel="Username"
                 placeholder="Username"
                 value={username}
@@ -65,19 +68,17 @@ const Login = ({ loginSuccess }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              {/* <Link to='/dashboard'> */}
               <button>Masuk </button>
-              {/* </Link> */}
-              <Link to="/siswa/login">Masuk sebagai Siswa</Link>
             </div>
+            <div className="toRegister">
+              <span>Belum Memiliki Akun?</span>
+              <Link to="/register">
+                <span>Daftar Disini</span>
+              </Link>
+            </div>
+            <Link to="/siswa/login">Masuk sebagai Siswa</Link>
             <p>{msg}</p>
           </form>
-          {/* <div className="toRegister">
-            <span>Belum Memiliki Akun?</span>
-            <Link to='/register'>
-              <span>Daftar Disini</span>
-            </Link>
-          </div> */}
         </div>
       </div>
     </div>

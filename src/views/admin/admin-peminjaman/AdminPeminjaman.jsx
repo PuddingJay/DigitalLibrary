@@ -12,6 +12,8 @@ import {
   CFormInput,
   CFormSelect,
   CSmartTable,
+  CInputGroup,
+  CInputGroupText
 } from '@coreui/react-pro'
 import axios from 'axios'
 import {
@@ -188,7 +190,6 @@ const AdminPeminjaman = () => {
         [fieldName]: fieldValue,
       }
     }
-
     console.log(fieldName, fieldValue)
     console.log(newFormData)
 
@@ -464,18 +465,30 @@ const AdminPeminjaman = () => {
                 >
                   Tambah Data Pinjam
                 </CButton>
+                {/* <CInputGroup>
+                  <CForm>
+                    <CFormInput
+                      name="batasPeminjamanPerHari"
+                      type="number"
+                      size="lg"
+                      id="inputBatasPeminjaman"
+                      floatingLabel="Batas Peminjaman"
+                      value={hargaDenda}
+                      onChange={hargaDendaOnChangeHandler}
+                    />
+                  </CForm>
+                  <CInputGroupText id="batasPeminjamanPerHari">Hari</CInputGroupText>
+                </CInputGroup> */}
                 <CForm>
-                  {/* <CInputGroup> */}
                   <CFormInput
                     name="hargaDenda"
                     type="number"
                     size="lg"
                     id="inputHargaDenda"
-                    floatingLabel="Harga Denda"
+                    floatingLabel="Denda/Hari"
                     value={hargaDenda}
                     onChange={hargaDendaOnChangeHandler}
                   />
-                  {/* </CInputGroup> */}
                 </CForm>
               </div>
               <div className="download-container">
@@ -552,6 +565,7 @@ const AdminPeminjaman = () => {
                       locale="en-US"
                       id="tglPinjam"
                       label="Tanggal Pinjam"
+                      value={addFormData.tglPinjam}
                       onDateChange={formOnChangeTglPinjam}
                     />
                   </CCol>

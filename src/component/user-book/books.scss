@@ -1,8 +1,9 @@
-@import "../../scss/style.scss";
+@import '../../scss/style.scss';
 
 .containerBook {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
 
   .mb-4 {
     .card {
@@ -51,9 +52,6 @@
               font-size: 15px;
             }
           }
-
-
-
         }
       }
     }
@@ -61,6 +59,47 @@
     .card:hover {
       background-color: rgb(174, 174, 174);
       opacity: 0.7;
+    }
+  }
+
+  .pagination.mb-4 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    /* Atur margin-top sesuai kebutuhan */
+    width: 100%;
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        display: inline-block;
+        margin-right: 5px;
+
+        .page-link {
+          display: block;
+          padding: 5px 10px;
+          background-color: #f0f0f0;
+          color: #333;
+          text-decoration: none;
+          border-radius: 3px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+
+          &:hover {
+            background-color: #ddd;
+          }
+
+          &.active {
+            background-color: #007bff;
+            color: #ffffff;
+            font-weight: bold;
+          }
+        }
+      }
     }
   }
 }
