@@ -107,7 +107,7 @@ import React, { useState, useEffect } from 'react'
 import { Document, Page } from 'react-pdf'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
-import NavbarComponent from '../../../component/NavbarComponent'
+import NavbarComponent from '../../../component/navbar/NavbarComponent'
 import './pdfViewer.css'
 
 function PdfViewer() {
