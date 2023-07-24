@@ -28,6 +28,19 @@ import CIcon from '@coreui/icons-react'
 import { cilCloudDownload } from '@coreui/icons'
 
 const AdminPeminjaman = () => {
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+
+    const dateObj = new Date(dateString);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const day = String(dateObj.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const today = formatDate(new Date());
+
   const [loading, setLoading] = useState()
   const [openModal, setOpenModal] = useState(false)
   const [openModalUpdate, setOpenModalUpdate] = useState(false)
@@ -35,38 +48,72 @@ const AdminPeminjaman = () => {
   const [books, setBooks] = useState([])
   const [siswas, setSiswas] = useState([])
   const [peminjamanDatas, setPeminjamanDatas] = useState(peminjaman)
+  const [batasPinjamPerHari, setBatasPinjamPerHari] = useState(() => {
+    const storedBatasPinjamPerHari = localStorage.getItem('batasPinjamPerHari');
+    return storedBatasPinjamPerHari ? parseInt(storedBatasPinjamPerHari) : 7;
+  });
+  const [currentId, setCurrentId] = useState('')
+  const [hargaDenda, setHargaDenda] = useState(() => {
+    const storedHargaDenda = localStorage.getItem('hargaDenda');
+    return storedHargaDenda ? parseInt(storedHargaDenda) : 500;
+  });
   const [addFormData, setAddFormData] = useState({
     kodeBuku: null,
     NIS: null,
     namaPeminjam: null,
     judulBuku: null,
     tglKembali: null,
-    tglPinjam: null,
-    batasPinjam: null,
+    tglPinjam: today,
+    batasPinjam: formatDate(
+      new Date(new Date(today).getTime() + batasPinjamPerHari * 24 * 60 * 60 * 1000)
+    ),
     status: "Belum Dikembalikan",
     denda: '',
   })
-  const [currentId, setCurrentId] = useState('')
-  const [hargaDenda, setHargaDenda] = useState(() => {
-    const storedHargaDenda = localStorage.getItem('hargaDenda');
-    return storedHargaDenda ? parseInt(storedHargaDenda) : 500;
-  });
+
+
+  useEffect(() => {
+    // Calculate 'peminjaman.batasPinjam' whenever batasPinjamPerHari or tglPinjam changes
+    if (addFormData.tglPinjam) {
+      setAddFormData((prevFormData) => ({
+        ...prevFormData,
+        batasPinjam: formatDate(new Date(new Date(prevFormData.tglPinjam).getTime() + (batasPinjamPerHari * 24 * 60 * 60 * 1000))),
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [batasPinjamPerHari, formatDate(addFormData.tglPinjam)]);
 
   const batalHandler = () => {
-    setAddFormData({})
-    setOpenModal(false)
-    setOpenModalUpdate(false)
-  }
+    setAddFormData({
+      ...addFormData,
+      status: "Belum Dikembalikan",
+      tglPinjam: today,
+      kodeBuku: null,
+      NIS: null,
+      namaPeminjam: null,
+      judulBuku: null,
+      tglKembali: null,
+      batasPinjam: formatDate(
+        new Date(new Date(today).getTime() + batasPinjamPerHari * 24 * 60 * 60 * 1000)
+      ),
+      denda: '',
+    });
+    setOpenModal(false);
+    setOpenModalUpdate(false);
+  };
 
   useEffect(() => {
     localStorage.setItem('hargaDenda', hargaDenda.toString());
-  }, [hargaDenda]);
+    localStorage.setItem('batasPinjamPerHari', batasPinjamPerHari.toString());
+  }, [hargaDenda, batasPinjamPerHari]);
 
   useEffect(() => {
     fetchData()
     fetchBooks()
     fetchSisws()
     setLoading(false)
+    console.log(addFormData)
+    console.log(currentId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -200,7 +247,7 @@ const AdminPeminjaman = () => {
     value !== null
       ? setAddFormData({
         ...addFormData,
-        tglPinjam: value.toISOString().split('T')[0],
+        tglPinjam: formatDate(value),
       })
       : setAddFormData({
         ...addFormData,
@@ -209,10 +256,11 @@ const AdminPeminjaman = () => {
   }
 
   const formOnChangeBatasPinjam = (value) => {
+    console.log('Received value:', value);
     value !== null
       ? setAddFormData({
         ...addFormData,
-        batasPinjam: value.toISOString().split('T')[0],
+        batasPinjam: formatDate(value),
       })
       : setAddFormData({
         ...addFormData,
@@ -224,7 +272,7 @@ const AdminPeminjaman = () => {
     value !== null
       ? setAddFormData({
         ...addFormData,
-        tglKembali: value.toISOString().split('T')[0],
+        tglKembali: formatDate(value),
       })
       : setAddFormData({
         ...addFormData,
@@ -283,10 +331,10 @@ const AdminPeminjaman = () => {
 
     const editedDataPeminjaman = {
       ...siswa,
-      tglKembali: siswa.tglKembali === null ? new Date().toISOString().split('T')[0] : siswa.tglKembali,
+      tglKembali: siswa.tglKembali === null ? formatDate(new Date()) : formatDate(siswa.tglKembali),
       status: 'Dikembalikan',
-      denda: calculateDenda(siswa.tglKembali, siswa.batasPinjam),
-    }
+      denda: calculateDenda(formatDate(siswa.tglKembali), formatDate(siswa.batasPinjam)),
+    };
     try {
       await axios.put(`http://localhost:3005/peminjaman/${idPeminjaman}`, editedDataPeminjaman)
       fetchData()
@@ -332,8 +380,8 @@ const AdminPeminjaman = () => {
     } else if (name === 'status') {
       if (value === 'Dikembalikan') {
         const denda = calculateDenda(
-          currentId.tglKembali,
-          currentId.batasPinjam
+          formatDate(currentId.tglKembali),
+          formatDate(currentId.batasPinjam)
         );
 
         setCurrentId((prevState) => ({
@@ -352,28 +400,30 @@ const AdminPeminjaman = () => {
   };
 
   const formOnChangeDateHandler = (name, date) => {
-    date !== null
-      ? setCurrentId((prevState) => ({
-        ...prevState,
-        [name]: date.toISOString().split('T')[0],
-      }))
-      : setCurrentId((prevState) => ({
-        ...prevState,
-        [name]: null,
-      }))
-  }
+    const formattedDate = date ? formatDate(date) : null;
+    setCurrentId((prevState) => ({
+      ...prevState,
+      [name]: formattedDate,
+    }));
+    console.log(currentId);
+  };
 
   const formUpdateHandler = async (event) => {
     event.preventDefault()
 
     try {
-      await axios.put(`http://localhost:3005/peminjaman/${currentId.idPeminjaman}`, currentId)
+      const formattedData = {
+        ...currentId,
+        tglPinjam: formatDate(currentId.tglPinjam),
+        batasPinjam: formatDate(currentId.batasPinjam),
+        tglKembali: formatDate(currentId.tglKembali) ? formatDate(currentId.tglKembali) : null,
+      };
+      await axios.put(`http://localhost:3005/peminjaman/${currentId.idPeminjaman}`, formattedData)
       fetchData()
       batalHandler()
     } catch (err) {
       console.error(err)
     }
-    console.log(currentId)
   }
 
   const handleDibayar = async (idPeminjaman) => {
@@ -465,20 +515,20 @@ const AdminPeminjaman = () => {
                 >
                   Tambah Data Pinjam
                 </CButton>
-                {/* <CInputGroup>
+                <CInputGroup>
                   <CForm>
                     <CFormInput
-                      name="batasPeminjamanPerHari"
+                      name="batasPinjamPerHari"
                       type="number"
                       size="lg"
-                      id="inputBatasPeminjaman"
+                      id="inputBatasPinjamPerHarii"
+                      value={batasPinjamPerHari} // Display the value from the state
+                      onChange={(e) => setBatasPinjamPerHari(parseInt(e.target.value))} // Update the state when the input changes
                       floatingLabel="Batas Peminjaman"
-                      value={hargaDenda}
-                      onChange={hargaDendaOnChangeHandler}
                     />
                   </CForm>
                   <CInputGroupText id="batasPeminjamanPerHari">Hari</CInputGroupText>
-                </CInputGroup> */}
+                </CInputGroup>
                 <CForm>
                   <CFormInput
                     name="hargaDenda"
@@ -562,10 +612,11 @@ const AdminPeminjaman = () => {
                     <CDatePicker
                       name="tglPinjam"
                       footer
-                      locale="en-US"
+                      locale="id-ID"
                       id="tglPinjam"
                       label="Tanggal Pinjam"
                       value={addFormData.tglPinjam}
+                      date={today}
                       onDateChange={formOnChangeTglPinjam}
                     />
                   </CCol>
@@ -573,9 +624,10 @@ const AdminPeminjaman = () => {
                     <CDatePicker
                       name="batasPinjam"
                       footer
-                      locale="en-US"
+                      locale="id-ID"
                       id="batasPinjam"
                       label="Batas Pinjam"
+                      date={addFormData.batasPinjam}
                       onDateChange={formOnChangeBatasPinjam}
                     />
                   </CCol>
@@ -583,7 +635,7 @@ const AdminPeminjaman = () => {
                     <CDatePicker
                       name="tglKembali"
                       footer
-                      locale="en-US"
+                      locale="id-ID"
                       id="tglKembali"
                       label="Tanggal Kembali"
                       onDateChange={formOnChangeTglKembali}
@@ -774,7 +826,7 @@ const AdminPeminjaman = () => {
                   date={currentId.tglPinjam}
                   name="tglPinjam"
                   footer
-                  locale="en-US"
+                  locale="id-ID"
                   id="tglPinjam"
                   label="Tanggal Pinjam"
                   onDateChange={(date) => {
@@ -787,7 +839,7 @@ const AdminPeminjaman = () => {
                   date={currentId.batasPinjam}
                   name="batasPinjam"
                   footer
-                  locale="en-US"
+                  locale="id-ID"
                   id="batasPinjam"
                   label="Batas Pinjam"
                   onDateChange={(date) => {
@@ -800,7 +852,7 @@ const AdminPeminjaman = () => {
                   date={currentId.tglKembali}
                   name="tglKembali"
                   footer
-                  locale="en-US"
+                  locale="id-ID"
                   id="tglKembali"
                   label="Tanggal Kembali"
                   onDateChange={(date) => {
