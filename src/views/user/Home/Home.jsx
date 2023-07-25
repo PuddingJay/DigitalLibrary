@@ -29,7 +29,7 @@ const Home = () => {
 
   const getSearch = (keyword) => {
     axios
-      .get(`http://localhost:3005/book/search/${keyword}`)
+      .get(`https://api2.librarysmayuppentek.sch.id/book/search/${keyword}`)
       .then((response) => {
         setSearchResult(response.data.data)
       })

@@ -63,7 +63,7 @@ const AdminDaftarPustaka = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/book')
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/book')
       setDaftarPustaka(response.data.data)
     } catch (error) {
       console.error(error)
@@ -79,7 +79,7 @@ const AdminDaftarPustaka = () => {
     console.log(formData)
 
     axios
-      .post('http://localhost:3005/book', formData)
+      .post('https://api2.librarysmayuppentek.sch.id/book', formData)
       .then(() => {
         toggleModalTambah()
         console.log(formData)
@@ -94,7 +94,7 @@ const AdminDaftarPustaka = () => {
 
   const handleDelete = async (idBuku) => {
     try {
-      await axios.delete(`http://localhost:3005/book/${idBuku}`)
+      await axios.delete(`https://api2.librarysmayuppentek.sch.id/book/${idBuku}`)
       fetchData()
     } catch (error) {
       console.log(error)
@@ -108,7 +108,7 @@ const AdminDaftarPustaka = () => {
     file_ebook?.files && formData.append('cover_buku', file_ebook.files[0])
     console.log('after', formData)
     try {
-      await axios.put(`http://localhost:3005/book/${currentBookId}`, formData)
+      await axios.put(`https://api2.librarysmayuppentek.sch.id/book/${currentBookId}`, formData)
       toggleModalUpdate()
       fetchData()
 
@@ -180,10 +180,10 @@ const AdminDaftarPustaka = () => {
       key: 'cover_buku',
       _style: { width: '10%' },
       formatter: (item) => (
-        // <img src={`http://localhost:3005/${item.cover_buku}`} alt="Cover Buku" />
+        // <img src={`https://api2.librarysmayuppentek.sch.id/${item.cover_buku}`} alt="Cover Buku" />
         <div>
           <img
-            src={`http://localhost:3005/${item.cover_buku}`}
+            src={`https://api2.librarysmayuppentek.sch.id/${item.cover_buku}`}
             alt="Cover Buku"
             style={{ width: '100px', height: 'auto' }}
           />

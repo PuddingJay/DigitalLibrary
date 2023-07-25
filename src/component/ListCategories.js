@@ -15,7 +15,7 @@ const ListCategories = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/book')
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/book')
       setDaftarPustaka(response.data.data)
     } catch (error) {
       console.error(error)

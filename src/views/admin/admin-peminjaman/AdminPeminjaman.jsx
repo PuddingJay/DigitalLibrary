@@ -130,7 +130,7 @@ const AdminPeminjaman = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/peminjaman');
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/peminjaman');
       const updatedPeminjaman = response.data.data.map((item) => {
         if (
           item.status === 'Belum Dikembalikan' &&
@@ -143,7 +143,7 @@ const AdminPeminjaman = () => {
           );
           item.denda = `Rp. ${differenceInDays * hargaDenda}`
 
-          axios.put(`http://localhost:3005/peminjaman/${item.idPeminjaman}`, item);
+          axios.put(`https://api2.librarysmayuppentek.sch.id/peminjaman/${item.idPeminjaman}`, item);
         }
         return item;
       });
@@ -155,7 +155,7 @@ const AdminPeminjaman = () => {
 
   const fetchBooks = async () => {
     try {
-      const responseBook = await axios.get('http://localhost:3005/book');
+      const responseBook = await axios.get('https://api2.librarysmayuppentek.sch.id/book');
       setBooks(responseBook.data?.data ?? []);
     } catch (error) {
       console.log(error);
@@ -164,7 +164,7 @@ const AdminPeminjaman = () => {
 
   const fetchSisws = async () => {
     try {
-      const responseSiswa = await axios.get('http://localhost:3005/siswa');
+      const responseSiswa = await axios.get('https://api2.librarysmayuppentek.sch.id/siswa');
       setSiswas(responseSiswa.data?.data ?? []);
       console.log(responseSiswa.data.data)
     } catch (error) {
@@ -302,7 +302,7 @@ const AdminPeminjaman = () => {
     setPeminjamanDatas(newDataPeminjamans);
 
     axios
-      .post('http://localhost:3005/peminjaman', newDataPeminjaman)
+      .post('https://api2.librarysmayuppentek.sch.id/peminjaman', newDataPeminjaman)
       .then((res) => {
         console.log(res);
         setOpenModal(false);
@@ -319,7 +319,7 @@ const AdminPeminjaman = () => {
 
   const handleDelete = async (idPeminjaman) => {
     try {
-      await axios.delete(`http://localhost:3005/peminjaman/${idPeminjaman}`)
+      await axios.delete(`https://api2.librarysmayuppentek.sch.id/peminjaman/${idPeminjaman}`)
       fetchData()
     } catch (err) {
       console.log(err)
@@ -336,7 +336,7 @@ const AdminPeminjaman = () => {
       denda: calculateDenda(formatDate(siswa.tglKembali), formatDate(siswa.batasPinjam)),
     };
     try {
-      await axios.put(`http://localhost:3005/peminjaman/${idPeminjaman}`, editedDataPeminjaman)
+      await axios.put(`https://api2.librarysmayuppentek.sch.id/peminjaman/${idPeminjaman}`, editedDataPeminjaman)
       fetchData()
       setAddFormData(siswa);
       console.log(editedDataPeminjaman);
@@ -418,7 +418,7 @@ const AdminPeminjaman = () => {
         batasPinjam: formatDate(currentId.batasPinjam),
         tglKembali: formatDate(currentId.tglKembali) ? formatDate(currentId.tglKembali) : null,
       };
-      await axios.put(`http://localhost:3005/peminjaman/${currentId.idPeminjaman}`, formattedData)
+      await axios.put(`https://api2.librarysmayuppentek.sch.id/peminjaman/${currentId.idPeminjaman}`, formattedData)
       fetchData()
       batalHandler()
     } catch (err) {
@@ -439,7 +439,7 @@ const AdminPeminjaman = () => {
 
     try {
       await axios.put(
-        `http://localhost:3005/peminjaman/${idPeminjaman}`,
+        `https://api2.librarysmayuppentek.sch.id/peminjaman/${idPeminjaman}`,
         editedDataPeminjaman
       );
       fetchData();

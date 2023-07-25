@@ -16,7 +16,7 @@ const Register = () => {
     e.preventDefault()
 
     try {
-      await axios.post('http://localhost:3005/admin', {
+      await axios.post('https://api2.librarysmayuppentek.sch.id/admin', {
         name: nama,
         username: username,
         password: password,

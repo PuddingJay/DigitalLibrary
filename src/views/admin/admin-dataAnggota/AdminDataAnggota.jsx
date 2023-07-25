@@ -49,7 +49,7 @@ const AdminDataAnggota = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/siswa')
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/siswa')
       setDataAnggota(response.data.data)
     } catch (error) {
       console.error(error)
@@ -62,7 +62,7 @@ const AdminDataAnggota = () => {
     const formData = { NIS, Nama, Kelas, Jurusan }
 
     axios
-      .post('http://localhost:3005/siswa', formData)
+      .post('https://api2.librarysmayuppentek.sch.id/siswa', formData)
       .then(() => {
         toggleModalTambah()
         fetchData()
@@ -74,7 +74,7 @@ const AdminDataAnggota = () => {
 
   const handleDelete = async (NIS) => {
     try {
-      await axios.delete(`http://localhost:3005/siswa/${NIS}`)
+      await axios.delete(`https://api2.librarysmayuppentek.sch.id/siswa/${NIS}`)
       fetchData()
     } catch (error) {
       console.log(error)
@@ -85,7 +85,7 @@ const AdminDataAnggota = () => {
     const formData = { NIS, Nama, Kelas, Jurusan }
 
     try {
-      await axios.put(`http://localhost:3005/siswa/${currentAnggotaId}`, formData)
+      await axios.put(`https://api2.librarysmayuppentek.sch.id/siswa/${currentAnggotaId}`, formData)
       toggleModalUpdate()
       fetchData()
 

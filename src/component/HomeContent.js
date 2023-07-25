@@ -10,7 +10,6 @@ import axios from 'axios'
 import jwtDecode from 'jwt-decode'
 
 const AppContent = () => {
-  const [, setToken] = useState('')
   const [, setExpire] = useState('')
   const navigate = useNavigate()
 
@@ -22,21 +21,32 @@ const AppContent = () => {
 
   const refreshToken = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/siswa/token')
-      setToken(response.data.accessToken)
+      const refreshToken = localStorage.getItem('refreshTokenSiswa')
+
+      if (!refreshToken) {
+        throw new Error('Refresh token not found')
+      }
+
+      const response = await axios.get(
+        `http://api2.librarysmayuppentek.sch.id/berhasilLogin/${refreshToken}`,
+      )
+
       const decoded = jwtDecode(response.data.accessToken)
+      localStorage.setItem('refreshTokenSiswa', refreshToken)
       setExpire(decoded.exp)
       console.log(decoded)
     } catch (err) {
-      if (err.response && err.response.status === 401) {
-        navigate('/login')
+      if (err.message === 'Refresh token not found') {
+        navigate('/siswa/login')
+      } else if (err.response && err.response.status === 401) {
+        navigate('/siswa/login')
       }
-      console.log(err.message)
+      console.log(err)
     }
   }
 
   // const getAdmin = async () => {
-  //   const response = await axiosJWT.get('http://localhost:3005/admin', {
+  //   const response = await axiosJWT.get('https://api2.librarysmayuppentek.sch.id/admin', {
   //     headers: {
   //       Authorization: `Bearer ${token}`,
   //     },
@@ -51,7 +61,7 @@ const AppContent = () => {
   //     const currentDate = new Date()
   //     if (expire * 1000 < currentDate.getTime()) {
   //       try {
-  //         const response = await axios.get('http://localhost:3005/token')
+  //         const response = await axios.get('https://api2.librarysmayuppentek.sch.id/token')
   //         config.headers.Authorization = `Bearer ${response.data.accessToken}`
   //         setToken(response.data.accessToken)
   //         const decoded = jwtDecode(response.data.accessToken)

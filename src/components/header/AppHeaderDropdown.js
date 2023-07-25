@@ -22,10 +22,13 @@ const AppHeaderDropdown = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/token')
+      const refreshToken = localStorage.getItem('refreshToken')
+      const response = await axios.get(
+        `https://api2.librarysmayuppentek.sch.id/token/${refreshToken}`,
+      )
       const decoded = jwtDecode(response.data.accessToken)
       setName(decoded.name)
-      // console.log(decoded)
+      console.log(decoded)
     } catch (error) {
       console.error(error)
     }
@@ -34,7 +37,10 @@ const AppHeaderDropdown = () => {
   const navigate = useNavigate()
   const logout = async () => {
     try {
-      await axios.delete('http://localhost:3005/logout')
+      const refreshToken = localStorage.getItem('refreshToken')
+      await axios.delete(`https://api2.librarysmayuppentek.sch.id/logout/${refreshToken}`)
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
       navigate('/login')
     } catch (err) {
       console.log(err)
@@ -58,7 +64,7 @@ const AppHeaderDropdown = () => {
           <CIcon icon={cilUser} className="me-2" disabled />
           Hello, {name}
         </CDropdownItem>
-        <CDropdownItem href="/login" onClick={logout}>
+        <CDropdownItem onClick={logout}>
           <CIcon icon={cilDoor} className="me-2" />
           Logout
         </CDropdownItem>

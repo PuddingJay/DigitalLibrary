@@ -48,7 +48,10 @@ const Books = React.forwardRef((props, ref) => {
           <Card className="shadow" key={item.idBuku}>
             <Card.Body>
               <Link to={`/Detail/${item.idBuku}`}>
-                <Card.Img variant="top" src={`http://localhost:3005/${item.cover_buku}`} />
+                <Card.Img
+                  variant="top"
+                  src={`https://api2.librarysmayuppentek.sch.id/${item.cover_buku}`}
+                />
                 <Card.Title>{item.judul}</Card.Title>
                 <Card.Text>Tersedia: {item.jumlah}</Card.Text>
               </Link>

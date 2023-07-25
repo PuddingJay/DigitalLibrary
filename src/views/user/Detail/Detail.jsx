@@ -15,7 +15,7 @@ const DetailBuku = () => {
   useEffect(() => {
     const fetchCatalogItem = async () => {
       try {
-        const url = `http://localhost:3005/book/${params.id}`
+        const url = `https://api2.librarysmayuppentek.sch.id/book/${params.id}`
         const response = await axios.get(url)
         setCatalogItem(response.data.data[0])
       } catch (error) {
@@ -35,7 +35,7 @@ const DetailBuku = () => {
       <div className="bookDetailContainer">
         <div className="bookPosterAction">
           <img
-            src={`http://localhost:3005/${catalogItem.cover_buku}`}
+            src={`https://api2.librarysmayuppentek.sch.id/${catalogItem.cover_buku}`}
             alt={catalogItem.judul}
             className="bookPoster"
           />

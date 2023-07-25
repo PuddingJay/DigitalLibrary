@@ -6,7 +6,7 @@ import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom'
 
 // eslint-disable-next-line react/prop-types
-const Login = ({ loginSuccess }) => {
+const Login = () => {
   const [Nama, setNama] = useState('')
   const [password, setPassword] = useState('')
   const [msg, setMsg] = useState('')
@@ -15,12 +15,17 @@ const Login = ({ loginSuccess }) => {
   const Auth = async (e) => {
     e.preventDefault()
     try {
-      const response = await axios.post('http://localhost:3005/siswa/login', {
+      const response = await axios.post('https://api2.librarysmayuppentek.sch.id/siswa/login', {
         Nama: Nama,
         password: password,
       })
+
+      const { accessToken, refreshToken } = response.data
+      // Store the accessToken and refreshToken in localStorage
+      localStorage.setItem('accessTokenSiswa', accessToken)
+      localStorage.setItem('refreshTokenSiswa', refreshToken)
+
       navigate('/Home')
-      loginSuccess(response)
     } catch (error) {
       if (error.response) {
         setMsg(error.response.data.message)

@@ -46,7 +46,7 @@ const Dashboard = () => {
   useEffect(() => {
     // Fetch total number of books
     axios
-      .get('http://localhost:3005/book')
+      .get('https://api2.librarysmayuppentek.sch.id/book')
       .then((response) => {
         setTotalBooks(response.data.data.length)
         setBooks(response.data.data)
@@ -57,11 +57,10 @@ const Dashboard = () => {
 
     // Fetch total number of users
     axios
-      .get('http://localhost:3005/siswa')
+      .get('https://api2.librarysmayuppentek.sch.id/siswa')
       .then((response) => {
         setTotalUsers(response.data.data.length)
         setSiswa(response.data.data)
-        console.log(response.data.data)
       })
       .catch((error) => {
         console.error('Error fetching Siswa data::', error)
@@ -69,7 +68,7 @@ const Dashboard = () => {
 
     // Fetch chartData from peminjaman
     axios
-      .get('http://localhost:3005/peminjaman')
+      .get('https://api2.librarysmayuppentek.sch.id/peminjaman')
       .then((response) => {
         setPeminjaman(response.data.data)
       })
@@ -113,7 +112,6 @@ const Dashboard = () => {
       totalDenda += dendaValue
     })
     const formattedDenda = 'Rp ' + totalDenda.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-    console.log(formattedDenda)
     return formattedDenda
   }
 
@@ -130,8 +128,6 @@ const Dashboard = () => {
         monthlyDenda[monthIndex] += dendaValue
       }
     })
-
-    console.log(monthlyDenda)
     return monthlyDenda
   }
 
@@ -167,8 +163,6 @@ const Dashboard = () => {
     }
   }, [peminjaman])
 
-  console.log(chartData)
-
   const getPeminjamanDataByMonth = () => {
     // Initialize an array to hold the monthly peminjaman data
     const monthlyData = Array(12).fill(0)
@@ -192,7 +186,6 @@ const Dashboard = () => {
       if (item.status === 'Dikembalikan' || item.status === 'Lunas') {
         monthlyData[month]++
       }
-      console.log(month)
     })
     return monthlyData
   }

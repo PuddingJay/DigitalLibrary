@@ -22,21 +22,35 @@ const NavbarComponent = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/berhasilLogin')
+      const refreshToken = localStorage.getItem('refreshTokenSiswa')
+
+      if (!refreshToken) {
+        throw new Error('Refresh token siswa not found')
+      }
+
+      const response = await axios.get(
+        `https://api2.librarysmayuppentek.sch.id/berhasilLogin/${refreshToken}`,
+      )
+
       const decoded = jwtDecode(response.data.accessToken)
       setNama(decoded.Nama)
       console.log(decoded)
     } catch (err) {
-      if (err.response && err.response.status === 401) {
+      if (err.message === 'Refresh token siswa not found') {
+        navigate('/siswa/login')
+      } else if (err.response && err.response.status === 401) {
         navigate('/siswa/login')
       }
-      console.log(err.message)
+      console.log(err)
     }
   }
 
   const logout = async () => {
     try {
-      await axios.delete('http://localhost:3005/siswaLogout')
+      const refreshToken = localStorage.getItem('refreshTokenSiswa')
+      await axios.delete(`https://api2.librarysmayuppentek.sch.id/siswaLogout/${refreshToken}`)
+      localStorage.removeItem('accessTokenSiswa')
+      localStorage.removeItem('refreshTokenSiswa')
       navigate('/siswa/login')
     } catch (err) {
       console.log(err)

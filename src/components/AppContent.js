@@ -9,7 +9,7 @@ import axios from 'axios'
 import jwtDecode from 'jwt-decode'
 
 const AppContent = () => {
-  const [, setToken] = useState('')
+  // const [, setToken] = useState('')
   const [setExpire] = useState('')
   const navigate = useNavigate()
 
@@ -21,23 +21,35 @@ const AppContent = () => {
 
   const refreshToken = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/token')
-      setToken(response.data.accessToken)
+      const refreshToken = localStorage.getItem('refreshToken')
+
+      // Check if refreshToken is null
+      if (!refreshToken) {
+        throw new Error('Refresh token not found')
+      }
+
+      const response = await axios.get(
+        `https://api2.librarysmayuppentek.sch.id/token/${refreshToken}`,
+      )
+      localStorage.setItem('refreshToken', refreshToken)
       const decoded = jwtDecode(response.data.accessToken)
       setExpire(decoded.exp)
       console.log(decoded)
     } catch (err) {
-      if (err.response && err.response.status === 401) {
+      if (err.message === 'Refresh token not found') {
+        navigate('/login')
+      } else if (err.response && err.response.status === 401) {
         navigate('/login')
       }
-      console.log(err.message)
-    } finally {
-      try {
-        await axios.delete('http://localhost:3005/siswaLogout')
-      } catch (err) {
-        console.log(err.message)
-      }
+      console.log(err)
     }
+    // finally {
+    //   try {
+    //     await axios.delete('https://api2.librarysmayuppentek.sch.id/siswaLogout')
+    //   } catch (err) {
+    //     console.log(err.message)
+    //   }
+    // }
   }
 
   return (

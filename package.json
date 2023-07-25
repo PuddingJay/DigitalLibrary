@@ -2,6 +2,7 @@
   "name": "digi-lib",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://librarysmayuppentek.sch.id/",
   "dependencies": {
     "@coreui/coreui": "^4.2.6",
     "@coreui/coreui-pro": "^4.6.0-alpha.1",
