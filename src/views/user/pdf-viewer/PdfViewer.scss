@@ -100,3 +100,56 @@
     cursor: pointer;
   }
 }
+
+.footer {
+  position: relative;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  z-index: 5;
+  flex-wrap: nowrap;
+  flex-direction: row;
+
+  .logo {
+    width: 100px;
+    height: 70px;
+
+    @include mobile {
+      margin: 0 10px;
+      width: 150px;
+      height: auto;
+    }
+
+    margin: 0;
+    z-index: 9999;
+  }
+
+  span {
+    font-size: 10px;
+
+    @include mobile {
+      font-size: 15px;
+    }
+
+    margin-right: 5px;
+  }
+
+  a {
+    font-size: 10px;
+
+    @include mobile {
+      font-size: 15px;
+    }
+  }
+
+  p {
+    font-size: 10px;
+
+    @include mobile {
+      font-size: 15px;
+    }
+  }
+}

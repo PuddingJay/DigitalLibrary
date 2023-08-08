@@ -1,21 +1,26 @@
 import React, { useState } from 'react'
 import './login.scss'
 import logo from '../../../assets/logoSMA.png'
-import { CFormInput } from '@coreui/react-pro'
+import { CFormInput, CInputGroup, CButton } from '@coreui/react-pro'
 import axios from 'axios'
-import { useNavigate, Link } from 'react-router-dom'
+import CIcon from '@coreui/icons-react'
+import { cilToggleOff, cilToggleOn } from '@coreui/icons'
 
 // eslint-disable-next-line react/prop-types
 const Login = () => {
   const [Nama, setNama] = useState('')
   const [password, setPassword] = useState('')
   const [msg, setMsg] = useState('')
-  const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false)
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword)
+  }
 
   const Auth = async (e) => {
     e.preventDefault()
     try {
-      const response = await axios.post('https://api2.librarysmayuppentek.sch.id/siswa/login', {
+      const response = await axios.post('http://localhost:3005/siswa/login', {
         Nama: Nama,
         password: password,
       })
@@ -25,7 +30,7 @@ const Login = () => {
       localStorage.setItem('accessTokenSiswa', accessToken)
       localStorage.setItem('refreshTokenSiswa', refreshToken)
 
-      navigate('/Home')
+      window.location.href = '/Home'
     } catch (error) {
       if (error.response) {
         setMsg(error.response.data.message)
@@ -49,7 +54,7 @@ const Login = () => {
             <p>SMA Yuppentek 1 Kota Tangerang</p>
           </div>
           <form onSubmit={Auth} className="loginContainer">
-            <h1>Login</h1>
+            <h1>Login Siswa</h1>
             <div className="formLogin">
               <CFormInput
                 type="text"
@@ -59,18 +64,36 @@ const Login = () => {
                 value={Nama}
                 onChange={(e) => setNama(e.target.value)}
               />
-              <CFormInput
-                type="password"
-                id="floatingPassword"
-                floatingLabel="Password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button>Masuk </button>
+              <CInputGroup>
+                <CFormInput
+                  type={showPassword ? 'text' : 'password'}
+                  id="floatingPassword"
+                  floatingLabel="Password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <CButton
+                  type="button"
+                  color="secondary"
+                  variant="outline"
+                  onClick={togglePasswordVisibility}
+                >
+                  <CIcon icon={showPassword ? cilToggleOn : cilToggleOff} size="xl" />
+                </CButton>
+              </CInputGroup>
+              <button className="btnMasuk">Masuk </button>
             </div>
-            <Link to="/login">Masuk sebagai Admin</Link>
+            <a href="/login">Masuk sebagai Admin</a>
             <p>{msg}</p>
+            <a
+              className="uper"
+              href="https://universitaspertamina.ac.id/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <img src="/images/logouper.png" alt="" />
+            </a>
           </form>
         </div>
       </div>

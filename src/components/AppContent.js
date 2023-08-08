@@ -1,5 +1,5 @@
-import React, { Suspense, useEffect, useState } from 'react'
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
+import React, { Suspense, useEffect } from 'react'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { CContainer, CSpinner } from '@coreui/react-pro'
 
 // routes config
@@ -10,9 +10,7 @@ import jwtDecode from 'jwt-decode'
 
 const AppContent = () => {
   // const [, setToken] = useState('')
-  const [setExpire] = useState('')
-  const navigate = useNavigate()
-
+  // const [expire, setExpire] = useState('')
   useEffect(() => {
     refreshToken()
     // getAdmin()
@@ -22,30 +20,42 @@ const AppContent = () => {
   const refreshToken = async () => {
     try {
       const refreshToken = localStorage.getItem('refreshToken')
-
-      // Check if refreshToken is null
       if (!refreshToken) {
         throw new Error('Refresh token not found')
       }
 
-      const response = await axios.get(
-        `https://api2.librarysmayuppentek.sch.id/token/${refreshToken}`,
-      )
+      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
       localStorage.setItem('refreshToken', refreshToken)
       const decoded = jwtDecode(response.data.accessToken)
-      setExpire(decoded.exp)
+
+      const oneDayInMilliseconds = 24 * 60 * 60 * 1000
+      const tokenExpirationTime = decoded.exp * 1000
+      const currentTime = Date.now()
+      if (currentTime > tokenExpirationTime + oneDayInMilliseconds) {
+        localStorage.removeItem('refreshToken')
+        throw new Error('Refresh token has expired')
+      }
+
       console.log(decoded)
     } catch (err) {
-      if (err.message === 'Refresh token not found') {
-        navigate('/login')
+      if (
+        err.message === 'Refresh token not found' ||
+        err.message === 'Refresh token has expired' ||
+        (err.response && err.response.status === 403)
+      ) {
+        window.location.href = '/login'
       } else if (err.response && err.response.status === 401) {
-        navigate('/login')
+        window.location.href = '/login'
+      } else if (err.response && err.response.status === 403) {
+        localStorage.removeItem('refreshToken')
+        window.location.href = '/login'
       }
       console.log(err)
     }
     // finally {
     //   try {
-    //     await axios.delete('https://api2.librarysmayuppentek.sch.id/siswaLogout')
+    //     const refreshTokenSiswa = localStorage.getItem('refreshTokenSiswa')
+    //     await axios.delete(`http://localhost:3005/siswaLogout/${refreshTokenSiswa}`)
     //   } catch (err) {
     //     console.log(err.message)
     //   }

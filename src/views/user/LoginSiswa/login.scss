@@ -123,7 +123,7 @@
             // padding: 10px 10px;
           }
 
-          button {
+          .btnMasuk {
             width: 50%;
             padding: 10px;
             border: none;
@@ -132,12 +132,31 @@
             font-weight: bold;
           }
 
+          .input-group {
+            .btn {
+              .icon {
+                .ci-primary {
+                  color: #29266a;
+                }
+              }
+            }
+          }
         }
 
         p {
           text-align: center;
           color: $dark;
           margin-top: 20px;
+        }
+      }
+
+      .uper {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 50px;
+
+        img {
+          width: 80px;
         }
       }
 

@@ -1,6 +1,7 @@
 @import '../../../scss/style.scss';
 
 .bookDetailContainer {
+  min-height: 72vh;
   display: grid;
   padding: 32px;
   margin: 0 auto;
@@ -60,8 +61,8 @@
       gap: 10px;
 
       .card {
-        background-color: $primary;
-        color: white;
+        background-color: $secondary;
+        color: black;
 
         .card-body {
           padding: 10px;
@@ -71,6 +72,62 @@
 
     .bookCreated {
       margin: 30px 0;
+    }
+  }
+}
+
+.footer {
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  z-index: 5;
+  flex-wrap: nowrap;
+  flex-direction: row;
+
+  @include mobile {
+    position: relative;
+  }
+
+  .logo {
+    width: 100px;
+    height: 70px;
+
+    @include mobile {
+      margin: 0 10px;
+      width: 150px;
+      height: auto;
+    }
+
+    margin: 0;
+    z-index: 9999;
+  }
+
+  span {
+    font-size: 10px;
+
+    @include mobile {
+      font-size: 15px;
+    }
+
+    margin-right: 5px;
+  }
+
+  a {
+    font-size: 10px;
+
+    @include mobile {
+      font-size: 15px;
+    }
+  }
+
+  p {
+    font-size: 10px;
+
+    @include mobile {
+      font-size: 15px;
     }
   }
 }

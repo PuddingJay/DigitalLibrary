@@ -24,7 +24,7 @@ function ShowPdf() {
 
   const loadPdf = async () => {
     try {
-      const url = `https://api2.librarysmayuppentek.sch.id/book/pdf/${params.id}`
+      const url = `http://localhost:3005/book/pdf/${params.id}`
       const response = await axios.get(url, {
         responseType: 'blob',
       })

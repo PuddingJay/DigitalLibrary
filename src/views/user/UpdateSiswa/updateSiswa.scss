@@ -1,0 +1,133 @@
+.card {
+  margin: 30px auto;
+  width: 50%;
+  padding: 10px;
+
+  @media only screen and (max-width:600px) {
+    width: 90%;
+  }
+
+  @media (min-width: 601px) and (max-width:1200px) {
+    width: 70%;
+  }
+
+  .alert {
+    margin: 0;
+  }
+
+  .card-body {
+    .profileSiswa {
+
+      @media screen and (max-width:350px) {
+        padding: 15px;
+      }
+
+      padding: 30px;
+      display: flex;
+
+      .name {
+        margin-left: 10px;
+
+        p {
+          opacity: 0.6;
+          margin: 0 0 0 2px;
+        }
+      }
+    }
+
+    .form-updateSiswa {
+      @media screen and (max-width:350px) {
+        padding: 0 15px 15px 15px;
+      }
+
+      padding: 0 30px 30px 30px;
+
+      h4 {
+        opacity: 0.8;
+        margin: 10px 0;
+      }
+
+      label {
+        margin-bottom: 10px;
+      }
+
+      .input-group {
+        margin-bottom: 20px;
+
+        .btn {
+          .icon {
+            .ci-primary {
+              color: #29266a;
+            }
+          }
+        }
+      }
+
+      .btnDaftar {
+        padding: 10px;
+        border: none;
+        background-color: #29266a;
+        color: white;
+        font-weight: bold;
+        width: 100%;
+      }
+    }
+  }
+}
+
+.footer {
+  position: relative;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  z-index: 5;
+  flex-wrap: nowrap;
+  flex-direction: row;
+
+  @media only screen and (min-width: 600px) {
+    position: fixed;
+  }
+
+  .logo {
+    width: 100px;
+    height: 70px;
+
+    @media only screen and (min-width: 600px) {
+      margin: 0 10px;
+      width: 150px;
+      height: auto;
+    }
+
+    margin: 0;
+    z-index: 9999;
+  }
+
+  span {
+    font-size: 10px;
+
+    @media only screen and (min-width: 600px) {
+      font-size: 15px;
+    }
+
+    margin-right: 5px;
+  }
+
+  a {
+    font-size: 10px;
+
+    @media only screen and (min-width: 600px) {
+      font-size: 15px;
+    }
+  }
+
+  p {
+    font-size: 10px;
+
+    @media only screen and (min-width: 600px) {
+      font-size: 15px;
+    }
+  }
+}

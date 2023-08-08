@@ -1,0 +1,56 @@
+.profileInfo {
+  padding: 30px;
+  display: flex;
+
+  .name {
+    margin-left: 10px;
+
+    p {
+      opacity: 0.6;
+      margin: 0 0 0 2px;
+    }
+  }
+}
+
+.updateData-form-container {
+  padding: 0 30px 30px 30px;
+  width: 60%;
+
+  h4 {
+    opacity: 0.8;
+    margin: 10px 0;
+  }
+
+  .formUpdate {
+    display: flex;
+    flex-wrap: wrap;
+
+    label {
+      margin-bottom: 5px;
+    }
+
+    input {
+      border: 1px solid lightgrey;
+      padding: 10px 10px;
+    }
+
+    .input-group {
+      .btn {
+        .icon {
+          .ci-primary {
+            color: #29266a;
+          }
+        }
+      }
+    }
+
+    .btnDaftar {
+      padding: 10px;
+      border: none;
+      background-color: #29266a;
+      color: white;
+      font-weight: bold;
+      width: 100%;
+    }
+  }
+}

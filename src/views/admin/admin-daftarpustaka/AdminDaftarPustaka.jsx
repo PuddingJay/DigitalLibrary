@@ -1,9 +1,8 @@
-// import './AdminDaftarPustaka.scss';
 import React, { useState, useEffect, useRef } from 'react'
 import '../admin-dataAnggota/AdminDataAnggota.scss'
 import './AdminDaftarPustaka.scss'
 
-import { CButton, CCard, CCardBody, CCollapse, CSmartTable } from '@coreui/react-pro'
+import { CButton, CCard, CCardBody, CCollapse, CSmartTable, CAlert } from '@coreui/react-pro'
 import axios from 'axios'
 import {
   Button,
@@ -17,7 +16,7 @@ import {
   Input,
 } from 'reactstrap'
 import CIcon from '@coreui/icons-react'
-import { cilCloudDownload } from '@coreui/icons'
+import { cilCloudDownload, cilCheckCircle } from '@coreui/icons'
 import { Link } from 'react-router-dom'
 
 const AdminDaftarPustaka = () => {
@@ -27,6 +26,7 @@ const AdminDaftarPustaka = () => {
   const [judul, setJudul] = useState('')
   const [penulis, setPenulis] = useState('')
   const [Kategori, setKategori] = useState('')
+  const [ringkasan, setRingkasan] = useState(null)
   const [tahun_terbit, setTahun_terbit] = useState('')
   const [keterangan, setKeterangan] = useState('')
   const [jumlah, setJumlah] = useState('')
@@ -35,6 +35,9 @@ const AdminDaftarPustaka = () => {
   const [modalTambah, setModalTambah] = useState(false)
   const [modalUpdate, setModalUpdate] = useState(false)
   const [currentBookId, setCurrentBookId] = useState('')
+
+  const [msg, setMsg] = useState(null)
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false)
 
   const formRef = useRef(null)
 
@@ -48,6 +51,7 @@ const AdminDaftarPustaka = () => {
     setJudul('')
     setPenulis('')
     setKategori('')
+    setRingkasan('')
     setTahun_terbit('')
     setKeterangan('')
     setJumlah('')
@@ -63,7 +67,7 @@ const AdminDaftarPustaka = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/book')
+      const response = await axios.get('http://localhost:3005/book')
       setDaftarPustaka(response.data.data)
     } catch (error) {
       console.error(error)
@@ -79,12 +83,18 @@ const AdminDaftarPustaka = () => {
     console.log(formData)
 
     axios
-      .post('https://api2.librarysmayuppentek.sch.id/book', formData)
-      .then(() => {
+      .post('http://localhost:3005/book', formData)
+      .then((res) => {
         toggleModalTambah()
-        console.log(formData)
+        // console.log(formData)
         fetchData()
-        console.log(formData)
+        // console.log(formData)
+        setMsg(res.data.message)
+        setShowSuccessAlert(true)
+
+        setTimeout(() => {
+          setShowSuccessAlert(false)
+        }, 3000)
       })
       .catch((error) => {
         console.error(error)
@@ -94,7 +104,13 @@ const AdminDaftarPustaka = () => {
 
   const handleDelete = async (idBuku) => {
     try {
-      await axios.delete(`https://api2.librarysmayuppentek.sch.id/book/${idBuku}`)
+      const response = await axios.delete(`http://localhost:3005/book/${idBuku}`)
+      setMsg(response.data.message)
+      setShowSuccessAlert(true)
+
+      setTimeout(() => {
+        setShowSuccessAlert(false)
+      }, 3000)
       fetchData()
     } catch (error) {
       console.log(error)
@@ -106,11 +122,19 @@ const AdminDaftarPustaka = () => {
 
     cover_buku?.files && formData.append('cover_buku', cover_buku.files[0])
     file_ebook?.files && formData.append('cover_buku', file_ebook.files[0])
-    console.log('after', formData)
     try {
-      await axios.put(`https://api2.librarysmayuppentek.sch.id/book/${currentBookId}`, formData)
+      const response = await axios.put(
+        `http://localhost:3005/book/${currentBookId.kodeBuku}`,
+        formData,
+      )
       toggleModalUpdate()
       fetchData()
+      setMsg(response.data.message)
+      setShowSuccessAlert(true)
+
+      setTimeout(() => {
+        setShowSuccessAlert(false)
+      }, 3000)
 
       // Perbarui data buku yang sudah dirubah dengan data baru
       setDaftarPustaka((prevData) => {
@@ -122,6 +146,7 @@ const AdminDaftarPustaka = () => {
               judul: judul || item.judul,
               penulis: penulis || item.penulis,
               Kategori: Kategori || item.Kategori,
+              ringkasan: ringkasan || item.ringkasan,
               tahun_terbit: tahun_terbit || item.tahun_terbit,
               keterangan: keterangan || item.keterangan,
               jumlah: jumlah || item.jumlah,
@@ -129,7 +154,9 @@ const AdminDaftarPustaka = () => {
               file_ebook: file_ebook?.files[0]?.name || item.file_ebook,
             }
           }
-          console.log(item)
+          console.log(currentBookId.kodeBuku)
+          console.log(ringkasan)
+          console.log(Kategori)
           return item
         })
       })
@@ -139,6 +166,7 @@ const AdminDaftarPustaka = () => {
       setJudul('')
       setPenulis('')
       setKategori('')
+      setRingkasan('')
       setTahun_terbit('')
       setKeterangan('')
       setJumlah('')
@@ -156,6 +184,7 @@ const AdminDaftarPustaka = () => {
     setJudul(book.judul)
     setPenulis(book.penulis)
     setKategori(book.Kategori)
+    setRingkasan(book.ringkasan)
     setTahun_terbit(book.tahun_terbit)
     setKeterangan(book.keterangan)
     setJumlah(book.jumlah)
@@ -180,10 +209,10 @@ const AdminDaftarPustaka = () => {
       key: 'cover_buku',
       _style: { width: '10%' },
       formatter: (item) => (
-        // <img src={`https://api2.librarysmayuppentek.sch.id/${item.cover_buku}`} alt="Cover Buku" />
+        // <img src={`http://localhost:3005/${item.cover_buku}`} alt="Cover Buku" />
         <div>
           <img
-            src={`https://api2.librarysmayuppentek.sch.id/${item.cover_buku}`}
+            src={`http://localhost:3005/${item.cover_buku}`}
             alt="Cover Buku"
             style={{ width: '100px', height: 'auto' }}
           />
@@ -196,7 +225,7 @@ const AdminDaftarPustaka = () => {
     },
     {
       key: 'show_details',
-      label: 'Aksi',
+      label: '',
       _style: { width: '1%' },
       filter: false,
       sorter: false,
@@ -215,12 +244,32 @@ const AdminDaftarPustaka = () => {
   }
 
   // buat download
-  const csvContent = DaftarPustaka.map((item) => Object.values(item).join(',')).join('\n')
-  const csvCode = 'data:text/csv;charset=utf-8,SEP=,%0A' + encodeURIComponent(csvContent)
+  const getCsvHeader = () => {
+    return columns.map((column) => column.key).join(',')
+  }
+
+  const getCsvRow = (item) => {
+    return columns
+      .map((column) => {
+        const value = item[column.key]
+        return Array.isArray(value) ? value.join(' | ') : value // Separate arrays with ' | '
+      })
+      .join(',')
+  }
+
+  const csvContent = DaftarPustaka.map(getCsvRow).join('\n')
+  const csvCode =
+    'data:text/csv;charset=utf-8,' + encodeURIComponent(getCsvHeader() + '\n' + csvContent)
 
   try {
     return (
       <>
+        {showSuccessAlert && (
+          <CAlert color="success" className="d-flex align-items-center">
+            <CIcon icon={cilCheckCircle} className="flex-shrink-0 me-2" width={24} height={24} />
+            <div>{msg}</div>
+          </CAlert>
+        )}
         <CCard>
           <CCardBody>
             <div className="actionDaftarPustaka">
@@ -300,6 +349,16 @@ const AdminDaftarPustaka = () => {
                       <option value="Lainnya">Lainnya</option>
                       {/* Tambahkan opsi tipe file lainnya sesuai kebutuhan */}
                     </Input>
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="ringkasan">Ringkasan</Label>
+                    <Input
+                      type="textarea"
+                      name="ringkasan"
+                      id="ringkasan"
+                      value={ringkasan}
+                      onChange={(e) => setRingkasan(e.target.value)}
+                    />
                   </FormGroup>
                   <FormGroup>
                     <Label for="tahun_terbit">Tahun Terbit</Label>
@@ -431,6 +490,16 @@ const AdminDaftarPustaka = () => {
                     </Input>
                   </FormGroup>
                   <FormGroup>
+                    <Label for="ringkasan">Ringkasan</Label>
+                    <Input
+                      type="textarea"
+                      name="ringkasan"
+                      id="ringkasan"
+                      value={ringkasan}
+                      onChange={(e) => setRingkasan(e.target.value)}
+                    />
+                  </FormGroup>
+                  <FormGroup>
                     <Label for="tahun_terbit">Tahun Terbit</Label>
                     <Input
                       type="text"
@@ -534,7 +603,7 @@ const AdminDaftarPustaka = () => {
                           toggleDetails(item.idBuku)
                         }}
                       >
-                        {details.includes(item.idBuku) ? 'Hide' : 'Show'}
+                        {details.includes(item.idBuku) ? 'Hide' : 'Aksi'}
                       </CButton>
                     </td>
                   )

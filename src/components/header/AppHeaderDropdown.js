@@ -7,14 +7,15 @@ import {
   CDropdownMenu,
   CDropdownToggle,
 } from '@coreui/react-pro'
-import { cilUser, cilDoor } from '@coreui/icons'
+import { cilUser, cilDoor, cilSettings, cilSmilePlus } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import axios from 'axios'
 import jwtDecode from 'jwt-decode'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const AppHeaderDropdown = () => {
   const [name, setName] = useState('')
+  const [hovered, setHovered] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -23,9 +24,7 @@ const AppHeaderDropdown = () => {
   const fetchData = async () => {
     try {
       const refreshToken = localStorage.getItem('refreshToken')
-      const response = await axios.get(
-        `https://api2.librarysmayuppentek.sch.id/token/${refreshToken}`,
-      )
+      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
       const decoded = jwtDecode(response.data.accessToken)
       setName(decoded.name)
       console.log(decoded)
@@ -34,14 +33,13 @@ const AppHeaderDropdown = () => {
     }
   }
 
-  const navigate = useNavigate()
   const logout = async () => {
     try {
       const refreshToken = localStorage.getItem('refreshToken')
-      await axios.delete(`https://api2.librarysmayuppentek.sch.id/logout/${refreshToken}`)
+      await axios.delete(`http://localhost:3005/logout/${refreshToken}`)
       localStorage.removeItem('accessToken')
       localStorage.removeItem('refreshToken')
-      navigate('/login')
+      window.location.href = '/login'
     } catch (err) {
       console.log(err)
     }
@@ -60,13 +58,30 @@ const AppHeaderDropdown = () => {
         <CDropdownHeader className="bg-body-secondary fw-semibold py-2 rounded-top">
           Account
         </CDropdownHeader>
-        <CDropdownItem href="">
+        <CDropdownItem>
           <CIcon icon={cilUser} className="me-2" disabled />
-          Hello, {name}
+          Halo, {name}
         </CDropdownItem>
-        <CDropdownItem onClick={logout}>
+        <Link to="/updateData" style={{ textDecoration: 'none' }}>
+          <CDropdownItem component="span">
+            <CIcon icon={cilSettings} className="me-2" disabled />
+            Edit Account
+          </CDropdownItem>
+        </Link>
+        <Link to="/register" style={{ textDecoration: 'none' }}>
+          <CDropdownItem component="span">
+            <CIcon icon={cilSmilePlus} className="me-2" disabled />
+            Daftar Admin
+          </CDropdownItem>
+        </Link>
+        <CDropdownItem
+          onClick={logout}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          style={{ cursor: hovered ? 'pointer' : 'default' }}
+        >
           <CIcon icon={cilDoor} className="me-2" />
-          Logout
+          Keluar
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>

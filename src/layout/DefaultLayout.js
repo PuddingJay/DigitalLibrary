@@ -3,7 +3,6 @@ import { AppContent, AppSidebar, AppFooter, AppHeader } from '../components/inde
 // import { CImage } from '@coreui/react-pro'
 
 const DefaultLayout = () => {
-  // const linkUper = 'https://universitaspertamina.ac.id/'
   return (
     <>
       <AppSidebar />
@@ -12,7 +11,6 @@ const DefaultLayout = () => {
         <div className="body flex-grow-1 px-3">
           <AppContent />
         </div>
-        {/* <CImage href={linkUper} className="logo" fluid rounded src="/images/logouper.png" /> */}
         <AppFooter />
       </div>
     </>

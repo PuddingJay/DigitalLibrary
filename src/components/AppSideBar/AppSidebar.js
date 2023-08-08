@@ -10,9 +10,10 @@ import 'simplebar/dist/simplebar.min.css'
 import './appSidebar.scss'
 
 // sidebar nav config
-import navigation from '../../_nav'
+import SidebarData from '../../_nav'
 
 const AppSidebar = () => {
+  const _nav = SidebarData()
   const dispatch = useDispatch()
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.sidebarShow)
@@ -60,7 +61,7 @@ const AppSidebar = () => {
       </CSidebarBrand>
       <CSidebarNav>
         <SimpleBar>
-          <AppSidebarNav items={navigation} />
+          <AppSidebarNav items={_nav} />
         </SimpleBar>
       </CSidebarNav>
       <CImage className="logo" fluid rounded src="/images/logouper.png" />

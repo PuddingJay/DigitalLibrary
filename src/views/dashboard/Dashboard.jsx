@@ -46,7 +46,7 @@ const Dashboard = () => {
   useEffect(() => {
     // Fetch total number of books
     axios
-      .get('https://api2.librarysmayuppentek.sch.id/book')
+      .get('http://localhost:3005/book')
       .then((response) => {
         setTotalBooks(response.data.data.length)
         setBooks(response.data.data)
@@ -57,23 +57,23 @@ const Dashboard = () => {
 
     // Fetch total number of users
     axios
-      .get('https://api2.librarysmayuppentek.sch.id/siswa')
+      .get('http://localhost:3005/siswa')
       .then((response) => {
         setTotalUsers(response.data.data.length)
         setSiswa(response.data.data)
       })
       .catch((error) => {
-        console.error('Error fetching Siswa data::', error)
+        console.error('Error fetching Siswa data:', error)
       })
 
     // Fetch chartData from peminjaman
     axios
-      .get('https://api2.librarysmayuppentek.sch.id/peminjaman')
+      .get('http://localhost:3005/peminjaman')
       .then((response) => {
         setPeminjaman(response.data.data)
       })
       .catch((error) => {
-        console.error('Error fetching Siswa data::', error)
+        console.error('Error fetching peminjaman data:', error)
       })
   }, [])
 
@@ -472,7 +472,7 @@ const Dashboard = () => {
             </CCardBody>
           </CCard>
         </CCol>
-        <CCol xl={3}>
+        {/* <CCol xl={3}>
           <CRow>
             <CCol md={4} xl={12}>
               <CWidgetStatsA
@@ -727,7 +727,7 @@ const Dashboard = () => {
               />
             </CCol>
           </CRow>
-        </CCol>
+        </CCol> */}
       </CRow>
     </>
   )

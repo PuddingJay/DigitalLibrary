@@ -7,6 +7,7 @@ import pdfjsWorker from 'react-pdf/node_modules/pdfjs-dist/build/pdf.worker.entr
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import NavbarComponent from '../../component/navbar/NavbarComponent'
+import { CFooter, CLink, CImage } from '@coreui/react-pro'
 import '../user/pdf-viewer/PdfViewer.scss'
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
@@ -15,6 +16,7 @@ function PdfRead() {
   const [pageNumber, setPageNumber] = useState(1)
   const [pdfBlob, setPdfBlob] = useState(null)
   const [jumpToPage, setJumpToPage] = useState(1)
+  const linkUper = 'https://universitaspertamina.ac.id/'
   // const noPrint = new NoPrint()
 
   const params = useParams()
@@ -25,7 +27,7 @@ function PdfRead() {
 
   const loadPdf = async () => {
     try {
-      const url = `https://api2.librarysmayuppentek.sch.id/book/pdf/${params.id}`
+      const url = `http://localhost:3005/book/pdf/${params.id}`
       const response = await axios.get(url, {
         responseType: 'blob',
       })
@@ -144,6 +146,15 @@ function PdfRead() {
             </div>
           )}
         </div>
+        <CFooter>
+          <CImage href={linkUper} className="logo" rounded src="/images/logouper.png" />
+          <div style={{ fontFamily: 'Poppins' }}>
+            <span className="ms-1"> Copyright &copy; 2023 Pengabdian Kepada Masyarakat</span>
+            <CLink href={linkUper} target="_blank" rel="noreferrer">
+              Universitas Pertamina
+            </CLink>
+          </div>
+        </CFooter>
       </div>
     </div>
   )

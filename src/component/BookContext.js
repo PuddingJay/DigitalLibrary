@@ -38,7 +38,7 @@ export const BookProvider = ({ children }) => {
   const [state, dispatch] = useReducer(bookReducer, initialState)
   const fetchData = async () => {
     try {
-      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/book')
+      const response = await axios.get('http://localhost:3005/book')
       dispatch({ type: 'FETCH_BOOKS', payload: response.data.data })
     } catch (error) {
       console.error(error)
