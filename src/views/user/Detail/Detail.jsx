@@ -34,13 +34,13 @@ const DetailBuku = () => {
   const [catalogItem, setCatalogItem] = useState(null)
   const params = useParams()
   const [likeCount, setLikeCount] = useState(catalogItem?.likes)
-  const [dislikeCount, setDislikeCount] = useState(catalogItem?.dislike)
+  const [, setDislikeCount] = useState(catalogItem?.dislike)
   const [Nama, setNama] = useState('')
   const [NIS, setNIS] = useState('')
-  const [kelas, setKelas] = useState('')
+  const [, setKelas] = useState('')
   const [siswaId, setSiswaId] = useState('')
   const [KomentarDatas, setKomentarDatas] = useState([])
-  const [jurusan, setJurusan] = useState('')
+  const [, setJurusan] = useState('')
   const navigate = useNavigate()
   const [RiwayatDatas, setRiwayatDatas] = useState([])
   const [kodeBuku, setKodeBuku] = useState(null)
@@ -100,14 +100,14 @@ const DetailBuku = () => {
     }
   }
 
-  const [addFormRiwayat, setAddFormRiwayat] = useState({
-    NIS: null, // Menggunakan siswaId yang sudah didapatkan dari fetchData
-    NamaAkun: null, // Menggunakan nama yang sudah didapatkan dari fetchData
-    kodeBukuRiwayat: null,
-    judulRiwayat: null,
-    coverRiwayat: null,
-    tersediaRiwayat: null,
-  })
+  // const [addFormRiwayat, setAddFormRiwayat] = useState({
+  //   NIS: null, // Menggunakan siswaId yang sudah didapatkan dari fetchData
+  //   NamaAkun: null, // Menggunakan nama yang sudah didapatkan dari fetchData
+  //   kodeBukuRiwayat: null,
+  //   judulRiwayat: null,
+  //   coverRiwayat: null,
+  //   tersediaRiwayat: null,
+  // })
 
   const fetchData = async () => {
     try {
