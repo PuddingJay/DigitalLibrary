@@ -1,25 +1,26 @@
 $deprecation-warnings: false !default;
 
-@import '@coreui/coreui-pro/scss/functions';
+@import "@coreui/coreui-pro/scss/functions";
 
 // If you want to override variables do it here
-@import 'variables';
-@import 'variables-dark';
+@import "variables";
+@import "variables-dark";
 
 // Import styles
-@import '@coreui/coreui-pro/scss/coreui';
+@import "@coreui/coreui-pro/scss/coreui";
+
 
 // Import Chart.js custom tooltips styles
-@import '@coreui/chartjs/scss/coreui-chartjs';
+@import "@coreui/chartjs/scss/coreui-chartjs";
 
-@import 'examples';
-@import 'layout';
+@import "examples";
+@import "layout";
 
 // Plugins
-@import 'calendar';
+@import "calendar";
 
 // If you want to add custom CSS you can put it here.
-@import 'custom';
+@import "custom";
 
 html {
   scroll-behavior: smooth;

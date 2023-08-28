@@ -5,10 +5,10 @@ import ListGroup from 'react-bootstrap/ListGroup'
 
 const ListCategories = () => {
   const [DaftarPustaka, setDaftarPustaka] = useState([])
-  const [UniqueCategories, setUniqueCategories] = useState([])
 
   useEffect(() => {
     fetchData()
+    console.log(DaftarPustaka)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -16,10 +16,6 @@ const ListCategories = () => {
     try {
       const response = await axios.get('http://localhost:3005/book')
       setDaftarPustaka(response.data.data)
-
-      // Extract unique categories
-      const categories = [...new Set(response.data.data.map((item) => item.Kategori))]
-      setUniqueCategories(categories)
     } catch (error) {
       console.error(error)
     }
@@ -32,9 +28,10 @@ const ListCategories = () => {
       </strong>
       <hr />
       <ListGroup>
-        {UniqueCategories.map((category) => (
-          <ListGroup.Item key={category}>
-            <h9>{category}</h9>
+        {DaftarPustaka.map((item) => (
+          <ListGroup.Item key={item.kode_buku}>
+            {/* onClick={() => ChangeCategory(item.Kategori)} className={categoryTerpilih === item.Kategori && "category-aktif"} style={{ cursor: "pointer" }} */}
+            <h9>{item.Kategori}</h9>
           </ListGroup.Item>
         ))}
       </ListGroup>

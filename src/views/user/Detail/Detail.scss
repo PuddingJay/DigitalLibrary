@@ -1,7 +1,7 @@
 @import '../../../scss/style.scss';
 
 .bookDetailContainer {
-  min-height: 80vh;
+  min-height: 72vh;
   display: grid;
   padding: 32px;
   margin: 0 auto;
@@ -37,9 +37,11 @@
       width: 100%;
     }
   }
+
   .likesContainerWrapper {
     display: flex;
-    gap: 16px; /* Jarak antara tombol Like dan Dislike */
+    gap: 16px;
+    /* Jarak antara tombol Like dan Dislike */
   }
 
   .likesContainer {
@@ -123,6 +125,7 @@
   }
 
   .bookInfo {
+
     .bookTitle,
     .bookDescription {
       grid-column-start: 2;
@@ -136,6 +139,8 @@
       .card {
         background-color: $primary;
         color: white;
+        // background-color: $secondary;
+        // color: black;
 
         .card-body {
           padding: 10px;
@@ -151,7 +156,8 @@
 
 .comment-container {
   display: flex;
-  margin-bottom: 10px; /* Memberi jarak antar komentar */
+  margin-bottom: 10px;
+  /* Memberi jarak antar komentar */
 }
 
 .comment-text-container {
@@ -166,16 +172,24 @@
 }
 
 .comment-text {
-  max-width: 40ch; /* Limit to 20 characters per line */
-  overflow-wrap: break-word; /* Break long words if needed */
-  word-wrap: break-word; /* Break long words if needed */
-  white-space: pre-wrap; /* Preserve line breaks */
+  max-width: 40ch;
+  /* Limit to 20 characters per line */
+  overflow-wrap: break-word;
+  /* Break long words if needed */
+  word-wrap: break-word;
+  /* Break long words if needed */
+  white-space: pre-wrap;
+  /* Preserve line breaks */
 }
+
 .edit-delete-container {
   display: flex;
-  justify-content: flex-end; /* Position buttons at the end (right) of the container */
-  margin-top: 10px; /* Add margin to separate buttons from comment text */
+  justify-content: flex-end;
+  /* Position buttons at the end (right) of the container */
+  margin-top: 10px;
+  /* Add margin to separate buttons from comment text */
 }
+
 .comment-time {
   color: gray;
   font-size: 12px;

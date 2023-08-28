@@ -2,6 +2,7 @@
   "name": "digi-lib",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://librarysmayuppentek.sch.id/",
   "dependencies": {
     "@coreui/coreui": "^4.2.6",
     "@coreui/coreui-pro": "^4.6.0-alpha.1",
@@ -34,17 +35,19 @@
     "react": "^18.2.0",
     "react-app-polyfill": "^3.0.0",
     "react-bootstrap": "^2.7.4",
+    "react-datepicker": "^4.16.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.10.1",
     "react-pdf": "^7.1.3",
     "react-redux": "^8.0.5",
-    "react-router-dom": "^6.12.1",
+    "react-router-dom": "^6.14.2",
     "react-scripts": "5.0.1",
     "reactstrap": "^9.1.10",
     "redux": "4.2.1",
     "sass": "^1.63.3",
     "simplebar-react": "^2.4.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "react-scripts start",

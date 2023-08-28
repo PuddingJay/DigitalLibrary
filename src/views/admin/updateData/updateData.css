@@ -1,0 +1,42 @@
+.profileInfo {
+  padding: 30px;
+  display: flex;
+}
+.profileInfo .name {
+  margin-left: 10px;
+}
+.profileInfo .name p {
+  opacity: 0.6;
+  margin: 0 0 0 2px;
+}
+
+.updateData-form-container {
+  padding: 0 30px 30px 30px;
+  width: 60%;
+}
+.updateData-form-container h4 {
+  opacity: 0.8;
+  margin: 10px 0;
+}
+.updateData-form-container .formUpdate {
+  display: flex;
+  flex-wrap: wrap;
+}
+.updateData-form-container .formUpdate label {
+  margin-bottom: 5px;
+}
+.updateData-form-container .formUpdate input {
+  border: 1px solid lightgrey;
+  padding: 10px 10px;
+}
+.updateData-form-container .formUpdate .input-group .btn .icon .ci-primary {
+  color: #29266a;
+}
+.updateData-form-container .formUpdate .btnDaftar {
+  padding: 10px;
+  border: none;
+  background-color: #29266a;
+  color: white;
+  font-weight: bold;
+  width: 100%;
+}/*# sourceMappingURL=updateData.css.map */

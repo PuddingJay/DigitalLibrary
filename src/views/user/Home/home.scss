@@ -107,6 +107,7 @@
     grid-template-columns: repeat(9, 1fr);
   }
 }
+
 .center-container {
   display: flex;
   flex-direction: column;
@@ -116,8 +117,10 @@
   max-width: 800px; // Sesuaikan dengan lebar maksimum yang diinginkan
   padding: 20px;
 }
+
 .top-books-container {
-  border-top: 2px solid transparent; /* Tambahkan garis dengan warna transparan */
+  border-top: 2px solid transparent;
+  /* Tambahkan garis dengan warna transparan */
 }
 
 .kotak {
@@ -128,7 +131,7 @@
 }
 
 .footer {
-  position: sticky;
+  position: relative;
   bottom: 0;
   left: 0;
   width: 100%;

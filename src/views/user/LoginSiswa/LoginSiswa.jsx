@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import './login.scss'
 import logo from '../../../assets/logoSMA.png'
-import { CFormInput } from '@coreui/react-pro'
+import { CFormInput, CInputGroup, CButton } from '@coreui/react-pro'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import CIcon from '@coreui/icons-react'
+import { cilToggleOff, cilToggleOn } from '@coreui/icons'
 
 // eslint-disable-next-line react/prop-types
 const Login = () => {
@@ -11,30 +12,41 @@ const Login = () => {
   const [password, setPassword] = useState('')
   const [msg, setMsg] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const navigate = useNavigate()
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword)
+  }
+
+  const convertToFullName = (input) => {
+    const spacedInput = input.replace(/([a-z])([A-Z])/g, '$1 $2')
+
+    const words = spacedInput.replace(/[^a-zA-Z0-9\s]/g, '').split(/\s+/)
+    return words.map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+  }
 
   const Auth = async (e) => {
     e.preventDefault()
+    const formattedNama = convertToFullName(Nama)
+
     try {
       const response = await axios.post('http://localhost:3005/siswa/login', {
-        Nama: Nama,
+        Nama: formattedNama,
         password: password,
       })
 
       const { accessToken, refreshToken } = response.data
-      // Store the accessToken and refreshToken in localStorage
       localStorage.setItem('accessTokenSiswa', accessToken)
       localStorage.setItem('refreshTokenSiswa', refreshToken)
 
-      navigate('/Home')
+      window.location.href = '/Home'
     } catch (error) {
       if (error.response) {
+        console.log(formattedNama)
+        console.log(Nama)
+        console.log(error)
         setMsg(error.response.data.message)
       }
     }
-  }
-  const toggleShowPassword = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword)
   }
   return (
     <div className="login">
@@ -63,7 +75,7 @@ const Login = () => {
                 value={Nama}
                 onChange={(e) => setNama(e.target.value)}
               />
-              <div className="password-container">
+              <CInputGroup>
                 <CFormInput
                   type={showPassword ? 'text' : 'password'}
                   id="floatingPassword"
@@ -72,13 +84,18 @@ const Login = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <span className="password-toggle" onClick={toggleShowPassword}>
-                  {showPassword ? 'Hide' : 'Show'} Password
-                </span>
-              </div>
-              <button>Masuk </button>
+                <CButton
+                  type="button"
+                  color="secondary"
+                  variant="outline"
+                  onClick={togglePasswordVisibility}
+                >
+                  <CIcon icon={showPassword ? cilToggleOn : cilToggleOff} size="xl" />
+                </CButton>
+              </CInputGroup>
+              <button className="btnMasuk">Masuk </button>
             </div>
-
+            <a href="/login">Masuk sebagai Admin</a>
             <p>{msg}</p>
             <a
               className="uper"

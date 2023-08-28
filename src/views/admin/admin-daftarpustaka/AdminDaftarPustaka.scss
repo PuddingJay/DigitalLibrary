@@ -1,4 +1,4 @@
-@import '../../../scss/style';
+@import "../../../scss/style";
 
 .photo {
   height: 80px;
@@ -12,6 +12,8 @@
 
 .grid-form {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Three columns with equal width */
-  gap: 20px; /* Add gap between columns */
+  grid-template-columns: repeat(2, 1fr);
+  /* Three columns with equal width */
+  gap: 20px;
+  /* Add gap between columns */
 }

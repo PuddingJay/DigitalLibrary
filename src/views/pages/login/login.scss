@@ -1,4 +1,4 @@
-@import '../../../scss/style';
+@import "../../../scss/style";
 
 .login {
   height: 100vh;
@@ -8,6 +8,7 @@
   align-items: center;
 
   .cardLogin {
+
     @include tablet {
       width: 80%;
     }
@@ -43,7 +44,7 @@
       display: none;
 
       .greeter {
-        margin: auto;
+        margin: auto auto;
         text-align: center;
 
         .divider {
@@ -60,23 +61,6 @@
           line-height: 70px;
         }
       }
-
-      span {
-        color: white;
-        font-size: 0.8em;
-        font-weight: bold;
-      }
-
-      button {
-        min-height: 44px;
-        font-size: 16px;
-        padding: 10px;
-        border: none;
-        background-color: rgb(255, 255, 255);
-        color: #29266a;
-        font-weight: bold;
-        cursor: pointer;
-      }
     }
 
     .right {
@@ -84,9 +68,9 @@
         padding: 35px;
       }
 
+      padding: 50px;
       display: flex;
       flex: 1;
-      padding: 50px;
       flex-direction: column;
       gap: 10px;
 
@@ -106,6 +90,7 @@
       }
 
       .loginContainer {
+
         h1 {
           margin: 0 0 60px 0;
           color: #333;
@@ -121,13 +106,23 @@
             // padding: 10px 10px;
           }
 
-          button {
+          .btnMasuk {
             width: 50%;
             padding: 10px;
             border: none;
             background-color: #29266a;
             color: white;
             font-weight: bold;
+          }
+
+          .input-group {
+            .btn {
+              .icon {
+                .ci-primary {
+                  color: #29266a;
+                }
+              }
+            }
           }
         }
 
@@ -149,13 +144,13 @@
       }
 
       // .toRegister {
-      //   @include mobile {
-      //     visibility: visible;
-      //   }
-
-      //   visibility: hidden;
+      //   display: block;
       //   margin-top: 10px;
-      //   gap: 0;
+
+      //   @include mobile {
+      //     display: none;
+      //     gap: 0;
+      //   }
 
       //   span:first-child {
       //     font-weight: 700;
@@ -164,12 +159,13 @@
 
       //   a span:last-child {
       //     display: block;
-      //     min-height: 44px;
+      //     margin-bottom: 20px;
       //     font-weight: 500;
-      //     color: black;
+      //     color: #29266a;
       //     font-size: 12px;
       //   }
       // }
+
     }
   }
 }

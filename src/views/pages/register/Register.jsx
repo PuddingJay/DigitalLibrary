@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
-import { CFormInput } from '@coreui/react-pro'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { CFormInput, CInputGroup, CButton } from '@coreui/react-pro'
+import { Link } from 'react-router-dom'
 import './register.scss'
 import axios from 'axios'
+import jwtDecode from 'jwt-decode'
+import CIcon from '@coreui/icons-react'
+import { cilToggleOff, cilToggleOn } from '@coreui/icons'
 
 const Register = () => {
   const [nama, setNama] = useState(null)
@@ -10,7 +13,52 @@ const Register = () => {
   const [password, setPassword] = useState(null)
   const [confPassword, setConfPassword] = useState(null)
   const [msg, setMsg] = useState(null)
-  const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfPassword, setShowConfPassword] = useState(false)
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword)
+  }
+  const toggleConfPasswordVisibility = () => {
+    setShowConfPassword(!showConfPassword)
+  }
+
+  useEffect(() => {
+    auth()
+  })
+
+  const auth = async () => {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken')
+      if (!refreshToken) {
+        throw new Error('Refresh token not found')
+      }
+
+      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
+      localStorage.setItem('refreshToken', refreshToken)
+      const decoded = jwtDecode(response.data.accessToken)
+
+      console.log(decoded)
+    } catch (err) {
+      if (
+        err.message === 'Refresh token not found' ||
+        (err.response && err.response.status === 403)
+      ) {
+        localStorage.removeItem('refreshToken')
+        window.location.href = '/login'
+      } else if (err.response && err.response.status === 401) {
+        window.location.href = '/login'
+      }
+      console.log(err)
+    } finally {
+      try {
+        const refreshTokenSiswa = localStorage.getItem('refreshTokenSiswa')
+        await axios.delete(`http://localhost:3005/siswaLogout/${refreshTokenSiswa}`)
+      } catch (err) {
+        console.log(err.message)
+      }
+    }
+  }
 
   const Regis = async (e) => {
     e.preventDefault()
@@ -23,8 +71,7 @@ const Register = () => {
         confPassword: confPassword,
       })
 
-      navigate('/login')
-      // window.location.href = '/login'
+      window.location.href = '/login'
       alert('Register Berhasil')
     } catch (error) {
       if (error.response) {
@@ -81,23 +128,43 @@ const Register = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
-              <CFormInput
-                type="password"
-                id="floatingPassword"
-                floatingLabel="Password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <CFormInput
-                type="password"
-                id="floatingConfPassword"
-                floatingLabel="Confirm Password"
-                placeholder="Confirm Password"
-                value={confPassword}
-                onChange={(e) => setConfPassword(e.target.value)}
-              />
-              <button>Daftar </button>
+              <CInputGroup>
+                <CFormInput
+                  type={showPassword ? 'text' : 'password'}
+                  id="floatingPassword"
+                  floatingLabel="Password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <CButton
+                  type="button"
+                  color="secondary"
+                  variant="outline"
+                  onClick={togglePasswordVisibility}
+                >
+                  <CIcon icon={showPassword ? cilToggleOn : cilToggleOff} size="xl" />
+                </CButton>
+              </CInputGroup>
+              <CInputGroup>
+                <CFormInput
+                  type={showConfPassword ? 'text' : 'password'}
+                  id="floatingConfPassword"
+                  floatingLabel="Confirm Password"
+                  placeholder="Confirm Password"
+                  value={confPassword}
+                  onChange={(e) => setConfPassword(e.target.value)}
+                />
+                <CButton
+                  type="button"
+                  color="secondary"
+                  variant="outline"
+                  onClick={toggleConfPasswordVisibility}
+                >
+                  <CIcon icon={showConfPassword ? cilToggleOn : cilToggleOff} size="xl" />
+                </CButton>
+              </CInputGroup>
+              <button className="btnDaftar">Daftar </button>
             </div>
             <div className="toRegister">
               <span>Sudah Memiliki Akun?</span>

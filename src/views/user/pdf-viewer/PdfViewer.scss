@@ -10,7 +10,7 @@
   flex-direction: column;
 }
 
-.pdf-page > canvas {
+.pdf-page>canvas {
   max-width: 100%;
   height: auto !important;
 }
@@ -81,6 +81,7 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
 .context-menu-warning {
   position: fixed;
   top: 50%;
@@ -91,7 +92,7 @@
   padding: 10px;
   border-radius: 5px;
   cursor: pointer;
-  z-index: 9999; /* Ensure it appears above everything else */
+  z-index: 9999;
 }
 
 .pdf-jump-container {
@@ -112,6 +113,7 @@
     cursor: pointer;
   }
 }
+
 .footer {
   position: relative;
   bottom: 0;

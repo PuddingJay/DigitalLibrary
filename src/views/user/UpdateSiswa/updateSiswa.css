@@ -1,0 +1,145 @@
+.wrapper {
+  min-height: 85vh;
+}
+.wrapper .card {
+  margin: 30px auto;
+  width: 70%;
+  padding: 10px;
+}
+@media only screen and (max-width: 600px) {
+  .wrapper .card {
+    width: 90%;
+  }
+}
+@media (min-width: 601px) and (max-width: 1200px) {
+  .wrapper .card {
+    width: 70%;
+  }
+}
+.wrapper .card .alert {
+  margin: 0;
+}
+.wrapper .card .card-body .profileSiswa {
+  padding: 30px;
+  display: flex;
+}
+@media screen and (max-width: 600px) {
+  .wrapper .card .card-body .profileSiswa {
+    padding: 5px;
+    flex-direction: column;
+  }
+}
+.wrapper .card .card-body .profileSiswa .avatarName {
+  display: flex;
+}
+.wrapper .card .card-body .profileSiswa .avatarName .name {
+  margin-left: 15px;
+}
+.wrapper .card .card-body .profileSiswa .avatarName .name p {
+  opacity: 0.6;
+  margin: 0;
+}
+.wrapper .card .card-body .profileSiswa .infoUser {
+  margin-left: 20px;
+  display: flex;
+  flex-direction: row;
+}
+@media screen and (max-width: 600px) {
+  .wrapper .card .card-body .profileSiswa .infoUser {
+    margin: 0;
+  }
+}
+.wrapper .card .card-body .profileSiswa .infoUser .infoLabel {
+  margin-left: 15px;
+}
+@media screen and (max-width: 600px) {
+  .wrapper .card .card-body .profileSiswa .infoUser .infoLabel {
+    margin: 0 15px 0 0;
+  }
+}
+.wrapper .card .card-body .profileSiswa .infoUser .infoLabel p {
+  opacity: 0.6;
+}
+.wrapper .card .card-body .profileSiswa .infoUser .infoLabel h5 {
+  margin-top: 10px;
+}
+.wrapper .card .card-body .form-updateSiswa {
+  padding: 0 30px 30px 30px;
+}
+@media screen and (max-width: 600px) {
+  .wrapper .card .card-body .form-updateSiswa {
+    padding: 0 10px 10px 10px;
+  }
+}
+.wrapper .card .card-body .form-updateSiswa h4 {
+  opacity: 0.8;
+  margin: 10px 0;
+}
+.wrapper .card .card-body .form-updateSiswa label {
+  margin-bottom: 10px;
+}
+.wrapper .card .card-body .form-updateSiswa .input-group {
+  margin-bottom: 20px;
+}
+.wrapper .card .card-body .form-updateSiswa .input-group .btn .icon .ci-primary {
+  color: #29266a;
+}
+.wrapper .card .card-body .form-updateSiswa .btnDaftar {
+  padding: 10px;
+  border: none;
+  background-color: #29266a;
+  color: white;
+  font-weight: bold;
+  width: 100%;
+}
+
+.footer {
+  position: relative;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  z-index: 5;
+  flex-wrap: nowrap;
+  flex-direction: row;
+}
+.footer .logo {
+  width: 100px;
+  height: 70px;
+  margin: 0;
+  z-index: 9999;
+}
+@media only screen and (min-width: 600px) {
+  .footer .logo {
+    margin: 0 10px;
+    width: 150px;
+    height: auto;
+  }
+}
+.footer span {
+  font-size: 10px;
+  margin-right: 5px;
+}
+@media only screen and (min-width: 600px) {
+  .footer span {
+    font-size: 15px;
+  }
+}
+.footer a {
+  font-size: 10px;
+}
+@media only screen and (min-width: 600px) {
+  .footer a {
+    font-size: 15px;
+  }
+}
+.footer p {
+  font-size: 10px;
+}
+@media only screen and (min-width: 600px) {
+  .footer p {
+    font-size: 15px;
+  }
+}/*# sourceMappingURL=updateSiswa.css.map */

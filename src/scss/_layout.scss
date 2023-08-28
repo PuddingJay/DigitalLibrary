@@ -1,19 +1,20 @@
 .wrapper {
   width: 100%;
-  @include ltr-rtl('padding-left', var(--cui-sidebar-occupy-start, 0));
-  @include ltr-rtl('padding-right', var(--cui-sidebar-occupy-end, 0));
+  @include ltr-rtl("padding-left", var(--cui-sidebar-occupy-start, 0));
+  @include ltr-rtl("padding-right", var(--cui-sidebar-occupy-end, 0));
   will-change: auto;
-  @include transition(padding 0.15s);
+  @include transition(padding .15s);
 }
 
 body {
   background-color: var(--cui-tertiary-bg);
 }
 
-// @if $enable-dark-mode {
-//   @include color-mode(dark) {
-//     body {
-//       background-color: #181924;
-//     }
-//   }
-// }
+
+@if $enable-dark-mode {
+  @include color-mode(dark) {
+    body {
+      background-color: #181924;
+    }
+  }
+}

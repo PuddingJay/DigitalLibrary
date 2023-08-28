@@ -34,10 +34,14 @@ const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
 const Home = React.lazy(() => import('./views/user/Home/Home'))
 const Detail = React.lazy(() => import('./views/user/Detail/Detail'))
-const PdfRead = React.lazy(() => import('./views/user/pdf-viewer/PdfRead'))
+const PdfRead = React.lazy(() => import('./views/user/PdfRead'))
+const UpdateSiswa = React.lazy(() => import('./views/user/UpdateSiswa/UpdateSiswa'))
 const SiswaLogin = React.lazy(() => import('./views/user/LoginSiswa/LoginSiswa'))
 const ShowPdf = React.lazy(() => import('./views/admin/admin-daftarpustaka/ShowPdf'))
 const Profil = React.lazy(() => import('./views/user/profil/Profil'))
+const FormPengunjung = React.lazy(() =>
+  import('./views/pages/form-data-pengunjung/FormDataPengunjung'),
+)
 
 const App = () => {
   const dispatch = useDispatch()
@@ -67,8 +71,14 @@ const App = () => {
         <Routes>
           <Route path="/login" name="Login Page" element={<Login />} />
           <Route path="/siswa/login" name="Login" element={<SiswaLogin />} />
-          {/* <Route exact path="/login" name="Login Page" element={<Login />} /> */}
+          <Route exact path="/" name="Login Page" element={<SiswaLogin />} />
           <Route exact path="/register" name="Register Page" element={<Register />} />
+          <Route
+            exact
+            path="/form-pengunjung"
+            name="Form Pengunjung"
+            element={<FormPengunjung />}
+          />
           <Route path="*" name="Home" element={<DefaultLayout />} />
           <Route exact path="/404" name="Page 404" element={<Page404 />} />
           <Route exact path="/500" name="Page 500" element={<Page500 />} />
@@ -77,6 +87,7 @@ const App = () => {
           <Route exact path="/Profil" name="Detail Buku" element={<Profil />} />
           <Route exact path="/PdfRead/:id" name="Baca Buku" element={<PdfRead />} />
           <Route exact path="/ShowPdf/:id" name="Lihat Buku" element={<ShowPdf />} />
+          <Route exact path="/updateSiswa" name="Lihat Buku" element={<UpdateSiswa />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
