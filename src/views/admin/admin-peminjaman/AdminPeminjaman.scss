@@ -1,0 +1,65 @@
+@import "../../../scss/style.scss";
+
+
+.download {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+
+.p-3 {
+  button {
+    margin-right: 5px;
+  }
+}
+
+.actionPeminjaman {
+  display: grid;
+  gap: 10px;
+
+  @include mobile {
+    display: flex;
+    justify-content: space-between;
+
+  }
+
+  .form-container {
+    display: grid;
+    gap: 10px;
+
+    @include mobile {
+      display: flex;
+      flex-grow: 1;
+    }
+  }
+
+  .btnModal {
+    margin-right: auto;
+  }
+
+  .input-group {
+    width: auto;
+    margin-right: 10px;
+
+    input {
+      width: 130px;
+    }
+  }
+
+  .form-floating {
+    input {
+      width: 150px;
+    }
+  }
+
+  .download-container {
+    display: flex;
+    align-items: stretch;
+    margin-left: 10px;
+
+    .download-button {
+      display: flex;
+      align-items: center;
+    }
+  }
+}

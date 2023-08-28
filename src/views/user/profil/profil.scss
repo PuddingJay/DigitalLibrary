@@ -1,0 +1,57 @@
+.profile-container {
+  padding: 20px;
+  background-color: #f8f9fa;
+}
+
+.profile-header {
+  background-color: #343a40;
+  color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.reading-history {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.delete-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto; /* Push the button to the bottom */
+}
+
+.delete-button {
+  background-color: #f44336; /* Red color for delete */
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.history-card {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+}
+
+.history-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.history-card .card-title {
+  font-size: 1.25rem;
+  margin: 10px 0;
+}
+
+.history-card .card-text {
+  color: #6c757d;
+}
+
+/* Additional styling can be applied as needed */
