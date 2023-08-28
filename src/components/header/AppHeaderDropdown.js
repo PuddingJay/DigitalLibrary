@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react'
 import {
   CAvatar,
   CDropdown,
+  CDropdownDivider,
   CDropdownHeader,
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
 } from '@coreui/react-pro'
-import { cilUser, cilDoor, cilSettings, cilSmilePlus } from '@coreui/icons'
+import { cilUser, cilDoor, cilSettings, cilSmilePlus, cilColorBorder } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import axios from 'axios'
 import jwtDecode from 'jwt-decode'
@@ -65,15 +66,23 @@ const AppHeaderDropdown = () => {
         <Link to="/updateData" style={{ textDecoration: 'none' }}>
           <CDropdownItem component="span">
             <CIcon icon={cilSettings} className="me-2" disabled />
-            Edit Account
+            Ubah Informasi Akun
           </CDropdownItem>
         </Link>
+        <CDropdownHeader className="bg-body-secondary fw-semibold py-2">Form</CDropdownHeader>
         <Link to="/register" style={{ textDecoration: 'none' }}>
           <CDropdownItem component="span">
             <CIcon icon={cilSmilePlus} className="me-2" disabled />
-            Daftar Admin
+            Form Daftar Admin
           </CDropdownItem>
         </Link>
+        <Link to="/form-pengunjung" style={{ textDecoration: 'none' }}>
+          <CDropdownItem component="span">
+            <CIcon icon={cilColorBorder} className="me-2" disabled />
+            Form Pengunjung
+          </CDropdownItem>
+        </Link>
+        <CDropdownDivider />
         <CDropdownItem
           onClick={logout}
           onMouseEnter={() => setHovered(true)}

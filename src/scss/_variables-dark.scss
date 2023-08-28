@@ -1,4 +1,5 @@
 $primary-dark: desaturate($primary, 20%) !default;
+$primary-dark: lighten($primary-dark, 27%);
 $secondary-dark: desaturate($secondary, 10%) !default;
 $success-dark: desaturate($success, 10%) !default;
 $info-dark: desaturate($info, 10%) !default;

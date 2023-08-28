@@ -17,22 +17,33 @@ const Login = () => {
     setShowPassword(!showPassword)
   }
 
+  const convertToFullName = (input) => {
+    const spacedInput = input.replace(/([a-z])([A-Z])/g, '$1 $2')
+
+    const words = spacedInput.replace(/[^a-zA-Z0-9\s]/g, '').split(/\s+/)
+    return words.map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+  }
+
   const Auth = async (e) => {
     e.preventDefault()
+    const formattedNama = convertToFullName(Nama)
+
     try {
       const response = await axios.post('http://localhost:3005/siswa/login', {
-        Nama: Nama,
+        Nama: formattedNama,
         password: password,
       })
 
       const { accessToken, refreshToken } = response.data
-      // Store the accessToken and refreshToken in localStorage
       localStorage.setItem('accessTokenSiswa', accessToken)
       localStorage.setItem('refreshTokenSiswa', refreshToken)
 
       window.location.href = '/Home'
     } catch (error) {
       if (error.response) {
+        console.log(formattedNama)
+        console.log(Nama)
+        console.log(error)
         setMsg(error.response.data.message)
       }
     }

@@ -1,77 +1,114 @@
-.card {
-  margin: 30px auto;
-  width: 50%;
-  padding: 10px;
+.wrapper {
+  min-height: 85vh;
 
-  @media only screen and (max-width:600px) {
-    width: 90%;
-  }
-
-  @media (min-width: 601px) and (max-width:1200px) {
+  .card {
+    margin: 30px auto;
     width: 70%;
-  }
+    padding: 10px;
 
-  .alert {
-    margin: 0;
-  }
-
-  .card-body {
-    .profileSiswa {
-
-      @media screen and (max-width:350px) {
-        padding: 15px;
-      }
-
-      padding: 30px;
-      display: flex;
-
-      .name {
-        margin-left: 10px;
-
-        p {
-          opacity: 0.6;
-          margin: 0 0 0 2px;
-        }
-      }
+    @media only screen and (max-width:600px) {
+      width: 90%;
     }
 
-    .form-updateSiswa {
-      @media screen and (max-width:350px) {
-        padding: 0 15px 15px 15px;
-      }
+    @media (min-width: 601px) and (max-width:1200px) {
+      width: 70%;
+    }
 
-      padding: 0 30px 30px 30px;
+    .alert {
+      margin: 0;
+    }
 
-      h4 {
-        opacity: 0.8;
-        margin: 10px 0;
-      }
+    .card-body {
+      .profileSiswa {
+        padding: 30px;
+        display: flex;
 
-      label {
-        margin-bottom: 10px;
-      }
+        @media screen and (max-width:600px) {
+          padding: 5px;
+          flex-direction: column;
+        }
 
-      .input-group {
-        margin-bottom: 20px;
+        .avatarName {
+          display: flex;
 
-        .btn {
-          .icon {
-            .ci-primary {
-              color: #29266a;
+          .name {
+            margin-left: 15px;
+
+            p {
+              opacity: 0.6;
+              margin: 0;
+            }
+          }
+        }
+
+        .infoUser {
+          margin-left: 20px;
+
+          @media screen and (max-width:600px) {
+            margin: 0;
+          }
+
+          display: flex;
+          flex-direction: row;
+
+          .infoLabel {
+            margin-left: 15px;
+
+            @media screen and (max-width:600px) {
+              margin: 0 15px 0 0;
+            }
+
+            p {
+              opacity: 0.6;
+              // margin: 0 0 0 2px;
+            }
+
+            h5 {
+              margin-top: 10px;
             }
           }
         }
       }
 
-      .btnDaftar {
-        padding: 10px;
-        border: none;
-        background-color: #29266a;
-        color: white;
-        font-weight: bold;
-        width: 100%;
+      .form-updateSiswa {
+        @media screen and (max-width:600px) {
+          padding: 0 10px 10px 10px;
+        }
+
+        padding: 0 30px 30px 30px;
+
+        h4 {
+          opacity: 0.8;
+          margin: 10px 0;
+        }
+
+        label {
+          margin-bottom: 10px;
+        }
+
+        .input-group {
+          margin-bottom: 20px;
+
+          .btn {
+            .icon {
+              .ci-primary {
+                color: #29266a;
+              }
+            }
+          }
+        }
+
+        .btnDaftar {
+          padding: 10px;
+          border: none;
+          background-color: #29266a;
+          color: white;
+          font-weight: bold;
+          width: 100%;
+        }
       }
     }
+
   }
 }
 
@@ -87,9 +124,9 @@
   flex-wrap: nowrap;
   flex-direction: row;
 
-  @media only screen and (min-width: 600px) {
-    position: fixed;
-  }
+  // @media only screen and (min-width: 600px) {
+  //   position: fixed;
+  // }
 
   .logo {
     width: 100px;

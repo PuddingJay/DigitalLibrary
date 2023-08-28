@@ -6,6 +6,7 @@ const DaftarPustaka = React.lazy(() =>
 )
 const DataPeminjaman = React.lazy(() => import('./views/admin/admin-peminjaman/AdminPeminjaman'))
 const DataAnggota = React.lazy(() => import('./views/admin/admin-dataAnggota/AdminDataAnggota'))
+const DataPengunjung = React.lazy(() => import('./views/admin/data-pengunjung/DataPengunjung'))
 const Login = React.lazy(() => import('./views/pages/login/Login'))
 const SiswaLogin = React.lazy(() => import('./views/user/LoginSiswa/LoginSiswa'))
 const UpdateData = React.lazy(() => import('./views/admin/updateData/UpdateData'))
@@ -20,6 +21,7 @@ const routes = [
   { path: '/daftarPustaka', name: 'Daftar Pustaka', element: DaftarPustaka },
   { path: '/dataPeminjaman', name: 'Data Peminjaman', element: DataPeminjaman },
   { path: '/dataAnggota', name: 'Data Anggota', element: DataAnggota },
+  { path: '/data-pengunjung', name: 'Data Pengunjung', element: DataPengunjung },
   { path: '/booking-pinjam', name: 'Booking Pinjam', element: BookingPinjam },
   { path: '/updateData', name: 'Informasi Profil', element: UpdateData },
   { path: '/laporan', name: 'Laporan', element: Laporan },

@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react'
 import logo from '../../assets/logoSMA.png'
 import {
   CImage, CContainer, CNavbar, CNavbarBrand, CNavbarToggler, CCollapse,
-  CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem
+  CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem, CDropdownDivider
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilDoor, cilSettings, cilHome } from '@coreui/icons'
+import { cilDoor, cilUser, cilHome } from '@coreui/icons'
 import jwtDecode from 'jwt-decode'
 import axios from 'axios'
 import './NavbarComponent.scss'
@@ -106,10 +106,11 @@ const NavbarComponent = () => {
                   </Link>
                   <Link to="/updateSiswa" style={{ textDecoration: 'none' }}>
                     <CDropdownItem component='span'>
-                      <CIcon icon={cilSettings} className="me-2" disabled />
-                      Change Password
+                      <CIcon icon={cilUser} className="me-2" disabled />
+                      Profil
                     </CDropdownItem>
                   </Link>
+                  <CDropdownDivider />
                   <CDropdownItem onClick={logout} onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}
                     style={{ cursor: hovered ? 'pointer' : 'default' }}>

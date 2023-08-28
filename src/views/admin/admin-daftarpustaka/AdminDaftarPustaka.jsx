@@ -26,10 +26,11 @@ const AdminDaftarPustaka = () => {
   const [judul, setJudul] = useState('')
   const [penulis, setPenulis] = useState('')
   const [Kategori, setKategori] = useState('')
-  const [ringkasan, setRingkasan] = useState(null)
+  const [ringkasan, setRingkasan] = useState('')
   const [tahun_terbit, setTahun_terbit] = useState('')
   const [keterangan, setKeterangan] = useState('')
   const [jumlah, setJumlah] = useState('')
+  const [tersedia, setTersedia] = useState('')
   const [cover_buku, setCover_buku] = useState(null)
   const [file_ebook, setfile_ebook] = useState(null)
   const [modalTambah, setModalTambah] = useState(false)
@@ -55,13 +56,24 @@ const AdminDaftarPustaka = () => {
     setTahun_terbit('')
     setKeterangan('')
     setJumlah('')
-    setCover_buku('')
-    setfile_ebook('')
+    setCover_buku(cover_buku || '')
+    setfile_ebook(file_ebook || '')
 
     setModalTambah(!modalTambah)
   }
 
   const toggleModalUpdate = () => {
+    setKodeBuku('')
+    setJudul('')
+    setPenulis('')
+    setKategori('')
+    setRingkasan('')
+    setTahun_terbit('')
+    setKeterangan('')
+    setJumlah('')
+    setCover_buku(cover_buku || '')
+    setfile_ebook(file_ebook || '')
+
     setModalUpdate(!modalUpdate)
   }
 
@@ -117,6 +129,21 @@ const AdminDaftarPustaka = () => {
     }
   }
 
+  const handleJumlahChange = (e) => {
+    const newJumlah = e.target.value !== '' ? parseInt(e.target.value) : ''
+    const oldJumlah = jumlah
+    const jumlahDiff = newJumlah - oldJumlah
+
+    if (!isNaN(jumlahDiff)) {
+      setTersedia(parseInt(tersedia) + jumlahDiff)
+    }
+
+    console.log('New Jumlah:' + newJumlah)
+    console.log('Jumlah Diff:' + jumlahDiff)
+
+    setJumlah(newJumlah)
+  }
+
   const handleUpdate = async () => {
     const formData = new FormData(formRef.current)
 
@@ -127,16 +154,7 @@ const AdminDaftarPustaka = () => {
         `http://localhost:3005/book/${currentBookId.kodeBuku}`,
         formData,
       )
-      toggleModalUpdate()
-      fetchData()
-      setMsg(response.data.message)
-      setShowSuccessAlert(true)
 
-      setTimeout(() => {
-        setShowSuccessAlert(false)
-      }, 3000)
-
-      // Perbarui data buku yang sudah dirubah dengan data baru
       setDaftarPustaka((prevData) => {
         return prevData.map((item) => {
           if (item.kodeBuku === currentBookId) {
@@ -150,16 +168,26 @@ const AdminDaftarPustaka = () => {
               tahun_terbit: tahun_terbit || item.tahun_terbit,
               keterangan: keterangan || item.keterangan,
               jumlah: jumlah || item.jumlah,
+              tersedia: tersedia || item.tersedia,
               cover_buku: cover_buku?.files[0]?.name || item.cover_buku,
               file_ebook: file_ebook?.files[0]?.name || item.file_ebook,
             }
           }
           console.log(currentBookId.kodeBuku)
-          console.log(ringkasan)
-          console.log(Kategori)
+          console.log(currentBookId.kodeBuku)
+          console.log(tersedia)
           return item
         })
       })
+
+      toggleModalUpdate()
+      fetchData()
+      setMsg(response.data.message)
+      setShowSuccessAlert(true)
+
+      setTimeout(() => {
+        setShowSuccessAlert(false)
+      }, 3000)
 
       // Setel ulang nilai input menjadi kosong atau nilai default
       setKodeBuku('')
@@ -188,6 +216,7 @@ const AdminDaftarPustaka = () => {
     setTahun_terbit(book.tahun_terbit)
     setKeterangan(book.keterangan)
     setJumlah(book.jumlah)
+    setTersedia(book.tersedia)
     setCover_buku(null)
     setfile_ebook(null)
     setModalUpdate(!modalUpdate)
@@ -287,294 +316,6 @@ const AdminDaftarPustaka = () => {
                 {/* Download data peminjaman (.csv) */}
               </CButton>
             </div>
-            <Modal isOpen={modalTambah} toggle={toggleModalTambah}>
-              <ModalHeader toggle={toggleModalTambah}>Tambah Data</ModalHeader>
-              <ModalBody>
-                <Form innerRef={formRef} onSubmit={handleAdd}>
-                  <FormGroup>
-                    <Label for="kodeBuku">Kode Buku</Label>
-                    <Input
-                      type="text"
-                      name="kodeBuku"
-                      id="kodeBuku"
-                      value={kodeBuku}
-                      onChange={(e) => setKodeBuku(e.target.value)}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="judul">Judul</Label>
-                    <Input
-                      type="text"
-                      name="judul"
-                      id="judul"
-                      value={judul}
-                      onChange={(e) => setJudul(e.target.value)}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="penulis">Penulis</Label>
-                    <Input
-                      type="text"
-                      name="penulis"
-                      id="penulis"
-                      value={penulis}
-                      onChange={(e) => setPenulis(e.target.value)}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="Kategori">Kategori</Label>
-                    <Input
-                      type="select"
-                      name="Kategori"
-                      id="Kategori"
-                      value={Kategori}
-                      onChange={(e) => setKategori(e.target.value)}
-                    >
-                      <option value="">Pilih Kategori</option>
-                      <option value="PKN">PKN</option>
-                      <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-                      <option value="Bahasa Inggris">Bahasa Inggris</option>
-                      <option value="Sejarah">Sejarah</option>
-                      <option value="Matematika">Matematika</option>
-                      <option value="Penjas">Penjas</option>
-                      <option value="Seni Budaya">Seni Budaya</option>
-                      <option value="Agama">Agama</option>
-                      <option value="TIK">TIK</option>
-                      <option value="Fisika">Fisika</option>
-                      <option value="Biologi">Biologi</option>
-                      <option value="Kimia">Kimia</option>
-                      <option value="Ekonomi">Ekonomi</option>
-                      <option value="Geografi">Geografi</option>
-                      <option value="Sosiologi">Sosiologi</option>
-                      <option value="Lainnya">Lainnya</option>
-                      {/* Tambahkan opsi tipe file lainnya sesuai kebutuhan */}
-                    </Input>
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="ringkasan">Ringkasan</Label>
-                    <Input
-                      type="textarea"
-                      name="ringkasan"
-                      id="ringkasan"
-                      value={ringkasan}
-                      onChange={(e) => setRingkasan(e.target.value)}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="tahun_terbit">Tahun Terbit</Label>
-                    <Input
-                      type="text"
-                      name="tahun_terbit"
-                      id="tahun_terbit"
-                      value={tahun_terbit}
-                      onChange={(e) => setTahun_terbit(e.target.value)}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="Keterangan">Tipe file</Label>
-                    <Input
-                      type="select"
-                      name="keterangan"
-                      id="keterangan"
-                      value={keterangan}
-                      onChange={(e) => setKeterangan(e.target.value)}
-                    >
-                      <option value="">Pilih Kategori</option>
-                      <option value="Buku Fisik">Buku Fisik</option>
-                      <option value="Buku Digital">Buku Digital</option>
-                    </Input>
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="Jumlah">Jumlah</Label>
-                    <Input
-                      type="text"
-                      name="jumlah"
-                      id="jumlah"
-                      value={jumlah}
-                      onChange={(e) => setJumlah(e.target.value)}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="cover_buku">Cover Buku</Label>
-                    <Input
-                      type="file"
-                      name="cover_buku"
-                      id="cover_buku"
-                      onChange={(e) => setCover_buku(e.target.files[0])}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="file_ebook">File Buku digital</Label>
-                    <Input
-                      type="file"
-                      name="file_ebook"
-                      id="file_ebook"
-                      onChange={(e) => setfile_ebook(e.target.files[0])}
-                    />
-                  </FormGroup>
-                </Form>
-              </ModalBody>
-              <ModalFooter>
-                <Button type="submit" color="primary" onClick={handleAdd}>
-                  Simpan
-                </Button>
-                <Button color="secondary" onClick={toggleModalTambah}>
-                  Batal
-                </Button>
-              </ModalFooter>
-            </Modal>
-
-            <Modal isOpen={modalUpdate} toggle={toggleModalUpdate}>
-              <ModalHeader toggle={toggleModalUpdate}>
-                Form {currentBookId ? 'Edit' : 'Edit'} Data
-              </ModalHeader>
-              <ModalBody>
-                <Form innerRef={formRef}>
-                  <FormGroup>
-                    <Label for="kodeBuku">Kode Buku</Label>
-                    <Input
-                      type="text"
-                      name="kodeBuku"
-                      id="kodeBuku"
-                      value={kodeBuku}
-                      onChange={(e) => setKodeBuku(e.target.value)}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="judul">Judul</Label>
-                    <Input
-                      type="text"
-                      name="judul"
-                      id="judul"
-                      value={judul}
-                      onChange={(e) => setJudul(e.target.value)}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="penulis">Penulis</Label>
-                    <Input
-                      type="text"
-                      name="penulis"
-                      id="penulis"
-                      value={penulis}
-                      onChange={(e) => setPenulis(e.target.value)}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="Kategori">Kategori</Label>
-                    <Input
-                      type="select"
-                      name="Kategori"
-                      id="Kategori"
-                      value={Kategori}
-                      onChange={(e) => setKategori(e.target.value)}
-                    >
-                      <option value="">Pilih Kategori</option>
-                      <option value="PKN">PKN</option>
-                      <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-                      <option value="Bahasa Inggris">Bahasa Inggris</option>
-                      <option value="Sejarah">Sejarah</option>
-                      <option value="Matematika">Matematika</option>
-                      <option value="Penjas">Penjas</option>
-                      <option value="Seni Budaya">Seni Budaya</option>
-                      <option value="Agama">Agama</option>
-                      <option value="TIK">TIK</option>
-                      <option value="Fisika">Fisika</option>
-                      <option value="Biologi">Biologi</option>
-                      <option value="Kimia">Kimia</option>
-                      <option value="Ekonomi">Ekonomi</option>
-                      <option value="Geografi">Geografi</option>
-                      <option value="Sosiologi">Sosiologi</option>
-                      <option value="Lainnya">Lainnya</option>
-                      {/* Tambahkan opsi tipe file lainnya sesuai kebutuhan */}
-                    </Input>
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="ringkasan">Ringkasan</Label>
-                    <Input
-                      type="textarea"
-                      name="ringkasan"
-                      id="ringkasan"
-                      value={ringkasan}
-                      onChange={(e) => setRingkasan(e.target.value)}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="tahun_terbit">Tahun Terbit</Label>
-                    <Input
-                      type="text"
-                      name="tahun_terbit"
-                      id="tahun_terbit"
-                      value={tahun_terbit}
-                      onChange={(e) => setTahun_terbit(e.target.value)}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="Keterangan">Tipe file</Label>
-                    <Input
-                      type="select"
-                      name="keterangan"
-                      id="keterangan"
-                      value={keterangan}
-                      onChange={(e) => setKeterangan(e.target.value)}
-                    >
-                      <option value="">Pilih Kategori</option>
-                      <option value="Buku Fisik">Buku Fisik</option>
-                      <option value="Buku Digital">Buku Digital</option>
-                    </Input>
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="Jumlah">Jumlah</Label>
-                    <Input
-                      type="text"
-                      name="jumlah"
-                      id="jumlah"
-                      value={jumlah}
-                      onChange={(e) => setJumlah(e.target.value)}
-                    />
-                  </FormGroup>
-
-                  <FormGroup>
-                    <Label for="cover_buku">Cover Buku</Label>
-                    <Input
-                      type="file"
-                      name="cover_buku"
-                      id="cover_buku"
-                      onChange={(e) => setCover_buku(e.target.files[0])}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Input
-                      type="hidden"
-                      name="cover_buku"
-                      id="cover_buku"
-                      onChange={(e) => setCover_buku(e.target.files[0])}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="file_ebook">File Buku digital</Label>
-                    <Input
-                      type="file"
-                      name="file_ebook"
-                      id="file_ebook"
-                      onChange={(e) => setfile_ebook(e.target.files[0])}
-                    />
-                  </FormGroup>
-                </Form>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  type="submit"
-                  color="primary"
-                  onClick={currentBookId ? () => handleUpdate(currentBookId) : handleAdd}
-                >
-                  Simpan
-                </Button>
-                <Button color="secondary" onClick={toggleModalUpdate}>
-                  Batal
-                </Button>
-              </ModalFooter>
-            </Modal>
 
             <CSmartTable
               className="mt-3"
@@ -648,6 +389,304 @@ const AdminDaftarPustaka = () => {
             />
           </CCardBody>
         </CCard>
+
+        <Modal isOpen={modalTambah} toggle={toggleModalTambah}>
+          <ModalHeader toggle={toggleModalTambah}>Tambah Data</ModalHeader>
+          <ModalBody>
+            <Form innerRef={formRef} onSubmit={handleAdd}>
+              <FormGroup>
+                <Label for="kodeBuku">Kode Buku</Label>
+                <Input
+                  type="text"
+                  name="kodeBuku"
+                  id="kodeBuku"
+                  value={kodeBuku}
+                  onChange={(e) => setKodeBuku(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="judul">Judul</Label>
+                <Input
+                  type="text"
+                  name="judul"
+                  id="judul"
+                  value={judul}
+                  onChange={(e) => setJudul(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="penulis">Penulis</Label>
+                <Input
+                  type="text"
+                  name="penulis"
+                  id="penulis"
+                  value={penulis}
+                  onChange={(e) => setPenulis(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="Kategori">Kategori</Label>
+                <Input
+                  type="select"
+                  name="Kategori"
+                  id="Kategori"
+                  value={Kategori}
+                  onChange={(e) => setKategori(e.target.value)}
+                >
+                  <option value="">Pilih Kategori</option>
+                  <option value="PKN">PKN</option>
+                  <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                  <option value="Bahasa Inggris">Bahasa Inggris</option>
+                  <option value="Sejarah">Sejarah</option>
+                  <option value="Matematika">Matematika</option>
+                  <option value="Penjas">Penjas</option>
+                  <option value="Seni Budaya">Seni Budaya</option>
+                  <option value="Agama">Agama</option>
+                  <option value="TIK">TIK</option>
+                  <option value="Fisika">Fisika</option>
+                  <option value="Biologi">Biologi</option>
+                  <option value="Kimia">Kimia</option>
+                  <option value="Ekonomi">Ekonomi</option>
+                  <option value="Geografi">Geografi</option>
+                  <option value="Sosiologi">Sosiologi</option>
+                  <option value="Lainnya">Lainnya</option>
+                  {/* Tambahkan opsi tipe file lainnya sesuai kebutuhan */}
+                </Input>
+              </FormGroup>
+              <FormGroup>
+                <Label for="ringkasan">Ringkasan</Label>
+                <Input
+                  type="textarea"
+                  name="ringkasan"
+                  id="ringkasan"
+                  value={ringkasan}
+                  onChange={(e) => setRingkasan(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="tahun_terbit">Tahun Terbit</Label>
+                <Input
+                  type="text"
+                  name="tahun_terbit"
+                  id="tahun_terbit"
+                  value={tahun_terbit}
+                  onChange={(e) => setTahun_terbit(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="Keterangan">Tipe file</Label>
+                <Input
+                  type="select"
+                  name="keterangan"
+                  id="keterangan"
+                  value={keterangan}
+                  onChange={(e) => setKeterangan(e.target.value)}
+                >
+                  <option value="">Pilih Kategori</option>
+                  <option value="Buku Fisik">Buku Fisik</option>
+                  <option value="Buku Digital">Buku Digital</option>
+                </Input>
+              </FormGroup>
+              <FormGroup>
+                <Label for="Jumlah">Jumlah</Label>
+                <Input
+                  type="text"
+                  name="jumlah"
+                  id="jumlah"
+                  value={jumlah}
+                  onChange={(e) => setJumlah(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="cover_buku">Cover Buku</Label>
+                <Input
+                  type="file"
+                  name="cover_buku"
+                  id="cover_buku"
+                  onChange={(e) => setCover_buku(e.target.files[0])}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="file_ebook">File Buku digital</Label>
+                <Input
+                  type="file"
+                  name="file_ebook"
+                  id="file_ebook"
+                  onChange={(e) => setfile_ebook(e.target.files[0])}
+                />
+              </FormGroup>
+            </Form>
+          </ModalBody>
+          <ModalFooter>
+            <Button type="submit" color="primary" onClick={handleAdd}>
+              Simpan
+            </Button>
+            <Button color="secondary" onClick={toggleModalTambah}>
+              Batal
+            </Button>
+          </ModalFooter>
+        </Modal>
+
+        <Modal isOpen={modalUpdate} toggle={toggleModalUpdate}>
+          <ModalHeader toggle={toggleModalUpdate}>
+            Form {currentBookId ? 'Edit' : 'Edit'} Data
+          </ModalHeader>
+          <ModalBody>
+            <Form innerRef={formRef}>
+              <FormGroup>
+                <Label for="kodeBuku">Kode Buku</Label>
+                <Input
+                  type="text"
+                  name="kodeBuku"
+                  id="kodeBuku"
+                  value={kodeBuku}
+                  onChange={(e) => setKodeBuku(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="judul">Judul</Label>
+                <Input
+                  type="text"
+                  name="judul"
+                  id="judul"
+                  value={judul}
+                  onChange={(e) => setJudul(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="penulis">Penulis</Label>
+                <Input
+                  type="text"
+                  name="penulis"
+                  id="penulis"
+                  value={penulis}
+                  onChange={(e) => setPenulis(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="Kategori">Kategori</Label>
+                <Input
+                  type="select"
+                  name="Kategori"
+                  id="Kategori"
+                  value={Kategori}
+                  onChange={(e) => setKategori(e.target.value)}
+                >
+                  <option value="">Pilih Kategori</option>
+                  <option value="PKN">PKN</option>
+                  <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                  <option value="Bahasa Inggris">Bahasa Inggris</option>
+                  <option value="Sejarah">Sejarah</option>
+                  <option value="Matematika">Matematika</option>
+                  <option value="Penjas">Penjas</option>
+                  <option value="Seni Budaya">Seni Budaya</option>
+                  <option value="Agama">Agama</option>
+                  <option value="TIK">TIK</option>
+                  <option value="Fisika">Fisika</option>
+                  <option value="Biologi">Biologi</option>
+                  <option value="Kimia">Kimia</option>
+                  <option value="Ekonomi">Ekonomi</option>
+                  <option value="Geografi">Geografi</option>
+                  <option value="Sosiologi">Sosiologi</option>
+                  <option value="Lainnya">Lainnya</option>
+                  {/* Tambahkan opsi tipe file lainnya sesuai kebutuhan */}
+                </Input>
+              </FormGroup>
+              <FormGroup>
+                <Label for="ringkasan">Ringkasan</Label>
+                <Input
+                  type="textarea"
+                  name="ringkasan"
+                  id="ringkasan"
+                  value={ringkasan}
+                  onChange={(e) => setRingkasan(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="tahun_terbit">Tahun Terbit</Label>
+                <Input
+                  type="text"
+                  name="tahun_terbit"
+                  id="tahun_terbit"
+                  value={tahun_terbit}
+                  onChange={(e) => setTahun_terbit(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="Keterangan">Tipe file</Label>
+                <Input
+                  type="select"
+                  name="keterangan"
+                  id="keterangan"
+                  value={keterangan}
+                  onChange={(e) => setKeterangan(e.target.value)}
+                >
+                  <option value="">Pilih Kategori</option>
+                  <option value="Buku Fisik">Buku Fisik</option>
+                  <option value="Buku Digital">Buku Digital</option>
+                </Input>
+              </FormGroup>
+              <FormGroup>
+                <Label for="Jumlah">Jumlah</Label>
+                <Input
+                  type="text"
+                  name="jumlah"
+                  id="jumlah"
+                  value={jumlah}
+                  onChange={handleJumlahChange}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="Tersedia">Tersedia</Label>
+                <Input
+                  type="text"
+                  name="tersedia"
+                  id="tersedia"
+                  value={tersedia}
+                  onChange={(e) => setTersedia(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="cover_buku">Cover Buku</Label>
+                <Input
+                  type="file"
+                  name="cover_buku"
+                  id="cover_buku"
+                  onChange={(e) => setCover_buku(e.target.files[0])}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Input
+                  type="hidden"
+                  name="cover_buku"
+                  id="cover_buku"
+                  onChange={(e) => setCover_buku(e.target.files[0])}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="file_ebook">File Buku digital</Label>
+                <Input
+                  type="file"
+                  name="file_ebook"
+                  id="file_ebook"
+                  onChange={(e) => setfile_ebook(e.target.files[0])}
+                />
+              </FormGroup>
+            </Form>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              type="submit"
+              color="primary"
+              onClick={currentBookId ? () => handleUpdate(currentBookId) : handleAdd}
+            >
+              Simpan
+            </Button>
+            <Button color="secondary" onClick={toggleModalUpdate}>
+              Batal
+            </Button>
+          </ModalFooter>
+        </Modal>
       </>
     )
   } catch (e) {

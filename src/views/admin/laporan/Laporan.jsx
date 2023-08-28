@@ -5,43 +5,37 @@ import DatePicker from 'react-datepicker'
 import CIcon from '@coreui/icons-react'
 import { cilCloudDownload } from '@coreui/icons'
 import 'react-datepicker/dist/react-datepicker.css'
+import * as XLSX from 'xlsx'
 import './laporan.scss'
 
 const Laporan = () => {
   const [loading, setLoading] = useState()
-  const dataPengunjung = [
-    {
-      NIS: 105219036,
-      Nama: 'Samppa Nori',
-      Kelas: '11',
-      Jurusan: '1',
-      WaktuKunjung: '2023-01-01',
-    },
-    {
-      NIS: 105219023,
-      Nama: 'Aldo Siagian',
-      Kelas: '10',
-      Jurusan: '-',
-      WaktuKunjung: '2022-02-01',
-    },
-    {
-      NIS: 105219056,
-      Nama: 'Nabil Karen',
-      Kelas: '12',
-      Jurusan: '-',
-      WaktuKunjung: '2022-04-01',
-    },
-  ]
   const [dataPeminjaman, setDataPeminjaman] = useState([])
   const [dataBuku, setDataBuku] = useState([])
+  const [dataPengunjung, setDataPengunjung] = useState([])
+  const [dataBooking, setDataBooking] = useState([])
+
   const [selectedOption, setSelectedOption] = useState('Peminjaman')
   const [selectedYear, setSelectedYear] = useState(new Date())
   const [selectedMonth, setSelectedMonth] = useState(null)
 
   useEffect(() => {
+    console.log(filteredData)
+  })
+
+  useEffect(() => {
     setLoading(false)
     fetchPeminjaman()
   }, [])
+
+  const fetchPengunjung = async () => {
+    try {
+      const response = await axios.get('http://localhost:3005/data-pengunjung')
+      setDataPengunjung(response.data.data)
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   const fetchPeminjaman = async () => {
     try {
@@ -61,21 +55,35 @@ const Laporan = () => {
     }
   }
 
-  const columnsPeminjaman = [
-    {
-      key: 'kodeBuku',
-      _style: { width: '10%' },
-    },
-    { key: 'namaPeminjam', _style: { width: '17%' } },
-    { key: 'judulBuku', _style: { width: '20%' } },
-    { key: 'tglPinjam', _style: { width: '10%' } },
-    { key: 'batasPinjam', _style: { width: '12%' } },
-    { key: 'tglKembali', _style: { width: '11%' } },
-    { key: 'status', _style: { width: '10%' } },
-    { key: 'denda', _style: { width: '10%' } },
-  ]
+  const fetchBooking = async () => {
+    try {
+      const response = await axios.get('http://localhost:3005/booking-pinjam')
+      setDataBooking(response.data.data)
+      console.log(response.data.data)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const formatDate = (dateString) => {
+    if (!dateString) return ''
+
+    const dateObj = new Date(dateString)
+    const year = dateObj.getFullYear()
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+    const day = String(dateObj.getDate()).padStart(2, '0')
+    const time = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+
+    return `${year}-${month}-${day}, Pukul ${time}`
+  }
 
   const columnsPustaka = [
+    {
+      key: 'No',
+      _style: { width: '1%' },
+      filter: false,
+      sorter: false,
+    },
     {
       key: 'kodeBuku',
       _style: { width: '12%' },
@@ -90,16 +98,62 @@ const Laporan = () => {
   ]
 
   const columnsPengunjung = [
-    { key: 'NIS', _style: { width: '20%' } },
-    { key: 'Nama', _style: { width: '30%' } },
-    { key: 'Kelas', _style: { width: '10%' } },
-    { key: 'Jurusan', _style: { width: '10%' } },
-    { key: 'WaktuKunjung', _style: { width: '20' } },
+    {
+      key: 'No',
+      _style: { width: '3%' },
+      filter: false,
+      sorter: false,
+    },
+    { key: 'NIS', _style: { width: '10%' } },
+    { key: 'nama', _style: { width: '20%' } },
+    { key: 'kelas', _style: { width: '10%' } },
+    { key: 'waktuKunjung', _style: { width: '20' } },
+  ]
+
+  const columnsPeminjaman = [
+    {
+      key: 'No',
+      _style: { width: '1%' },
+      filter: false,
+      sorter: false,
+    },
+    {
+      key: 'kodeBuku',
+      _style: { width: '7%' },
+    },
+    { key: 'namaPeminjam', _style: { width: '15%' } },
+    { key: 'judulBuku', _style: { width: '15%' } },
+    { key: 'tglPinjam', _style: { width: '10%' } },
+    { key: 'batasPinjam', _style: { width: '12%' } },
+    { key: 'tglKembali', _style: { width: '11%' } },
+    { key: 'status', _style: { width: '10%' } },
+    { key: 'denda', _style: { width: '10%' } },
+    { key: 'createdAt', _style: { width: '10%' }, label: 'Tercatat Pada' },
+  ]
+
+  const columnsBooking = [
+    {
+      key: 'No',
+      _style: { width: '5%' },
+      filter: false,
+      sorter: false,
+    },
+    {
+      key: 'NIS',
+      _style: { width: '13%' },
+    },
+    { key: 'Nama', _style: { width: '18%' } },
+    { key: 'kodeBuku', _style: { width: '10%' } },
+    { key: 'judul', _style: { width: '21%' } },
+    { key: 'waktuBooking', _style: { width: '15%' } },
+    { key: 'createdAt', _style: { width: '15%' }, label: 'Tercatat pada' },
   ]
 
   const handleOptionChange = (e) => {
     setSelectedOption(e.target.value)
     fetchBuku()
+    fetchPengunjung()
+    fetchBooking()
   }
 
   let selectedColumns
@@ -109,6 +163,8 @@ const Laporan = () => {
     selectedColumns = columnsPustaka
   } else if (selectedOption === 'Data Pengunjung') {
     selectedColumns = columnsPengunjung
+  } else if (selectedOption === 'Data Booking Pinjam') {
+    selectedColumns = columnsBooking
   } else {
     selectedColumns = columnsPeminjaman
   }
@@ -120,6 +176,8 @@ const Laporan = () => {
     selectedData = dataBuku
   } else if (selectedOption === 'Data Pengunjung') {
     selectedData = dataPengunjung
+  } else if (selectedOption === 'Data Booking Pinjam') {
+    selectedData = dataBooking
   } else {
     selectedData = dataPeminjaman
   }
@@ -140,10 +198,8 @@ const Laporan = () => {
   }
 
   const filteredData = selectedData.filter((item) => {
-    const itemYearWaktuKunjung = new Date(item.WaktuKunjung).getFullYear()
-    const itemMonthWaktuKunjung = new Date(item.WaktuKunjung).getMonth()
-    const itemYearTglPinjam = new Date(item.tglPinjam).getFullYear()
-    const itemMonthTglPinjam = new Date(item.tglPinjam).getMonth()
+    const itemYearWaktuKunjung = new Date(item.waktuKunjung).getFullYear()
+    const itemMonthWaktuKunjung = new Date(item.waktuKunjung).getMonth()
     const itemYearCreatedAt = new Date(item.createdAt).getFullYear()
     const itemMonthCreatedAt = new Date(item.createdAt).getMonth()
 
@@ -153,28 +209,51 @@ const Laporan = () => {
     return (
       (itemYearWaktuKunjung === selectedYearValue &&
         (selectedMonth === null || itemMonthWaktuKunjung === selectedMonthValue)) ||
-      (itemYearTglPinjam === selectedYearValue &&
-        (selectedMonth === null || itemMonthTglPinjam === selectedMonthValue)) ||
       (itemYearCreatedAt === selectedYearValue &&
         (selectedMonth === null || itemMonthCreatedAt === selectedMonthValue))
     )
   })
 
-  const getCsvHeader = () => {
-    return selectedColumns.map((column) => column.key).join(',')
+  const getExcelData = () => {
+    if (!filteredData || !filteredData[0]) {
+      alert('Tidak bisa download data kosong')
+      return new Blob()
+    }
+    const header = Object.keys(filteredData[0])
+    const data = filteredData.map((item) => {
+      const formattedWaktuKunjung = formatDate(item.waktuKunjung)
+      const formattedCreatedAt = formatDate(item.createdAt)
+
+      return header.map((column) => {
+        if (column === 'waktuKunjung') {
+          return formattedWaktuKunjung
+        } else if (column === 'createdAt') {
+          return formattedCreatedAt
+        }
+        return item[column]
+      })
+    })
+
+    const ws = XLSX.utils.aoa_to_sheet([header, ...data])
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    })
+
+    return blob
   }
 
-  const getCsvRow = (item) => {
-    return selectedColumns
-      .map((column) => {
-        const value = item[column.key]
-        return Array.isArray(value) ? value.join(' | ') : value // Separate arrays with ' | '
-      })
-      .join(',')
+  const downloadExcel = () => {
+    const blob = getExcelData()
+    if (blob.size > 0) {
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(blob)
+      link.download = 'data-laporan.xlsx'
+      link.click()
+    }
   }
-  const csvContent = filteredData.map(getCsvRow).join('\n')
-  const csvCode =
-    'data:text/csv;charset=utf-8,' + encodeURIComponent(getCsvHeader() + '\n' + csvContent)
 
   return (
     <CCard>
@@ -182,13 +261,12 @@ const Laporan = () => {
         <CButton
           className="download-button"
           color="primary"
-          href={csvCode}
-          download="data-laporan.csv"
+          onClick={downloadExcel}
           target="_blank"
           size="lg"
         >
           <CIcon icon={cilCloudDownload} size="lg" />
-          {` `}Download data laporan (.csv)
+          {` `}Download data laporan (.xlsx)
         </CButton>
 
         <CFormSelect
@@ -201,6 +279,7 @@ const Laporan = () => {
             { label: 'Peminjaman', value: 'Peminjaman' },
             { label: 'Pustaka', value: 'Daftar Pustaka' },
             { label: 'Data Pengunjung', value: 'Data Pengunjung' },
+            { label: 'Data Booking Pinjam', value: 'Data Booking Pinjam' },
           ]}
         />
 
@@ -210,14 +289,15 @@ const Laporan = () => {
             onChange={(date) => setSelectedYear(date)}
             dateFormat="yyyy"
             showYearPicker
+            className="form-control"
             yearItemNumber={6}
           />
           <DatePicker
             selected={selectedMonth}
             onChange={(date) => setSelectedMonth(date)}
             dateFormat="MM"
+            className="form-control ms-2"
             showMonthYearPicker
-            className="ms-2"
           />
         </div>
 
@@ -226,7 +306,7 @@ const Laporan = () => {
           activePage={3}
           footer
           clickableRows
-          columns={selectedColumns} // Use the selected columns here
+          columns={selectedColumns}
           columnSorter
           loading={loading}
           items={filteredData}
@@ -242,11 +322,21 @@ const Laporan = () => {
             responsive: true,
           }}
           scopedColumns={{
+            No: (item, index) => {
+              const itemNumber = index + 1
+              return <td>{itemNumber}</td>
+            },
             status: (item) => (
               <td>
                 <CBadge color={getBadge(item.status)}>{item.status}</CBadge>
               </td>
             ),
+            createdAt: (item) => {
+              return <td className="py-2">{formatDate(item.createdAt)}</td>
+            },
+            waktuKunjung: (item) => {
+              return <td className="py-2">{formatDate(item.waktuKunjung)}</td>
+            },
           }}
         />
       </CCardBody>

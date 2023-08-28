@@ -7,6 +7,7 @@ import {
   cilPeople,
   cilDescription,
   cilNoteAdd,
+  cilAddressBook,
 } from '@coreui/icons'
 import { CNavItem, CNavTitle } from '@coreui/react-pro'
 import axios from 'axios'
@@ -53,6 +54,12 @@ const SidebarData = () => {
       name: 'Data Anggota',
       to: '/dataAnggota',
       icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
+    },
+    {
+      component: CNavItem,
+      name: 'Data Pengunjung',
+      to: '/data-pengunjung',
+      icon: <CIcon icon={cilAddressBook} customClassName="nav-icon" />,
     },
     {
       component: CNavItem,

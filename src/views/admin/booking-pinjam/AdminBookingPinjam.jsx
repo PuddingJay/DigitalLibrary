@@ -4,6 +4,7 @@ import { CButton, CCard, CCardBody, CSmartTable } from '@coreui/react-pro'
 import axios from 'axios'
 import CIcon from '@coreui/icons-react'
 import { cilCloudDownload } from '@coreui/icons'
+import * as XLSX from 'xlsx'
 
 const AdminBookingPinjam = () => {
   const [loading, setLoading] = useState()
@@ -35,6 +36,12 @@ const AdminBookingPinjam = () => {
 
   const columns = [
     {
+      key: 'No',
+      _style: { width: '5%' },
+      filter: false,
+      sorter: false,
+    },
+    {
       key: 'NIS',
       _style: { width: '13%' },
     },
@@ -42,7 +49,7 @@ const AdminBookingPinjam = () => {
     { key: 'kodeBuku', _style: { width: '10%' } },
     { key: 'judul', _style: { width: '21%' } },
     { key: 'waktuBooking', _style: { width: '15%' } },
-    { key: 'createdAt', _style: { width: '15%' } },
+    { key: 'createdAt', _style: { width: '15%' }, label: 'Tercatat pada' },
     {
       key: 'show_details',
       label: 'Aksi',
@@ -52,21 +59,52 @@ const AdminBookingPinjam = () => {
     },
   ]
 
-  const getCsvHeader = () => {
-    return columns.map((column) => column.key).join(',')
+  const formatDate = (dateString) => {
+    const dateObject = new Date(dateString)
+    const year = dateObject.getFullYear()
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0')
+    const day = String(dateObject.getDate()).padStart(2, '0')
+    const time = dateObject.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+
+    return `${year}-${month}-${day}, ${time}`
   }
 
-  const getCsvRow = (item) => {
-    return columns
-      .map((column) => {
-        const value = item[column.key]
-        return Array.isArray(value) ? value.join(' | ') : value // Separate arrays with ' | '
+  const getExcelData = () => {
+    if (!dataBooking || !dataBooking[0]) {
+      alert('Tidak bisa download data kosong')
+      return new Blob()
+    }
+    const header = Object.keys(dataBooking[0])
+    const data = dataBooking.map((item) => {
+      const formattedBookingPinjam = formatDate(item.createdAt)
+      return header.map((column) => {
+        if (column === 'waktuKunjung') {
+          return formattedBookingPinjam
+        }
+        return item[column]
       })
-      .join(',')
+    })
+
+    const ws = XLSX.utils.aoa_to_sheet([header, ...data])
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    })
+
+    return blob
   }
-  const csvContent = dataBooking.map(getCsvRow).join('\n')
-  const csvCode =
-    'data:text/csv;charset=utf-8,' + encodeURIComponent(getCsvHeader() + '\n' + csvContent)
+
+  const downloadExcel = () => {
+    const blob = getExcelData()
+    if (blob.size > 0) {
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(blob)
+      link.download = 'data-booking-pinjam.xlsx'
+      link.click()
+    }
+  }
 
   return (
     <CCard>
@@ -75,13 +113,12 @@ const AdminBookingPinjam = () => {
         <CButton
           className="download-button"
           color="primary"
-          href={csvCode}
-          download="data-booking-pinjam.csv"
+          onClick={downloadExcel}
           target="_blank"
           size="lg"
         >
           <CIcon icon={cilCloudDownload} size="lg" />
-          {` `}Download data Booking Pinjam (.csv)
+          {` `}Download data Booking Pinjam (.xslx)
         </CButton>
         {/* </div> */}
         <CSmartTable
@@ -99,6 +136,13 @@ const AdminBookingPinjam = () => {
           itemsPerPage={5}
           pagination
           scopedColumns={{
+            No: (item, index) => {
+              const itemNumber = index + 1
+              return <td>{itemNumber}</td>
+            },
+            createdAt: (item) => {
+              return <td className="py-2">{formatDate(item.createdAt)}</td>
+            },
             show_details: (item) => {
               return (
                 <td className="py-2">

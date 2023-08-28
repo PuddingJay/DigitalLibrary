@@ -45,6 +45,7 @@ const DetailBuku = () => {
     return `${year}-${month}-${day}`
   }
 
+  const today = formatDate(new Date());
   useEffect(() => {
     fetchSiswa()
   }, [])
@@ -77,13 +78,13 @@ const DetailBuku = () => {
     NIS: NIS,
     nama: nama,
     judulBuku: judulBuku,
-    waktuBooking: null,
+    waktuBooking: today,
   })
 
   const handleBatal = () => {
     setAddFormData({
       ...addFormData,
-      waktuBooking: null
+      waktuBooking: today
     })
   }
 
@@ -123,10 +124,11 @@ const DetailBuku = () => {
         waktuBooking: addFormData.waktuBooking
       }
       const response = await axios.post('http://localhost:3005/booking-pinjam', dataBooking)
-      console.log(response)
+      // console.log(response)
+      alert(response.data.message)
       toggleModal()
     } catch (err) {
-      alert(err.response.data.message + ' periksa data input dan coba lagi')
+      alert(err.response.data.message)
     }
   }
 
@@ -169,7 +171,7 @@ const DetailBuku = () => {
             <h4>Tahun Terbit</h4>
             <p>Tahun Terbit : {catalogItem.tahun_terbit}</p>
             <h4>Tersedia</h4>
-            <p>Tersedia : {catalogItem.jumlah}</p>
+            <p>Tersedia : {catalogItem.tersedia}</p>
           </div>
         </div>
       </div>
@@ -196,6 +198,7 @@ const DetailBuku = () => {
               id="waktuBooking"
               label="Waktu Booking"
               value={addFormData.waktuBooking}
+              date={today}
               onDateChange={formOnChangeTglPinjam}
               className="mb-3"
             />

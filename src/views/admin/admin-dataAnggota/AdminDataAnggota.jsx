@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../admin-dataAnggota/AdminDataAnggota.scss'
 import {
   CButton,
@@ -29,6 +29,7 @@ import {
 } from 'reactstrap'
 import { cilCloudDownload, cilCheckCircle, cilCloudUpload } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
+import * as XLSX from 'xlsx'
 
 const AdminDataAnggota = () => {
   const [loading, setLoading] = useState()
@@ -44,8 +45,6 @@ const AdminDataAnggota = () => {
 
   const [msg, setMsg] = useState(null)
   const [showSuccessAlert, setShowSuccessAlert] = useState(false)
-
-  const formRef = useRef(null)
 
   useEffect(() => {
     fetchData()
@@ -135,7 +134,6 @@ const AdminDataAnggota = () => {
         setShowSuccessAlert(false)
       }, 3000)
 
-      // Perbarui data buku yang sudah dirubah dengan data baru
       setDataAnggota((prevData) => {
         return prevData.map((item) => {
           if (item.NIS === currentAnggotaId) {
@@ -151,7 +149,6 @@ const AdminDataAnggota = () => {
         })
       })
 
-      // Setel ulang nilai input menjadi kosong atau nilai default
       setNIS('')
       setNama('')
       setKelas('')
@@ -163,7 +160,7 @@ const AdminDataAnggota = () => {
 
   const toggleModal = (NIS) => {
     const siswa = DataAnggota.find((item) => item.NIS === NIS)
-    setCurrentAnggotaId(siswa.NIS) // Set the NIS value as the currentAnggotaId
+    setCurrentAnggotaId(siswa.NIS)
     setNIS(siswa.NIS)
     setNama(siswa.Nama)
     setKelas(siswa.Kelas)
@@ -174,12 +171,16 @@ const AdminDataAnggota = () => {
   const [details, setDetails] = useState([])
   const columns = [
     {
-      key: 'NIS',
-      _style: { width: '18%' },
+      key: 'No',
+      _style: { width: '5%' },
+      filter: false,
+      sorter: false,
     },
-    { key: 'Nama', _style: { width: '50%' } },
-    { key: 'Kelas', _style: { width: '18%' } },
-    { key: 'Jurusan', _style: { width: '18%' } },
+    { key: 'NIS', _style: { width: '18%' }, label: 'NIS/ID' },
+    { key: 'Nama', _style: { width: '25%' } },
+    { key: 'Kelas', _style: { width: '10%' }, label: 'Kelas/Peran' },
+    { key: 'Jurusan', _style: { width: '12%' }, label: 'Jurusan/Ruang' },
+    { key: 'jumlahPinjam', _style: { width: '12%' } },
     {
       key: 'show_details',
       label: 'Aksi',
@@ -199,26 +200,36 @@ const AdminDataAnggota = () => {
     setDetails(newDetails)
   }
 
-  // buat download
-  const getCsvHeader = () => {
-    return columns.map((column) => column.key).join(',')
+  const getExcelData = () => {
+    if (!DataAnggota || !DataAnggota[0]) {
+      alert('Tidak bisa download data kosong')
+      return new Blob()
+    }
+    const header = Object.keys(DataAnggota[0])
+    const data = DataAnggota.map((item) => header.map((column) => item[column]))
+
+    const ws = XLSX.utils.aoa_to_sheet([header, ...data])
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    })
+
+    return blob
   }
 
-  const getCsvRow = (item) => {
-    return columns
-      .map((column) => {
-        const value = item[column.key]
-        return Array.isArray(value) ? value.join(' | ') : value // Separate arrays with ' | '
-      })
-      .join(',')
+  const downloadExcel = () => {
+    const blob = getExcelData()
+    if (blob.size > 0) {
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(blob)
+      link.download = 'data-anggota.xlsx'
+      link.click()
+    }
   }
-
-  const csvContent = DataAnggota.map(getCsvRow).join('\n')
-  const csvCode =
-    'data:text/csv;charset=utf-8,' + encodeURIComponent(getCsvHeader() + '\n' + csvContent)
 
   // import excel
-
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0])
     setJsonData('')
@@ -281,6 +292,27 @@ const AdminDataAnggota = () => {
     }
   }
 
+  const options = ['Open this select menu', '10', '11', '12', 'Guru', 'Umum']
+  const handleNaikKelas = async () => {
+    try {
+      const response = await axios.put('http://localhost:3005/siswa-naik-kelas')
+      if (response && response.data) {
+        setMsg(response.data)
+      } else {
+        console.error('Tidak ada data yang dapat diolah')
+        setMsg('Gagal mengubah nilai kelas')
+      }
+      fetchData()
+    } catch (err) {
+      console.error(err)
+      if (err.response && err.response.data && err.response.data.error) {
+        setMsg(err.response.data.error)
+      } else {
+        setMsg('Gagal mengubah nilai kelas')
+      }
+    }
+  }
+
   try {
     return (
       <>
@@ -300,6 +332,20 @@ const AdminDataAnggota = () => {
                 <CButton
                   color="primary"
                   size="lg"
+                  variant="outline"
+                  className="btnNaikKelas"
+                  onClick={() => {
+                    const naikKelas = window.confirm('Konfirmasi Kenaikan Kelas')
+                    if (naikKelas) {
+                      handleNaikKelas()
+                    }
+                  }}
+                >
+                  Naik Kelas
+                </CButton>
+                <CButton
+                  color="primary"
+                  size="lg"
                   className="importCsv"
                   onClick={() => {
                     toggleModalImport()
@@ -310,9 +356,9 @@ const AdminDataAnggota = () => {
                 </CButton>
               </div>
               <CButton
+                className="download-button"
                 color="primary"
-                href={csvCode}
-                download="data-anggota.csv"
+                onClick={downloadExcel}
                 target="_blank"
                 size="lg"
               >
@@ -323,7 +369,7 @@ const AdminDataAnggota = () => {
 
             <CSmartTable
               className="mt-3"
-              activePage={3}
+              activePage={1}
               footer
               cleaner
               clickableRows
@@ -335,6 +381,10 @@ const AdminDataAnggota = () => {
               itemsPerPage={5}
               pagination
               scopedColumns={{
+                No: (item, index) => {
+                  const itemNumber = index + 1
+                  return <td>{itemNumber}</td>
+                },
                 show_details: (item) => {
                   return (
                     <td className="py-2">
@@ -388,7 +438,10 @@ const AdminDataAnggota = () => {
                   )
                 },
               }}
-              sorterValue={{ column: 'name', state: 'asc' }}
+              sorterValue={{
+                column: 'name',
+                state: 'asc',
+              }}
               tableFilter
               tableHeadProps={{
                 color: 'info',
@@ -404,9 +457,9 @@ const AdminDataAnggota = () => {
         <CModal alignment="center" visible={modalTambah} toggle={toggleModalTambah}>
           <ModalHeader toggle={toggleModalTambah}>Tambah Anggota</ModalHeader>
           <ModalBody>
-            <Form innerRef={formRef}>
+            <Form>
               <FormGroup>
-                <Label for="NIS">NIS</Label>
+                <Label for="NIS">NIS/ID</Label>
                 <Input
                   type="text"
                   name="NIS"
@@ -440,18 +493,17 @@ const AdminDataAnggota = () => {
                   name="Kelas"
                   id="Kelas"
                   type="text"
-                  label="Kelas"
+                  label="Kelas/Peran"
                   value={Kelas}
                   onChange={(e) => setKelas(e.target.value)}
                 >
-                  <option>Open this select menu</option>
-                  <option>10</option>
-                  <option>11</option>
-                  <option>12</option>
+                  {options.map((option, index) => (
+                    <option key={index}>{option}</option>
+                  ))}
                 </CFormSelect>
               </FormGroup>
               <FormGroup>
-                <Label for="Jurusan">Jurusan</Label>
+                <Label for="Jurusan">Jurusan/Ruang</Label>
                 <Input
                   type="text"
                   name="Jurusan"
@@ -478,9 +530,9 @@ const AdminDataAnggota = () => {
             Form {currentAnggotaId ? 'Edit' : 'Edit'} Data
           </ModalHeader>
           <ModalBody>
-            <Form innerRef={formRef}>
+            <Form>
               <FormGroup>
-                <Label for="NIS">NIS</Label>
+                <Label for="NIS">NIS/ID</Label>
                 <Input
                   type="text"
                   name="NIS"
@@ -500,7 +552,7 @@ const AdminDataAnggota = () => {
                 />
               </FormGroup>
               <FormGroup>
-                <Label for="Kelas">Kelas</Label>
+                <Label for="Kelas">Kelas/Peran</Label>
                 <CFormSelect
                   type="text"
                   name="Kelas"
@@ -508,14 +560,13 @@ const AdminDataAnggota = () => {
                   value={Kelas}
                   onChange={(e) => setKelas(e.target.value)}
                 >
-                  <option>Open this select menu</option>
-                  <option>10</option>
-                  <option>11</option>
-                  <option>12</option>
+                  {options.map((option, index) => (
+                    <option key={index}>{option}</option>
+                  ))}
                 </CFormSelect>
               </FormGroup>
               <FormGroup>
-                <Label for="Jurusan">Jurusan</Label>
+                <Label for="Jurusan">Jurusan/Ruang</Label>
                 <Input
                   type="text"
                   name="Jurusan"

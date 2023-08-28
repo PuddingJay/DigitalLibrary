@@ -38,6 +38,9 @@ const PdfRead = React.lazy(() => import('./views/user/PdfRead'))
 const UpdateSiswa = React.lazy(() => import('./views/user/UpdateSiswa/UpdateSiswa'))
 const SiswaLogin = React.lazy(() => import('./views/user/LoginSiswa/LoginSiswa'))
 const ShowPdf = React.lazy(() => import('./views/admin/admin-daftarpustaka/ShowPdf'))
+const FormPengunjung = React.lazy(() =>
+  import('./views/pages/form-data-pengunjung/FormDataPengunjung'),
+)
 
 const App = () => {
   const dispatch = useDispatch()
@@ -69,6 +72,12 @@ const App = () => {
           <Route path="/siswa/login" name="Login" element={<SiswaLogin />} />
           <Route exact path="/" name="Login Page" element={<SiswaLogin />} />
           <Route exact path="/register" name="Register Page" element={<Register />} />
+          <Route
+            exact
+            path="/form-pengunjung"
+            name="Form Pengunjung"
+            element={<FormPengunjung />}
+          />
           <Route path="*" name="Home" element={<DefaultLayout />} />
           <Route exact path="/404" name="Page 404" element={<Page404 />} />
           <Route exact path="/500" name="Page 500" element={<Page500 />} />

@@ -46,7 +46,8 @@
     "redux": "4.2.1",
     "sass": "^1.63.3",
     "simplebar-react": "^2.4.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "react-scripts start",

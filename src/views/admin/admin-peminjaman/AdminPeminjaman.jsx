@@ -25,6 +25,7 @@ import {
 import axios from 'axios'
 import CIcon from '@coreui/icons-react'
 import { cilCloudDownload, cilCheckCircle } from '@coreui/icons'
+import * as XLSX from 'xlsx'
 
 const AdminPeminjaman = () => {
   const [msg, setMsg] = useState(null)
@@ -39,6 +40,18 @@ const AdminPeminjaman = () => {
     const day = String(dateObj.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
+  };
+
+  const formatCreatedDate = (dateString) => {
+    if (!dateString) return "";
+
+    const dateObj = new Date(dateString);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const day = String(dateObj.getDate()).padStart(2, "0");
+    const time = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+
+    return `${year}-${month}-${day} Pukul: ${time}`;
   };
 
   const today = formatDate(new Date());
@@ -457,6 +470,9 @@ const AdminPeminjaman = () => {
       }, 3000)
       batalHandler()
     } catch (err) {
+      if (err.response && err.response.status === 404) {
+        alert('Buku Tidak Tersedia');
+      }
       console.error(err)
     }
   }
@@ -486,11 +502,17 @@ const AdminPeminjaman = () => {
   const [details, setDetails] = useState([])
   const columns = [
     {
+      key: 'No',
+      _style: { width: '5%' },
+      filter: false,
+      sorter: false,
+    },
+    {
       key: 'kodeBuku',
-      _style: { width: '12%' },
+      _style: { width: '10%' },
     },
     { key: 'namaPeminjam', _style: { width: '17%' } },
-    { key: 'judulBuku', _style: { width: '20%' } },
+    { key: 'judulBuku', _style: { width: '18%' } },
     { key: 'tglPinjam', _style: { width: '10%' } },
     { key: 'batasPinjam', _style: { width: '10%' } },
     { key: 'tglKembali', _style: { width: '10%' } },
@@ -531,22 +553,42 @@ const AdminPeminjaman = () => {
   }
 
   // buat download
-  const getCsvHeader = () => {
-    return columns.map((column) => column.key).join(',')
-  }
-
-  const getCsvRow = (item) => {
-    return columns
-      .map((column) => {
-        const value = item[column.key]
-        return Array.isArray(value) ? value.join(' | ') : value // Separate arrays with ' | '
+  const getExcelData = () => {
+    if (!peminjaman || !peminjaman[0]) {
+      alert('Tidak bisa download data kosong')
+      return new Blob()
+    }
+    const header = Object.keys(peminjaman[0])
+    const data = peminjaman.map((item) => {
+      const formattedPeminjaman = formatCreatedDate(item.createdAt)
+      return header.map((column) => {
+        if (column === 'createdAt') {
+          return formattedPeminjaman
+        }
+        return item[column]
       })
-      .join(',')
+    })
+
+    const ws = XLSX.utils.aoa_to_sheet([header, ...data])
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    })
+
+    return blob
   }
 
-  const csvContent = peminjaman.map(getCsvRow).join('\n')
-  const csvCode =
-    'data:text/csv;charset=utf-8,' + encodeURIComponent(getCsvHeader() + '\n' + csvContent)
+  const downloadExcel = () => {
+    const blob = getExcelData()
+    if (blob.size > 0) {
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(blob)
+      link.download = 'data-peminjaman.xlsx'
+      link.click()
+    }
+  }
 
   try {
     return (
@@ -601,13 +643,11 @@ const AdminPeminjaman = () => {
                 <CButton
                   className="download-button"
                   color="primary"
-                  href={csvCode}
-                  download="data-peminjaman.csv"
+                  onClick={downloadExcel}
                   target="_blank"
                   size="lg"
                 >
                   <CIcon icon={cilCloudDownload} size="lg" />
-                  {/* Download data peminjaman (.csv) */}
                 </CButton>
               </div>
             </div>
@@ -626,6 +666,10 @@ const AdminPeminjaman = () => {
               itemsPerPage={5}
               pagination
               scopedColumns={{
+                No: (item, index) => {
+                  const itemNumber = index + 1
+                  return <td>{itemNumber}</td>
+                },
                 status: (item) => (
                   <td>
                     <CBadge color={getBadge(item.status)}>{item.status}</CBadge>
@@ -652,8 +696,8 @@ const AdminPeminjaman = () => {
                   return (
                     <CCollapse visible={details.includes(item.idPeminjaman)}>
                       <CCardBody className="p-3">
-                        <h4>Buku {item.judulBuku}</h4>
-                        <p className="text-muted">Dipinjam Sejak: {item.tglPinjam}</p>
+                        <h4>Buku {item.judulBuku} ( {item.kodeBuku} ) </h4>
+                        <p className="text-muted">Dicatat pada tanggal: {formatCreatedDate(item.createdAt)} Oleh {item.namaPeminjam} ({item.NIS})</p>
                         <CButton
                           size="sm"
                           color="dark"
