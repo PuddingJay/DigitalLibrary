@@ -39,6 +39,12 @@ const SidebarData = () => {
     },
     {
       component: CNavItem,
+      name: 'Approval Buku',
+      to: '/Approval',
+      icon: <CIcon icon={cilBook} customClassName="nav-icon" />,
+    },
+    {
+      component: CNavItem,
       name: 'Daftar Pustaka',
       to: '/daftarPustaka',
       icon: <CIcon icon={cilBook} customClassName="nav-icon" />,
@@ -70,6 +76,12 @@ const SidebarData = () => {
         color: 'danger',
         text: totalBooking.toString(),
       },
+    },
+    {
+      component: CNavItem,
+      name: 'Permintaan Buku',
+      to: '/kotakSaran',
+      icon: <CIcon icon={cilSpreadsheet} customClassName="nav-icon" />,
     },
     {
       component: CNavItem,

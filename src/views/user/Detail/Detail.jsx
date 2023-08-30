@@ -52,7 +52,6 @@ const DetailBuku = () => {
     judulBuku: null,
     textKomentar: '',
   })
-
   const formatDate = (dateString) => {
     if (!dateString) return ''
 
@@ -63,8 +62,9 @@ const DetailBuku = () => {
 
     return `${year}-${month}-${day}`
   }
-
   const today = formatDate(new Date());
+
+
 
   const [editFormData, setEditFormData] = useState({
     idKomentar: null,
@@ -120,12 +120,12 @@ const DetailBuku = () => {
       const response = await axios.get(`http://localhost:3005/berhasilLogin/${refreshToken}`)
 
       const decoded = jwtDecode(response.data.accessToken)
-      setNama(decoded.Nama)
+      setNama(decoded.nama)
       setSiswaId(decoded.siswaId)
       setKelas(decoded.Kelas)
       setJurusan(decoded.Jurusan)
       setNIS(decoded.siswaId)
-      console.log(decoded)
+      // console.log(decoded)
     } catch (err) {
       if (err.message === 'Refresh token siswa not found') {
         navigate('/siswa/login')
@@ -139,30 +139,31 @@ const DetailBuku = () => {
   }
 
   const formOnChangeTglPinjam = (value) => {
-    value !== null
-      ? setAddFormDataMemesan({
-        ...addFormDataMemesan,
-        waktuBooking: formatDate(value),
-      })
-      : setAddFormDataMemesan({
-        ...addFormDataMemesan,
-        waktuBooking: null,
-      })
-
-    console.log(addFormData);
-  }
+    if (value == null) {
+      setAddFormDataMemesan((prevData) => ({
+        ...prevData,
+        tglPemesanan: null,
+      }));
+    } else {
+      setAddFormDataMemesan((prevData) => ({
+        ...prevData,
+        tglPemesanan: formatDate(value),
+      }));
+    }
+    console.log(addFormDataMemesan);
+  };
 
   const [addFormDataMemesan, setAddFormDataMemesan] = useState({
-    NIS: NIS,
-    nama: Nama,
-    judulBuku: judulBuku,
-    waktuBooking: today,
+    Siswa_NIS: NIS,
+    // nama: Nama,
+    Buku_kodeBuku: kodeBuku,
+    tglPemesanan: today,
   })
 
   const handleBatal = () => {
     setAddFormData({
       ...addFormDataMemesan,
-      waktuBooking: today
+      tglPemesanan: today
     })
   }
 
@@ -180,7 +181,7 @@ const DetailBuku = () => {
 
   useEffect(() => {
     const fetchCatalogItem = async () => {
-      console.log(params.id)
+      // console.log(params.id)
       try {
         const url = `http://localhost:3005/book/${params.id}`
         const response = await axios.get(url)
@@ -205,7 +206,7 @@ const DetailBuku = () => {
     }
   }, [kodeBuku])
 
-  console.log(catalogItem)
+  // console.log(catalogItem)
   if (!catalogItem) {
     return <div>Loading...</div>
   }
@@ -214,6 +215,7 @@ const DetailBuku = () => {
     try {
       // Send a request to update the likes count in the database
       const url = `http://localhost:3005/updateTop/${params.id}`
+      console.log(params.id);
       const response = await axios.put(url, {
         kodeBuku: params.id, // Assuming 'params.id' contains the book's kodeBuku
         likes: likeCount + 1,
@@ -323,14 +325,17 @@ const DetailBuku = () => {
   const handleTambahBooking = async () => {
     try {
       const dataBooking = {
-        NIS: NIS,
-        nama: Nama,
-        kodeBuku: kodeBuku,
-        judulBuku: judulBuku,
-        waktuBooking: addFormData.waktuBooking
+        Siswa_NIS: NIS,
+        Buku_kodeBuku: kodeBuku,
+        tglPemesanan: addFormDataMemesan.tglPemesanan
       }
       const response = await axios.post('http://localhost:3005/booking-pinjam', dataBooking)
       // console.log(response)
+      setAddFormDataMemesan((prevData) => ({
+        ...prevData,
+        tglPemesanan: today,
+      }));
+
       alert(response.data.message)
       toggleModal()
     } catch (err) {
@@ -359,7 +364,7 @@ const DetailBuku = () => {
             </CButton>
           ) : (
             <Link to={`/PdfRead/${catalogItem.kodeBuku}`}>
-              <CButton type="submit" onClick={formOnSubmitRiwayat}>
+              <CButton type="submit" className="btnBaca" onClick={formOnSubmitRiwayat}>
                 Baca
               </CButton>
             </Link>
@@ -468,7 +473,7 @@ const DetailBuku = () => {
               type="submit"
               style={{
                 width: '20%', // Lebar tombol kirim diatur menjadi lebih pendek
-                backgroundColor: 'blue',
+                backgroundColor: '#29266a',
                 color: 'white',
                 padding: '8px 16px',
                 borderRadius: '5px',
@@ -522,13 +527,14 @@ const DetailBuku = () => {
         <CModalBody>
           <CForm>
             <CDatePicker
-              name="waktuBooking"
+              name="tglPemesanan"
               footer
               locale="id-ID"
               id="waktuBooking"
               label="Waktu Booking"
-              value={addFormDataMemesan.waktuBooking}
+              value={addFormDataMemesan.tglPemesanan}
               date={today}
+              minDate={today}
               onDateChange={formOnChangeTglPinjam}
               className="mb-3"
             />

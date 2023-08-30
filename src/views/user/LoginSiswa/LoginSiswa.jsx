@@ -30,7 +30,7 @@ const Login = () => {
 
     try {
       const response = await axios.post('http://localhost:3005/siswa/login', {
-        Nama: formattedNama,
+        nama: formattedNama,
         password: password,
       })
 

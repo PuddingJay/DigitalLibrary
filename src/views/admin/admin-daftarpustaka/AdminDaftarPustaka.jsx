@@ -279,7 +279,7 @@ const AdminDaftarPustaka = () => {
     },
     { key: 'judul', _style: { width: '17%' } },
     { key: 'penulis', _style: { width: '20%' } },
-    { key: 'Kategori', _style: { width: '10%' } },
+    { key: 'kategori', _style: { width: '10%' } },
     { key: 'keterangan', _style: { width: '10%' } },
     { key: 'jumlah', _style: { width: '5%' } },
     { key: 'tersedia', _style: { width: '5%' } },
@@ -288,7 +288,7 @@ const AdminDaftarPustaka = () => {
       _style: { width: '10%' },
     },
     {
-      key: 'file_ebook',
+      key: 'berkasBuku',
       _style: { width: '10%' },
     },
     {

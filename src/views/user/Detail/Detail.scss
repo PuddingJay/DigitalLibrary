@@ -32,7 +32,7 @@
       cursor: not-allowed;
     }
 
-    button {
+    .btnBaca {
       margin-top: 20px;
       width: 100%;
     }
@@ -196,7 +196,7 @@
 }
 
 .footer {
-  position: fixed;
+  position: relative;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -208,7 +208,7 @@
   flex-direction: row;
 
   @include mobile {
-    position: fixed;
+    position: relative;
   }
 
   .logo {

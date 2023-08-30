@@ -74,8 +74,8 @@ const AdminPeminjaman = () => {
     return storedHargaDenda ? parseInt(storedHargaDenda) : 500;
   });
   const [addFormData, setAddFormData] = useState({
-    kodeBuku: null,
-    NIS: null,
+    Buku_kodeBuku: null,
+    Siswa_NIS: null,
     namaPeminjam: null,
     judulBuku: null,
     tglKembali: null,
@@ -153,11 +153,11 @@ const AdminPeminjaman = () => {
 
   const fetchNamaSiswa = async () => {
     const sisw = siswas.find((item) => item.NIS === addFormData.NIS);
-    const NISSiswa = sisw ? sisw.NIS : null;
+    const NISSiswa = sisw ? sisw.siswa_NIS : null;
 
     setAddFormData((prevFormData) => ({
       ...prevFormData,
-      NIS: NISSiswa,
+      Siswa_NIS: NISSiswa,
     }));
     console.log(sisw);
   };
@@ -181,6 +181,7 @@ const AdminPeminjaman = () => {
         }
         return item;
       });
+      console.log(updatedPeminjaman)
       setPeminjaman(updatedPeminjaman);
     } catch (error) {
       console.error(error);
@@ -231,20 +232,21 @@ const AdminPeminjaman = () => {
     if (fieldName === 'kodeBuku') {
       const book = books.find((item) => item.kodeBuku === fieldValue);
       const judulBuku = book ? book.judul : null;
+      console.log(book);
 
       newFormData = {
         ...addFormData,
-        kodeBuku: fieldValue,
+        Buku_kodeBuku: fieldValue,
         judulBuku: judulBuku,
       };
     } else if (fieldName === 'NIS') {
       const nisValue = parseInt(fieldValue);
-      const sisw = siswas.find((item) => item.NIS === nisValue);
-      const namaSiswa = sisw ? sisw.Nama : null;
-
+      const sisw = siswas.find((item) => item.siswa_NIS === nisValue);
+      const namaSiswa = sisw ? sisw.nama : null;
+      console.log(sisw);
       newFormData = {
         ...addFormData,
-        NIS: nisValue,
+        Siswa_NIS: nisValue,
         namaPeminjam: namaSiswa,
       };
     } else if (fieldName === 'status') {
@@ -321,8 +323,8 @@ const AdminPeminjaman = () => {
     fetchNamaSiswa(); // Fetch the namaSiswa value based on the NIS
 
     if (
-      !addFormData.kodeBuku ||
-      !addFormData.NIS ||
+      !addFormData.Buku_kodeBuku ||
+      !addFormData.Siswa_NIS ||
       !addFormData.namaPeminjam ||
       !addFormData.judulBuku ||
       !addFormData.tglPinjam ||
@@ -330,13 +332,13 @@ const AdminPeminjaman = () => {
       !addFormData.status
     ) {
       // Handle the error here (e.g., show a message to the user)
-      alert("Kolom yang harus diisi tidak boleh kosong");
+      alert("Hanya kolom tanggal kembali dan denda yang boleh kosong");
       return;
     }
 
     const newDataPeminjaman = {
-      kodeBuku: addFormData.kodeBuku,
-      NIS: addFormData.NIS,
+      Buku_kodeBuku: addFormData.Buku_kodeBuku,
+      Siswa_NIS: addFormData.Siswa_NIS,
       namaPeminjam: addFormData.namaPeminjam,
       judulBuku: addFormData.judulBuku,
       tglKembali: addFormData.tglKembali,
@@ -421,21 +423,23 @@ const AdminPeminjaman = () => {
       [name]: value,
     }))
 
-    if (name === 'NIS') {
+    if (name === 'Siswa_NIS') {
       const nisValue = parseInt(value)
-      const sisw = siswas.find((item) => item.NIS === nisValue)
+      const sisw = siswas.find((item) => item.siswa_NIS === nisValue)
+      // console.log(sisw);
       if (sisw) {
         setCurrentId((prevState) => ({
           ...prevState,
-          namaPeminjam: sisw.Nama,
+          nama: sisw.nama,
         }))
       }
-    } else if (name === 'kodeBuku') {
+    } else if (name === 'Buku_kodeBuku') {
       const book = books.find((item) => item.kodeBuku === value)
+      console.log(book);
       if (book) {
         setCurrentId((prevState) => ({
           ...prevState,
-          judulBuku: book.judul,
+          judul: book.judul,
         }));
       }
     } else if (name === 'status') {
@@ -527,11 +531,12 @@ const AdminPeminjaman = () => {
       sorter: false,
     },
     {
-      key: 'kodeBuku',
+      key: 'Buku_kodeBuku',
       _style: { width: '10%' },
+      label: 'Kode Buku',
     },
-    { key: 'namaPeminjam', _style: { width: '17%' } },
-    { key: 'judulBuku', _style: { width: '18%' } },
+    { key: 'nama', _style: { width: '17%' } },
+    { key: 'judul', _style: { width: '18%' } },
     { key: 'tglPinjam', _style: { width: '10%' } },
     { key: 'batasPinjam', _style: { width: '10%' } },
     { key: 'tglKembali', _style: { width: '10%' } },
@@ -714,8 +719,8 @@ const AdminPeminjaman = () => {
                   return (
                     <CCollapse visible={details.includes(item.idPeminjaman)}>
                       <CCardBody className="p-3">
-                        <h4>Buku {item.judulBuku} ( {item.kodeBuku} ) </h4>
-                        <p className="text-muted">Dicatat pada tanggal: {formatCreatedDate(item.createdAt)} Oleh {item.namaPeminjam} ({item.NIS})</p>
+                        <h4>Buku {item.judul} ( {item.Buku_kodeBuku} ) </h4>
+                        <p className="text-muted">Dicatat pada tanggal: {formatCreatedDate(item.createdAt)} Oleh {item.nama} ({item.Siswa_NIS})</p>
                         <CButton
                           size="sm"
                           color="dark"
@@ -909,8 +914,8 @@ const AdminPeminjaman = () => {
             <CForm className="row g-3" onSubmit={formUpdateHandler}>
               <CCol md={3}>
                 <CFormInput
-                  value={currentId.NIS}
-                  name="NIS"
+                  value={currentId.Siswa_NIS}
+                  name="Siswa_NIS"
                   type="text"
                   id="inputNIS"
                   label="NIS"
@@ -919,8 +924,8 @@ const AdminPeminjaman = () => {
               </CCol>
               <CCol md={9}>
                 <CFormInput
-                  value={currentId.namaPeminjam}
-                  name="namaPeminjam"
+                  value={currentId.nama}
+                  name="nama"
                   type="text"
                   id="inputNamaPeminjam"
                   label="Nama Peminjam"
@@ -929,8 +934,8 @@ const AdminPeminjaman = () => {
               </CCol>
               <CCol md={2}>
                 <CFormInput
-                  value={currentId.kodeBuku}
-                  name="kodeBuku"
+                  value={currentId.Buku_kodeBuku}
+                  name="Buku_kodeBuku"
                   type="text"
                   id="inputIdBuku"
                   label="Kode Buku"
@@ -939,8 +944,8 @@ const AdminPeminjaman = () => {
               </CCol>
               <CCol xs={10}>
                 <CFormInput
-                  value={currentId.judulBuku}
-                  name="judulBuku"
+                  value={currentId.judul}
+                  name="judul"
                   id="inputJudulBuku"
                   label="Judul Buku"
                   placeholder="Judul Buku"

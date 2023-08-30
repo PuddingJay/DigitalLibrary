@@ -1,29 +1,83 @@
 import React, { useState, useEffect } from 'react'
 import './adminBookingPinjam.scss'
-import { CButton, CCard, CCardBody, CSmartTable } from '@coreui/react-pro'
+import { CButton, CCard, CCardBody, CSmartTable, CBadge, CCollapse } from '@coreui/react-pro'
 import axios from 'axios'
 import CIcon from '@coreui/icons-react'
 import { cilCloudDownload } from '@coreui/icons'
 import * as XLSX from 'xlsx'
+import jwtDecode from 'jwt-decode'
 
 const AdminBookingPinjam = () => {
   const [loading, setLoading] = useState()
   const [dataBooking, setDataBooking] = useState([])
 
   useEffect(() => {
-    fetchData()
-    setLoading(false)
+    RefreshToken()
   }, [])
+
+  const getBadge = (status) => {
+    switch (status) {
+      case 'Kadaluarsa':
+        return 'danger'
+      case 'Belum Dipinjam':
+        return 'warning'
+      case 'Dipinjam':
+        return 'primary'
+      default:
+        return 'primary'
+    }
+  }
+
+  const RefreshToken = async () => {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken')
+      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
+      const decoded = jwtDecode(response.data.accessToken)
+
+      if (decoded.role !== 'admin') {
+        window.location.href = '/dashboard' // Ganti '/dashboard' dengan rute yang sesuai
+        alert('Anda tidak punya akses untuk halaman ini')
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const fetchData = async () => {
     try {
+      const currentDate = new Date()
+      const fiveSecondinMilliseconds = 5 * 1000 // 2 days in milliseconds
       const response = await axios.get('http://localhost:3005/booking-pinjam')
-      setDataBooking(response.data.data)
-      console.log(response.data.data)
-    } catch (err) {
-      console.error(err)
+      const updatedDataPromises = response.data.data.map(async (item) => {
+        if (item.status === 'Belum Dipinjam') {
+          const tglPemesanan = new Date(item.tglPemesanan)
+          const timeDifference = currentDate - tglPemesanan
+
+          if (timeDifference >= fiveSecondinMilliseconds) {
+            return {
+              ...item,
+              status: 'Kadaluarsa',
+            }
+          }
+          axios.put(`http://localhost:3005/booking-pinjam/${item.idReservasi}`, item)
+        }
+        return item
+      })
+
+      const updatedData = await Promise.all(updatedDataPromises)
+
+      console.log(updatedData)
+      setDataBooking(updatedData)
+      console.log(dataBooking)
+    } catch (error) {
+      alert(error.message)
     }
   }
+
+  useEffect(() => {
+    fetchData()
+    setLoading(false)
+  }, [])
 
   const handleDelete = async (idBookingPinjam) => {
     try {
@@ -34,6 +88,31 @@ const AdminBookingPinjam = () => {
     }
   }
 
+  const handleDipinjam = async (idBookingPinjam) => {
+    try {
+      const response = await axios.put(`http://localhost:3005/booking-pinjam/${idBookingPinjam}`, {
+        status: 'Dipinjam',
+      })
+
+      // Update the bookings list with the updated status
+      const updatedBookings = dataBooking.map((booking) => {
+        if (booking.idReservasi === idBookingPinjam) {
+          return {
+            ...booking,
+            status: 'Dipinjam',
+          }
+        }
+        return booking
+      })
+
+      setDataBooking(updatedBookings) // Update the state with new bookings list
+      console.log(response.data.message) // Log the response message
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const [details, setDetails] = useState([])
   const columns = [
     {
       key: 'No',
@@ -41,14 +120,11 @@ const AdminBookingPinjam = () => {
       filter: false,
       sorter: false,
     },
-    {
-      key: 'NIS',
-      _style: { width: '13%' },
-    },
-    { key: 'Nama', _style: { width: '18%' } },
-    { key: 'kodeBuku', _style: { width: '10%' } },
+    { key: 'nama', _style: { width: '18%' } },
+    { key: 'Buku_kodeBuku', _style: { width: '10%' }, label: 'Kode Buku' },
     { key: 'judul', _style: { width: '21%' } },
-    { key: 'waktuBooking', _style: { width: '15%' } },
+    { key: 'tglPemesanan', _style: { width: '15%' }, label: 'Tanggal Mau Pinjam' },
+    { key: 'status', _style: { width: '8%' } },
     { key: 'createdAt', _style: { width: '15%' }, label: 'Tercatat pada' },
     {
       key: 'show_details',
@@ -58,6 +134,16 @@ const AdminBookingPinjam = () => {
       sorter: false,
     },
   ]
+  const toggleDetails = (index) => {
+    const position = details.indexOf(index)
+    let newDetails = details.slice()
+    if (position !== -1) {
+      newDetails.splice(position, 1)
+    } else {
+      newDetails = [...details, index]
+    }
+    setDetails(newDetails)
+  }
 
   const formatDate = (dateString) => {
     const dateObject = new Date(dateString)
@@ -78,7 +164,7 @@ const AdminBookingPinjam = () => {
     const data = dataBooking.map((item) => {
       const formattedBookingPinjam = formatDate(item.createdAt)
       return header.map((column) => {
-        if (column === 'waktuKunjung') {
+        if (column === 'createdAt') {
           return formattedBookingPinjam
         }
         return item[column]
@@ -140,27 +226,66 @@ const AdminBookingPinjam = () => {
               const itemNumber = index + 1
               return <td>{itemNumber}</td>
             },
+            status: (item) => (
+              <td>
+                <CBadge color={getBadge(item.status)}>{item.status}</CBadge>
+              </td>
+            ),
             createdAt: (item) => {
               return <td className="py-2">{formatDate(item.createdAt)}</td>
             },
             show_details: (item) => {
+              // console.log(item.idReservasi)
               return (
                 <td className="py-2">
                   <CButton
+                    color="primary"
+                    variant="outline"
+                    shape="square"
                     size="sm"
-                    color="danger"
                     onClick={() => {
-                      const shouldDelete = window.confirm(
-                        'Apakah Anda yakin ingin menghapus data ini?',
-                      )
-                      if (shouldDelete) {
-                        handleDelete(item.idBookingPinjam)
-                      }
+                      toggleDetails(item.idReservasi)
                     }}
                   >
-                    Delete
+                    {details.includes(item.idReservasi) ? 'Hide' : 'Show'}
                   </CButton>
                 </td>
+              )
+            },
+            details: (item) => {
+              return (
+                <CCollapse visible={details.includes(item.idReservasi)}>
+                  <CCardBody className="p-3">
+                    <h4>Nama: {item.nama}</h4>
+                    <CButton
+                      size="sm"
+                      color="primary"
+                      className="me-2"
+                      onClick={() => {
+                        const yakinPinjam = window.confirm('Konfirmasi buku sudah dipinjam ?')
+                        if (yakinPinjam) {
+                          handleDipinjam(item.idReservasi)
+                        }
+                      }}
+                    >
+                      Konfirmasi Dipinjam
+                    </CButton>
+                    <CButton
+                      size="sm"
+                      color="danger"
+                      onClick={() => {
+                        const shouldDelete = window.confirm(
+                          'Apakah Anda yakin ingin menghapus data ini?',
+                        )
+                        if (shouldDelete) {
+                          handleDelete(item.idReservasi)
+                        }
+                      }}
+                    >
+                      Delete
+                    </CButton>
+                  </CCardBody>
+                </CCollapse>
               )
             },
           }}

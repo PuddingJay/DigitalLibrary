@@ -34,7 +34,7 @@ const NavbarComponent = () => {
         `http://localhost:3005/berhasilLogin/${refreshToken}`,
       )
       const decoded = jwtDecode(response.data.accessToken)
-      setNama(decoded.Nama)
+      setNama(decoded.nama)
 
       const oneDayInMilliseconds = 24 * 60 * 60 * 1000
       const tokenExpirationTime = decoded.exp * 1000
@@ -44,7 +44,7 @@ const NavbarComponent = () => {
         throw new Error('Refresh token has expired')
       }
 
-      console.log(decoded)
+      // console.log(decoded)
     } catch (err) {
       if (
         err.message === 'Refresh token siswa not found' ||
@@ -99,7 +99,7 @@ const NavbarComponent = () => {
                 <CDropdownToggle>Selamat datang {Nama}</CDropdownToggle>
                 <CDropdownMenu>
                   <Link to="/Profil/">
-                    <CDropdownItem>Profil</CDropdownItem>
+                    <CDropdownItem component='span'>Profil</CDropdownItem>
                   </Link>
                   <Link to="/Home" style={{ textDecoration: 'none' }}>
                     <CDropdownItem component='span'>

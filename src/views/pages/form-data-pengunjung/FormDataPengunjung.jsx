@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState /*useEffect*/ } from 'react'
 import './formDataPengunjung.scss'
 import { CAlert, CForm, CFormInput, CButton, CFormSelect } from '@coreui/react-pro'
 import { CCard, CCardBody, CCardHeader } from '@coreui/react-pro'
@@ -8,29 +8,29 @@ import { cilCheckCircle, cilXCircle } from '@coreui/icons'
 
 const DataPengunjung = () => {
   const [inputValues, setInputValues] = useState({
-    NIS: '',
     nama: '',
-    kelas: '',
+    tipePengunjung: '',
+    asal: '',
   })
-  const [siswas, setSiswas] = useState([])
-  const options = ['Open this select menu', '10', '11', '12', 'Guru', 'Umum']
+  // const [siswas, setSiswas] = useState([])
+  const options = ['Open this select menu', 'Siswa', 'Guru', 'Tamu']
   const [msg, setMsg] = useState('')
   const [showSuccessAlert, setShowSuccessAlert] = useState(false)
   const [showErrorAlert, setShowErrorAlert] = useState(false)
 
-  useEffect(() => {
-    fetchSisws()
-  }, [])
+  // useEffect(() => {
+  //   fetchSisws()
+  // }, [])
 
-  const fetchSisws = async () => {
-    try {
-      const responseSiswa = await axios.get('http://localhost:3005/siswa')
-      setSiswas(responseSiswa.data?.data ?? [])
-      // console.log(responseSiswa.data.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  // const fetchSisws = async () => {
+  //   try {
+  //     const responseSiswa = await axios.get('http://localhost:3005/siswa')
+  //     setSiswas(responseSiswa.data?.data ?? [])
+  //     // console.log(responseSiswa.data.data)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   const handleInputChange = (event) => {
     const { name, value } = event.target
@@ -38,24 +38,24 @@ const DataPengunjung = () => {
       ...prevValues,
       [name]: value,
     }))
-    if (name === 'NIS') {
-      const nisValue = parseInt(value)
-      const sisw = siswas.find((item) => item.NIS === nisValue)
-      const namaSiswa = sisw ? sisw.Nama : ''
-      const kelasSiswa = sisw ? sisw.Kelas : ''
+    // if (name === 'NIS') {
+    //   const nisValue = parseInt(value)
+    //   const sisw = siswas.find((item) => item.NIS === nisValue)
+    //   const namaSiswa = sisw ? sisw.Nama : ''
+    //   const kelasSiswa = sisw ? sisw.Kelas : ''
 
-      setInputValues({
-        NIS: value,
-        nama: namaSiswa,
-        kelas: kelasSiswa,
-      })
-    }
+    //   setInputValues({
+    //     NIS: value,
+    //     nama: namaSiswa,
+    //     kelas: kelasSiswa,
+    //   })
+    // }
   }
 
   const handleAdd = async (e) => {
     e.preventDefault()
-    const { NIS, nama, kelas } = inputValues
-    if (!NIS || !nama || !kelas) {
+    const { nama, tipePengunjung, asal } = inputValues
+    if (!tipePengunjung || !nama || !asal) {
       setShowErrorAlert(true)
       setMsg('Harap isi semua kolom input.')
       setTimeout(() => {
@@ -74,16 +74,16 @@ const DataPengunjung = () => {
       }, 3000)
 
       setInputValues({
-        NIS: '',
         nama: '',
-        kelas: '',
+        tipePengunjung: '',
+        asal: '',
       })
     } catch (err) {
       console.log(err)
       setInputValues({
-        NIS: '',
         nama: '',
-        kelas: '',
+        tipePengunjung: '',
+        asal: '',
       })
 
       setShowErrorAlert(true)
@@ -116,15 +116,6 @@ const DataPengunjung = () => {
           <CForm onSubmit={handleAdd}>
             <CFormInput
               type="text"
-              id="inputNIS"
-              floatingLabel="NIS/ID"
-              placeholder="NIS/ID"
-              name="NIS"
-              value={inputValues.NIS}
-              onChange={handleInputChange}
-            />
-            <CFormInput
-              type="text"
               id="inputNama"
               floatingLabel="Nama Lengkap"
               placeholder="Nama Lengkap"
@@ -132,19 +123,29 @@ const DataPengunjung = () => {
               value={inputValues.nama}
               onChange={handleInputChange}
             />
+
             <CFormSelect
-              name="kelas"
-              id="kelas"
-              floatingLabel="kelas/Peran"
-              aria-label="Floating label select example"
+              name="tipePengunjung"
+              id="tipePengunjung"
+              floatingLabel="Tipe Pengunjung"
+              aria-label="opsi tipe pengunjung seperti siswa, guru, atau tamu"
               className="pt-4"
-              value={inputValues.kelas}
+              value={inputValues.tipePengunjung}
               onChange={handleInputChange}
             >
               {options.map((option, index) => (
                 <option key={index}>{option}</option>
               ))}
             </CFormSelect>
+            <CFormInput
+              type="text"
+              id="inputAsal"
+              floatingLabel="Asal / Kelas"
+              placeholder="Asal / Kelas"
+              name="asal"
+              value={inputValues.asal}
+              onChange={handleInputChange}
+            />
             <CButton type="submit">Berkunjung</CButton>
           </CForm>
         </CCardBody>

@@ -478,15 +478,18 @@ const Dashboard = () => {
                         <CAvatar
                           size="md"
                           // eslint-disable-next-line prettier/prettier
-                          src={`https://ui-avatars.com/api/?name=${item.Nama ? item.Nama : undefined
+                          src={`https://ui-avatars.com/api/?name=${item.nama ? item.nama : undefined
                             // eslint-disable-next-line prettier/prettier
                             }&background=random`}
                           status="success"
                         />
                       </CTableDataCell>
                       <CTableDataCell>
-                        <div>{item.Nama}</div>
-                        <div className="small text-disabled text-nowrap"> NIS: {item.NIS}</div>
+                        <div>{item.nama}</div>
+                        <div className="small text-disabled text-nowrap">
+                          {' '}
+                          NIS: {item.siswa_NIS}
+                        </div>
                       </CTableDataCell>
                       <CTableDataCell /*className="text-center"*/>
                         <div>
