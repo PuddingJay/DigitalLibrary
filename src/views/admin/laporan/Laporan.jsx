@@ -7,6 +7,7 @@ import { cilCloudDownload } from '@coreui/icons'
 import 'react-datepicker/dist/react-datepicker.css'
 import * as XLSX from 'xlsx'
 import './laporan.scss'
+import jwtDecode from 'jwt-decode'
 
 const Laporan = () => {
   const [loading, setLoading] = useState()
@@ -18,6 +19,25 @@ const Laporan = () => {
   const [selectedOption, setSelectedOption] = useState('Peminjaman')
   const [selectedYear, setSelectedYear] = useState(new Date())
   const [selectedMonth, setSelectedMonth] = useState(null)
+
+  useEffect(() => {
+    RefreshToken()
+  }, [])
+
+  const RefreshToken = async () => {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken')
+      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
+      const decoded = jwtDecode(response.data.accessToken)
+
+      if (decoded.role !== 'admin') {
+        window.location.href = '/dashboard' // Ganti '/dashboard' dengan rute yang sesuai
+        alert('Anda tidak punya akses untuk halaman ini')
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   useEffect(() => {
     console.log(filteredData)
@@ -90,12 +110,32 @@ const Laporan = () => {
     },
     { key: 'judul', _style: { width: '17%' } },
     { key: 'penulis', _style: { width: '20%' } },
-    { key: 'Kategori', _style: { width: '10%' } },
+    { key: 'kategori', _style: { width: '10%' } },
     { key: 'keterangan', _style: { width: '10%' } },
-    { key: 'jumlah', _style: { width: '10%' } },
-    { key: 'tersedia', _style: { width: '10%' } },
-    { key: 'createdAt', _style: { width: '10%' } },
+    { key: 'jumlah', _style: { width: '5%' } },
+    { key: 'tersedia', _style: { width: '5%' } },
+    {
+      key: 'isApproval',
+      _style: { width: '10%' },
+    },
+    {
+      key: 'berkasBuku',
+      _style: { width: '10%' },
+    },
   ]
+
+  const getBadgePustaka = (isApproval) => {
+    switch (isApproval) {
+      case 'Disetujui':
+        return 'primary'
+      case 'Belum Disetujui':
+        return 'warning'
+      case 'Ditolak':
+        return 'danger'
+      default:
+        return 'primary'
+    }
+  }
 
   const columnsPengunjung = [
     {
@@ -104,10 +144,14 @@ const Laporan = () => {
       filter: false,
       sorter: false,
     },
-    { key: 'NIS', _style: { width: '10%' } },
-    { key: 'nama', _style: { width: '20%' } },
-    { key: 'kelas', _style: { width: '10%' } },
-    { key: 'waktuKunjung', _style: { width: '20' } },
+    {
+      key: 'nama',
+      label: 'NIS/ID',
+      _style: { width: '13%' },
+    },
+    { key: 'asal', _style: { width: '18%' } },
+    { key: 'tipePengunjung', _style: { width: '18%' }, label: 'Sebagai' },
+    { key: 'waktuKunjung', _style: { width: '15%' } },
   ]
 
   const columnsPeminjaman = [
@@ -118,11 +162,12 @@ const Laporan = () => {
       sorter: false,
     },
     {
-      key: 'kodeBuku',
+      key: 'Buku_kodeBuku',
       _style: { width: '7%' },
+      label: 'Kode Buku',
     },
-    { key: 'namaPeminjam', _style: { width: '15%' } },
-    { key: 'judulBuku', _style: { width: '15%' } },
+    { key: 'nama', _style: { width: '15%' } },
+    { key: 'judul', _style: { width: '15%' } },
     { key: 'tglPinjam', _style: { width: '10%' } },
     { key: 'batasPinjam', _style: { width: '12%' } },
     { key: 'tglKembali', _style: { width: '11%' } },
@@ -138,14 +183,12 @@ const Laporan = () => {
       filter: false,
       sorter: false,
     },
-    {
-      key: 'NIS',
-      _style: { width: '13%' },
-    },
-    { key: 'Nama', _style: { width: '18%' } },
-    { key: 'kodeBuku', _style: { width: '10%' } },
+
+    { key: 'nama', _style: { width: '18%' } },
+    { key: 'Buku_kodeBuku', _style: { width: '10%' }, label: 'Kode Buku' },
     { key: 'judul', _style: { width: '21%' } },
-    { key: 'waktuBooking', _style: { width: '15%' } },
+    { key: 'tglPemesanan', _style: { width: '15%' }, label: 'Tanggal Mau Pinjam' },
+    { key: 'status', _style: { width: '8%' } },
     { key: 'createdAt', _style: { width: '15%' }, label: 'Tercatat pada' },
   ]
 
@@ -192,6 +235,10 @@ const Laporan = () => {
         return 'success'
       case 'Belum Dikembalikan':
         return 'danger'
+      case 'Belum Dipinjam':
+        return 'warning'
+      case 'Dipinjam':
+        return 'success'
       default:
         return 'primary'
     }
@@ -326,6 +373,11 @@ const Laporan = () => {
               const itemNumber = index + 1
               return <td>{itemNumber}</td>
             },
+            isApproval: (item) => (
+              <td>
+                <CBadge color={getBadgePustaka(item.isApproval)}>{item.isApproval}</CBadge>
+              </td>
+            ),
             status: (item) => (
               <td>
                 <CBadge color={getBadge(item.status)}>{item.status}</CBadge>

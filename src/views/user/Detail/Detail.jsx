@@ -109,7 +109,6 @@ const DetailBuku = () => {
       const response = await axios.get(`http://localhost:3005/berhasilLogin/${refreshToken}`)
 
       const decoded = jwtDecode(response.data.accessToken)
-
       setNama(decoded.nama)
       setSiswaId(decoded.siswaId)
       setKelas(decoded.Kelas)
@@ -175,12 +174,12 @@ const DetailBuku = () => {
       try {
         const url = `http://localhost:3005/book/${params.id}`
         const response = await axios.get(url)
+        // console.log(response)
         setCatalogItem(response.data.data[0])
         setLikeCount(response.data.data[0]?.likes)
         setDislikeCount(response.data.data[0]?.dislike)
         setJudulBuku(response.data.data[0].judul)
         setKodeBuku(response.data.data[0].kodeBuku)
-        // console.log(response.data.data[0])
       } catch (error) {
         console.error(error)
       }
@@ -472,12 +471,18 @@ const DetailBuku = () => {
         <div className="bookInfo">
           <h2 className="bookTitle">{catalogItem.judul}</h2>
           <div className="bookLabel">
-            <CCard>
-              <CCardBody> {catalogItem.Kategori}</CCardBody>
-            </CCard>
-            <CCard>
-              <CCardBody> {catalogItem.keterangan}</CCardBody>
-            </CCard>
+            {/* <CCard> */}
+            <CButton disabled variant="outline">
+              {' '}
+              {catalogItem.kategori}
+            </CButton>
+            {/* </CCard> */}
+            {/* <CCard> */}
+            <CButton disabled variant="outline">
+              {' '}
+              {catalogItem.keterangan}
+            </CButton>
+            {/* </CCard> */}
             <CButton onClick={toggleModal}> Booking Pinjam </CButton>
           </div>
           <div className="bookCreated">

@@ -181,6 +181,7 @@ const AdminPeminjaman = () => {
         }
         return item;
       });
+      console.log(updatedPeminjaman)
       setPeminjaman(updatedPeminjaman);
     } catch (error) {
       console.error(error);

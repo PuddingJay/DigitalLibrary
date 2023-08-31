@@ -44,8 +44,8 @@ const UpdateSiswa = () => {
 
   const [id, setId] = useState('')
   const [nama, setNama] = useState('')
-  const [kelas, setKelas] = useState('')
-  const [jurusan, setJurusan] = useState('')
+  // const [status, setStatus] = useState('')
+  // const [jurusan, setJurusan] = useState('')
   const [jumlahPinjam, setJumlahPinjam] = useState('')
   const [dataPinjam, setDataPinjam] = useState('')
   const [password, setPassword] = useState('')
@@ -91,17 +91,24 @@ const UpdateSiswa = () => {
 
   const column = [
     {
-      key: 'kodeBuku',
-      _style: { width: '7%' },
+      key: 'No',
+      _style: { width: '1%' },
+      filter: false,
+      sorter: false,
     },
-    { key: 'namaPeminjam', _style: { width: '15%' } },
-    { key: 'judulBuku', _style: { width: '12%' } },
+    {
+      key: 'Buku_kodeBuku',
+      _style: { width: '7%' },
+      label: 'Kode Buku',
+    },
+    { key: 'nama', _style: { width: '15%' } },
+    { key: 'judul', _style: { width: '15%' } },
     { key: 'tglPinjam', _style: { width: '10%' } },
     { key: 'batasPinjam', _style: { width: '12%' } },
     { key: 'tglKembali', _style: { width: '11%' } },
     { key: 'status', _style: { width: '10%' } },
     { key: 'denda', _style: { width: '10%' } },
-    { key: 'createdAt', _style: { width: '20%' }, label: 'Tercatat pada' },
+    { key: 'createdAt', _style: { width: '10%' }, label: 'Tercatat Pada' },
   ]
 
   const getBadge = (status) => {
@@ -123,10 +130,9 @@ const UpdateSiswa = () => {
     try {
       const refreshTokenSiswa = localStorage.getItem('refreshTokenSiswa')
       const response = await axios.get(`http://localhost:3005/siswa/${refreshTokenSiswa}`)
-      setNama(response.data.data[0].Nama)
-      setId(response.data.data[0].NIS)
-      setKelas(response.data.data[0].Kelas)
-      setJurusan(response.data.data[0].Jurusan)
+      setNama(response.data.data[0].nama)
+      setId(response.data.data[0].siswa_NIS)
+      // setJurusan(response.data.data[0].Jurusan)
       console.log(response.data.data)
     } catch (err) {
       console.error(err)
@@ -231,13 +237,13 @@ const UpdateSiswa = () => {
               </div>
               <div className="infoUser">
                 <div className="infoLabel">
-                  <p>Kelas</p>
-                  <h5>{kelas}</h5>
+                  <p>NIS</p>
+                  <h5>{id}</h5>
                 </div>
-                <div className="infoLabel">
+                {/* <div className="infoLabel">
                   <p>Jurusan / Ruang</p>
                   <h5>{jurusan}</h5>
-                </div>
+                </div> */}
                 <div className="infoLabel">
                   <p>Jumlah Pinjam</p>
                   <h5>{jumlahPinjam}</h5>
@@ -335,6 +341,10 @@ const UpdateSiswa = () => {
                 responsive: true,
               }}
               scopedColumns={{
+                No: (item, index) => {
+                  const itemNumber = index + 1
+                  return <td>{itemNumber}</td>
+                },
                 status: (item) => (
                   <td>
                     <CBadge color={getBadge(item.status)}>{item.status}</CBadge>

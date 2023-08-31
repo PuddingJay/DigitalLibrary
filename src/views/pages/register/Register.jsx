@@ -25,6 +25,7 @@ const Register = () => {
 
   useEffect(() => {
     auth()
+    RefreshToken()
   })
 
   const auth = async () => {
@@ -60,12 +61,30 @@ const Register = () => {
     }
   }
 
+  const RefreshToken = async () => {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken')
+      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
+      const decoded = jwtDecode(response.data.accessToken)
+
+      if (decoded.role !== 'superadmin') {
+        window.location.href = '/dashboard'
+        alert('Anda tidak punya akses untuk halaman ini')
+      }
+    } catch (err) {
+      console.error(err)
+      if (err.response && err.response.status === 404) {
+        window.location.href = '/login'
+      }
+    }
+  }
+
   const Regis = async (e) => {
     e.preventDefault()
 
     try {
       await axios.post('http://localhost:3005/admin', {
-        name: nama,
+        nama: nama,
         username: username,
         password: password,
         confPassword: confPassword,

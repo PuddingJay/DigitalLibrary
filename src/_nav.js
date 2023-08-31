@@ -39,7 +39,7 @@ const SidebarData = () => {
     },
     {
       component: CNavItem,
-      name: 'Approval',
+      name: 'Approval Buku',
       to: '/Approval',
       icon: <CIcon icon={cilBook} customClassName="nav-icon" />,
     },
@@ -83,6 +83,12 @@ const SidebarData = () => {
       name: 'Permintaan Buku',
       to: '/kotakSaran',
       icon: <CIcon icon={cilBook} customClassName="nav-icon" />,
+    },
+    {
+      component: CNavItem,
+      name: 'Permintaan Buku',
+      to: '/kotakSaran',
+      icon: <CIcon icon={cilSpreadsheet} customClassName="nav-icon" />,
     },
     {
       component: CNavItem,

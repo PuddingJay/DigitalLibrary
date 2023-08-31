@@ -8,13 +8,13 @@ import { useNavigate } from 'react-router-dom'
 
 const FeedbackForm = () => {
   const [Nama, setNama] = useState('')
-  const [Kelas, setKelas] = useState('')
+  const [, setKelas] = useState('')
   const [siswaId, setSiswaId] = useState('')
   const [NIS, setNIS] = useState('')
   const [SaranDatas, setSaranDatas] = useState([])
-  const [Jurusan, setJurusan] = useState('')
+  const [, setJurusan] = useState('')
   //   const [saran, setSaran] = useState([])
-  const [siswas, setSiswas] = useState([])
+  // const [siswas, setSiswas] = useState([])
   const navigate = useNavigate()
 
   const [addFormData, setAddFormData] = useState({
@@ -117,10 +117,11 @@ const FeedbackForm = () => {
 
         <button
           type="submit"
+          // color='primary'
           style={{
             alignSelf: 'center',
             marginTop: '20px',
-            backgroundColor: 'blue', // Ubah warna tombol menjadi biru di sini
+            backgroundColor: '#29266a', // Ubah warna tombol menjadi biru di sini
             color: 'white', // Tambahkan warna teks menjadi putih agar terlihat jelas pada latar biru
             padding: '10px 20px', // Tambahkan padding agar tombol terlihat lebih besar
             borderRadius: '5px', // Tambahkan borderRadius agar tombol terlihat lebih bulat

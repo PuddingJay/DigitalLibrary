@@ -48,7 +48,6 @@ const AdminDaftarPustaka = () => {
   const [currentBookId, setCurrentBookId] = useState('')
   const [coverWarning, setCoverWarning] = useState('')
   const [fileWarning, setfileWarning] = useState('')
-  const [kategoriLainnya, setKategoriLainnya] = useState('')
   const [isApproval, setIsApproval] = useState('Belum Disetujui')
   const [fullKategori, setFullKategori] = useState([])
 

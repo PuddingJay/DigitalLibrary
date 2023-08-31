@@ -5,23 +5,41 @@ import axios from 'axios'
 import CIcon from '@coreui/icons-react'
 import { cilCloudDownload, cilCheckCircle, cilXCircle } from '@coreui/icons'
 import * as XLSX from 'xlsx'
+import jwtDecode from 'jwt-decode'
 
 const DataPengunjung = () => {
-  const [loading, setLoading] = useState()
+  const [loading, setLoading] = useState(true)
   const [dataPengunjung, setDataPengunjung] = useState([])
   const [msg, setMsg] = useState('')
   const [showSuccessAlert, setShowSuccessAlert] = useState(false)
   const [showErrorAlert, setShowErrorAlert] = useState(false)
 
+  const RefreshToken = async () => {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken')
+      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
+      const decoded = jwtDecode(response.data.accessToken)
+
+      if (decoded.role !== 'admin') {
+        window.location.href = '/dashboard' // Ganti '/dashboard' dengan rute yang sesuai
+        alert('Anda tidak punya akses untuk halaman ini')
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   useEffect(() => {
     fetchData()
-    setLoading(false)
+    RefreshToken()
+    console.log(dataPengunjung)
   }, [])
 
   const fetchData = async () => {
     try {
       const response = await axios.get('http://localhost:3005/data-pengunjung')
       setDataPengunjung(response.data.data)
+      setLoading(false)
       console.log(response.data.data)
     } catch (err) {
       console.error(err)
@@ -56,12 +74,11 @@ const DataPengunjung = () => {
       sorter: false,
     },
     {
-      key: 'NIS',
-      label: 'NIS/ID',
+      key: 'nama',
       _style: { width: '13%' },
     },
-    { key: 'nama', _style: { width: '18%' } },
-    { key: 'kelas', _style: { width: '18%' }, label: 'Kelas/Peran' },
+    { key: 'asal', _style: { width: '18%' } },
+    { key: 'tipePengunjung', _style: { width: '18%' }, label: 'Sebagai' },
     { key: 'waktuKunjung', _style: { width: '15%' } },
     {
       key: 'show_details',

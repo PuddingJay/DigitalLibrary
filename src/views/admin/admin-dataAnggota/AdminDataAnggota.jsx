@@ -7,7 +7,7 @@ import {
   CCollapse,
   CSmartTable,
   CAlert,
-  CFormSelect,
+  // CFormSelect,
   CModal,
   CModalHeader,
   CModalBody,
@@ -36,10 +36,10 @@ const AdminDataAnggota = () => {
   const [loading, setLoading] = useState()
   const [DataAnggota, setDataAnggota] = useState([])
   const [NIS, setNIS] = useState([])
-  const [Nama, setNama] = useState([])
-  const [Kelas, setKelas] = useState([])
+  const [nama, setNama] = useState([])
+  // const [Kelas, setKelas] = useState([])
   const [currentAnggotaId, setCurrentAnggotaId] = useState(null)
-  const [Jurusan, setJurusan] = useState([])
+  // const [Jurusan, setJurusan] = useState([])
 
   const [selectedFile, setSelectedFile] = useState(null)
   const [jsonData, setJsonData] = useState('')
@@ -58,8 +58,8 @@ const AdminDataAnggota = () => {
   const toggleModalTambah = () => {
     setNIS('')
     setNama('')
-    setKelas('')
-    setJurusan('')
+    // setKelas('')
+    // setJurusan('')
 
     setModalTambah(!modalTambah)
   }
@@ -85,7 +85,7 @@ const AdminDataAnggota = () => {
   const handleAdd = async (e) => {
     e.preventDefault()
 
-    const formData = { NIS, Nama, Kelas, Jurusan }
+    const formData = { NIS, nama }
     try {
       const response = await axios.post('http://localhost:3005/siswa', formData)
       toggleModalTambah()
@@ -121,7 +121,7 @@ const AdminDataAnggota = () => {
   }
 
   const handleUpdate = async () => {
-    const formData = { NIS, Nama, Kelas, Jurusan }
+    const formData = { NIS, nama }
 
     try {
       const response = await axios.put(`http://localhost:3005/siswa/${currentAnggotaId}`, formData)
@@ -141,9 +141,7 @@ const AdminDataAnggota = () => {
             return {
               ...item,
               NIS: NIS,
-              Nama: Nama,
-              Kelas: Kelas,
-              Jurusan: Jurusan,
+              Nama: nama,
             }
           }
           return item
@@ -152,20 +150,21 @@ const AdminDataAnggota = () => {
 
       setNIS('')
       setNama('')
-      setKelas('')
-      setJurusan('')
+      // setKelas('')
+      // setJurusan('')
     } catch (error) {
       console.error(error)
     }
   }
 
   const toggleModal = (NIS) => {
-    const siswa = DataAnggota.find((item) => item.NIS === NIS)
-    setCurrentAnggotaId(siswa.NIS)
-    setNIS(siswa.NIS)
-    setNama(siswa.Nama)
-    setKelas(siswa.Kelas)
-    setJurusan(siswa.Jurusan)
+    const siswa = DataAnggota.find((item) => item.siswa_NIS === NIS)
+    console.log(siswa)
+    setCurrentAnggotaId(siswa.siswa_NIS)
+    setNIS(siswa.siswa_NIS)
+    setNama(siswa.nama)
+    // setKelas(siswa.Kelas)
+    // setJurusan(siswa.Jurusan)
     setModalUpdate(!modalUpdate)
   }
 
@@ -177,10 +176,9 @@ const AdminDataAnggota = () => {
       filter: false,
       sorter: false,
     },
-    { key: 'NIS', _style: { width: '18%' }, label: 'NIS/ID' },
-    { key: 'Nama', _style: { width: '25%' } },
-    { key: 'Kelas', _style: { width: '10%' }, label: 'Kelas/Peran' },
-    { key: 'Jurusan', _style: { width: '12%' }, label: 'Jurusan/Ruang' },
+    { key: 'siswa_NIS', _style: { width: '18%' }, label: 'NIS/ID' },
+    { key: 'nama', _style: { width: '25%' } },
+    { key: 'status', _style: { width: '10%' }, label: 'Status Anggota' },
     { key: 'jumlahPinjam', _style: { width: '12%' } },
     {
       key: 'show_details',
@@ -249,16 +247,21 @@ const AdminDataAnggota = () => {
       .post('http://localhost:3005/import-excel', formData)
       .then((response) => {
         if (Array.isArray(response.data)) {
-          setJsonData(response.data)
+          const transformedData = response.data.map((item) => ({
+            NIS: item.NIS || item.nis || item.Nis,
+            nama: item.Nama || item.NAMA || item.nama,
+          }))
+          setJsonData(transformedData)
+          console.log(transformedData)
         } else {
           console.error('Converted data is not in the expected format:', response.data)
         }
+        console.log(response)
       })
       .catch((error) => {
         console.error('Error converting file:', error)
         alert(error.response.data.error.message)
       })
-    console.log(jsonData)
   }
 
   // post hasil convert ke tabel data
@@ -293,26 +296,26 @@ const AdminDataAnggota = () => {
     }
   }
 
-  const options = ['Open this select menu', '10', '11', '12', 'Guru', 'Umum']
-  const handleNaikKelas = async () => {
-    try {
-      const response = await axios.put('http://localhost:3005/siswa-naik-kelas')
-      if (response && response.data) {
-        setMsg(response.data)
-      } else {
-        console.error('Tidak ada data yang dapat diolah')
-        setMsg('Gagal mengubah nilai kelas')
-      }
-      fetchData()
-    } catch (err) {
-      console.error(err)
-      if (err.response && err.response.data && err.response.data.error) {
-        setMsg(err.response.data.error)
-      } else {
-        setMsg('Gagal mengubah nilai kelas')
-      }
-    }
-  }
+  // const options = ['Open this select menu', '10', '11', '12', 'Guru', 'Umum']
+  // const handleNaikKelas = async () => {
+  //   try {
+  //     const response = await axios.put('http://localhost:3005/siswa-naik-kelas')
+  //     if (response && response.data) {
+  //       setMsg(response.data)
+  //     } else {
+  //       console.error('Tidak ada data yang dapat diolah')
+  //       setMsg('Gagal mengubah nilai kelas')
+  //     }
+  //     fetchData()
+  //   } catch (err) {
+  //     console.error(err)
+  //     if (err.response && err.response.data && err.response.data.error) {
+  //       setMsg(err.response.data.error)
+  //     } else {
+  //       setMsg('Gagal mengubah nilai kelas')
+  //     }
+  //   }
+  // }
 
   try {
     return (
@@ -330,7 +333,7 @@ const AdminDataAnggota = () => {
                 <CButton color="primary" size="lg" className="btnModal" onClick={toggleModalTambah}>
                   Tambah Data Anggota
                 </CButton>
-                <CButton
+                {/* <CButton
                   color="primary"
                   size="lg"
                   variant="outline"
@@ -343,7 +346,7 @@ const AdminDataAnggota = () => {
                   }}
                 >
                   Naik Kelas
-                </CButton>
+                </CButton> */}
                 <CButton
                   color="primary"
                   size="lg"
@@ -395,27 +398,27 @@ const AdminDataAnggota = () => {
                         shape="square"
                         size="sm"
                         onClick={() => {
-                          toggleDetails(item.NIS)
+                          toggleDetails(item.siswa_NIS)
                         }}
                       >
-                        {details.includes(item.NIS) ? 'Hide' : 'Show'}
+                        {details.includes(item.siswa_NIS) ? 'Hide' : 'Show'}
                       </CButton>
                     </td>
                   )
                 },
                 details: (item) => {
                   return (
-                    <CCollapse visible={details.includes(item.NIS)}>
+                    <CCollapse visible={details.includes(item.siswa_NIS)}>
                       <CCardBody className="p-3">
-                        <h4>{item.Nama}</h4>
-                        <p className="text-muted">
+                        <h4>Nama: {item.nama}</h4>
+                        {/* <p className="text-muted">
                           Kelas {item.Kelas} {item.Jurusan}
-                        </p>
+                        </p> */}
                         <CButton
                           size="sm"
                           color="primary"
                           onClick={() => {
-                            toggleModal(item.NIS)
+                            toggleModal(item.siswa_NIS)
                           }}
                         >
                           Edit
@@ -475,7 +478,7 @@ const AdminDataAnggota = () => {
                   type="text"
                   name="Nama"
                   id="Nama"
-                  value={Nama}
+                  value={nama}
                   onChange={(e) => setNama(e.target.value)}
                 />
               </FormGroup>
@@ -489,7 +492,7 @@ const AdminDataAnggota = () => {
                   onChange={(e) => setNIS(e.target.value)}
                 />
               </FormGroup>
-              <FormGroup>
+              {/* <FormGroup>
                 <CFormSelect
                   name="Kelas"
                   id="Kelas"
@@ -502,8 +505,8 @@ const AdminDataAnggota = () => {
                     <option key={index}>{option}</option>
                   ))}
                 </CFormSelect>
-              </FormGroup>
-              <FormGroup>
+              </FormGroup> */}
+              {/* <FormGroup>
                 <Label for="Jurusan">Jurusan/Ruang</Label>
                 <Input
                   type="text"
@@ -513,7 +516,7 @@ const AdminDataAnggota = () => {
                   value={Jurusan}
                   onChange={(e) => setJurusan(e.target.value)}
                 />
-              </FormGroup>
+              </FormGroup> */}
             </Form>
           </ModalBody>
           <ModalFooter>
@@ -548,11 +551,11 @@ const AdminDataAnggota = () => {
                   type="text"
                   name="Nama"
                   id="Nama"
-                  value={Nama}
+                  value={nama}
                   onChange={(e) => setNama(e.target.value)}
                 />
               </FormGroup>
-              <FormGroup>
+              {/* <FormGroup>
                 <Label for="Kelas">Kelas/Peran</Label>
                 <CFormSelect
                   type="text"
@@ -576,7 +579,7 @@ const AdminDataAnggota = () => {
                   value={Jurusan}
                   onChange={(e) => setJurusan(e.target.value)}
                 />
-              </FormGroup>
+              </FormGroup> */}
             </Form>
           </ModalBody>
           <ModalFooter>
