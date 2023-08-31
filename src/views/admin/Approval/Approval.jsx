@@ -27,12 +27,12 @@ import jwtDecode from 'jwt-decode'
 const Approval = () => {
   const [loading, setLoading] = useState()
   const [DaftarPustaka, setDaftarPustaka] = useState([])
+  const [isConfirmDialogOpen, setConfirmDialogOpen] = useState(false)
 
   const navigate = useNavigate()
 
   const formRef = useRef(null)
   const [name, setName] = useState('')
-  const [role, setRole] = useState('')
 
   useEffect(() => {
     RefreshToken()
@@ -69,15 +69,21 @@ const Approval = () => {
   }
 
   const OnChangeApprove = async (kodeBuku) => {
-    const data = { isApproval: 'Disetujui' }
+    const isApproved = window.confirm(
+      'Sebelum klik Disetujui, silahkan klik show ebook terlebih dahulu, dan cek apakah lisensi buku sudah sesuai ? Jika iya klik tombol ok!',
+    )
+    if (isApproved) {
+      const data = { isApproval: 'Disetujui' }
 
-    try {
-      await axios.put(`http://localhost:3005/updateApprove/${kodeBuku}`, data, {
-        headers: { 'Content-Type': 'application/json' },
-      })
-      fetchData()
-    } catch (err) {
-      console.error(err)
+      try {
+        await axios.put(`http://localhost:3005/updateApprove/${kodeBuku}`, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        fetchData()
+      } catch (err) {
+        console.error(err)
+      }
+    } else {
     }
   }
   const OnChangeRejected = async (kodeBuku) => {
@@ -101,7 +107,7 @@ const Approval = () => {
     },
     { key: 'judul', _style: { width: '17%' } },
     { key: 'penulis', _style: { width: '20%' } },
-    { key: 'Kategori', _style: { width: '10%' } },
+    { key: 'kategori', _style: { width: '10%' } },
     { key: 'keterangan', _style: { width: '10%' } },
     { key: 'jumlah', _style: { width: '5%' } },
     { key: 'tersedia', _style: { width: '5%' } },
@@ -110,7 +116,7 @@ const Approval = () => {
       _style: { width: '10%' },
     },
     {
-      key: 'file_ebook',
+      key: 'berkasBuku',
       _style: { width: '10%' },
     },
 
@@ -251,7 +257,7 @@ const Approval = () => {
 
                         {/* <CImage fluid src="/images/react.jpg" /> */}
                         <CImage
-                          src={`http://localhost:3005/${item.cover_buku}`}
+                          src={`http://localhost:3005/${item.cover}`}
                           width={100}
                           height={100}
                         />

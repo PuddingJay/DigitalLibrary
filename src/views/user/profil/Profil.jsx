@@ -15,6 +15,7 @@ import moment from 'moment'
 const Profil = () => {
   const [Nama, setNama] = useState('')
   const [Kelas, setKelas] = useState('')
+  const [NIS, setNIS] = useState('')
   const [siswaId, setSiswaId] = useState('')
   const [Jurusan, setJurusan] = useState('')
   const navigate = useNavigate()
@@ -27,9 +28,9 @@ const Profil = () => {
 
   useEffect(() => {
     if (Nama) {
-      fetchHistory(Nama)
+      fetchHistory(NIS) // Menggunakan NIS, bukan Nama
     }
-  }, [Nama])
+  }, [Nama, NIS])
 
   const fetchData = async () => {
     try {
@@ -42,25 +43,28 @@ const Profil = () => {
       const response = await axios.get(`http://localhost:3005/berhasilLogin/${refreshToken}`)
 
       const decoded = jwtDecode(response.data.accessToken)
-      setNama(decoded.Nama)
+
+      setNama(decoded.nama)
       setSiswaId(decoded.siswaId)
       setKelas(decoded.Kelas)
       setJurusan(decoded.Jurusan)
-
-      console.log(decoded)
+      setNIS(decoded.siswaId)
+      console.log(NIS)
     } catch (err) {
       if (err.message === 'Refresh token siswa not found') {
         navigate('/siswa/login')
+        // window.location.href = '/siswa/login'
       } else if (err.response && err.response.status === 401) {
         navigate('/siswa/login')
+        // window.location.href = '/siswa/login'
       }
       console.log(err)
     }
   }
-  const fetchHistory = async (nama) => {
+  const fetchHistory = async (siswa_NIS) => {
     try {
-      console.log('Fetching history for user:', nama)
-      const response = await axios.get(`http://localhost:3005/history/${nama}`)
+      console.log('Fetching history for user:', NIS)
+      const response = await axios.get(`http://localhost:3005/history/${NIS}`)
       if (response.data.data.length > 0) {
         setRiwayatDatas(response.data.data)
       } else {
@@ -71,13 +75,13 @@ const Profil = () => {
     }
   }
   const handleDeleteClick = async (idRiwayat) => {
+    console.log(idRiwayat)
     try {
       const confirmed = window.confirm('Apakah Anda yakin ingin menghapus?')
       if (confirmed) {
-        await axios.delete(`http://localhost:3005/history/${idRiwayat}`)
-        fetchHistory()
-        window.location.reload()
-        console.log(`Delete button clicked for item with ID: ${idRiwayat}`)
+        const response = await axios.delete(`http://localhost:3005/history/${idRiwayat}`)
+        console.log(response.data) // Print response from server
+        fetchHistory(NIS) // Menggunakan nilai NIS
       }
     } catch (err) {
       console.log(err)
@@ -90,7 +94,7 @@ const Profil = () => {
       <div className="profile-container">
         <div className="profile-header">
           <h2>Nama Pengguna: {Nama}</h2>
-          <h2>NIS: {siswaId}</h2>
+          <h2>NIS: {NIS}</h2>
           <h2>Kelas: {Kelas}</h2>
           <h2>Jurusan: {Jurusan}</h2>
         </div>
@@ -99,14 +103,15 @@ const Profil = () => {
           <h2>Riwayat baca</h2>
           <Row className="mb-4 katalog">
             {RiwayatDatas.map((item) => (
-              <Card className="shadow history-card" key={item.kodeBukuRiwayat}>
+              <Card className="shadow history-card" key={item.buku_kodeBuku}>
                 <div className="dropdown-container">
-                  <Card.Img variant="top" src={`http://localhost:3005/${item.coverRiwayat}`} />
+                  <Card.Img variant="top" src={`http://localhost:3005/${item.cover}`} />
                   <Card.Body>
-                    <Card.Title>{item.judulRiwayat}</Card.Title>
-                    <Card.Text>Tersedia: {item.tersediaRiwayat}</Card.Text>
+                    <Card.Title>{item.judul}</Card.Title>
+                    <Card.Text>Tersedia: {item.tersedia}</Card.Text>
                     <Card.Text>
-                      Diakses pada: {moment(item.TanggalAkses).format('DD/MM/YYYY HH:mm')}
+                      Diakses pada: {moment(item.createdAt).format('DD/MM/YYYY HH:mm')}
+                      id Riwayat : {item.idRiwayat}
                     </Card.Text>
                   </Card.Body>
 

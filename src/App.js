@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { CSpinner } from '@coreui/react-pro'
 import './scss/style.scss'
+import Kategori from './views/admin/admin-daftarpustaka/Kategori'
 
 const loading = (
   <div className="pt-3 text-center">
@@ -42,7 +43,7 @@ const Profil = React.lazy(() => import('./views/user/profil/Profil'))
 const FormPengunjung = React.lazy(() =>
   import('./views/pages/form-data-pengunjung/FormDataPengunjung'),
 )
-
+const ListKategori = React.lazy(() => import('./views/admin/admin-daftarpustaka/Kategori'))
 const App = () => {
   const dispatch = useDispatch()
   const theme = useSelector((state) => state.theme)
@@ -85,6 +86,7 @@ const App = () => {
           <Route exact path="/Home" name="Katalog Buku" element={<Home />} />
           <Route exact path="/Detail/:id" name="Detail Buku" element={<Detail />} />
           <Route exact path="/Profil" name="Detail Buku" element={<Profil />} />
+          <Route exact path="/Kategori" name="Kategori Buku" element={<Kategori />} />
           <Route exact path="/PdfRead/:id" name="Baca Buku" element={<PdfRead />} />
           <Route exact path="/ShowPdf/:id" name="Lihat Buku" element={<ShowPdf />} />
           <Route exact path="/updateSiswa" name="Lihat Buku" element={<UpdateSiswa />} />

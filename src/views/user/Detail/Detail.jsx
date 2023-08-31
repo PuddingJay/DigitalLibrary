@@ -19,7 +19,7 @@ import {
   CDatePicker,
   CButton,
   CCard,
-  CCardBody
+  CCardBody,
 } from '@coreui/react-pro'
 import './Detail.scss'
 import CIcon from '@coreui/icons-react'
@@ -46,13 +46,12 @@ const DetailBuku = () => {
   const [kodeBuku, setKodeBuku] = useState(null)
   const [judulBuku, setJudulBuku] = useState('')
   const [addFormData, setAddFormData] = useState({
-    NIS: null, // Menggunakan siswaId yang sudah didapatkan dari fetchData
-    namaKomentator: null, // Menggunakan nama yang sudah didapatkan dari fetchData
-    kodeBuku: null,
-    judulBuku: null,
-    textKomentar: '',
-  })
+    siswa_NIS: null, // Menggunakan siswaId yang sudah didapatkan dari fetchData
 
+    buku_kodeBuku: null,
+
+    teksKomentar: '',
+  })
   const formatDate = (dateString) => {
     if (!dateString) return ''
 
@@ -63,23 +62,22 @@ const DetailBuku = () => {
 
     return `${year}-${month}-${day}`
   }
-
-  const today = formatDate(new Date());
+  const today = formatDate(new Date())
 
   const [editFormData, setEditFormData] = useState({
     idKomentar: null,
-    textKomentar: '',
+    teksKomentar: '',
   })
 
-  const handleEdit = (idKomentar, textKomentar) => {
+  const handleEdit = (idKomentar, teksKomentar) => {
     setEditFormData({
       idKomentar,
-      textKomentar,
+      teksKomentar,
     })
   }
   const handleUpdate = async (idKomentar) => {
     const updatedData = {
-      textKomentar: editFormData.textKomentar,
+      teksKomentar: editFormData.teksKomentar,
       waktuKomentar: moment(), // Update waktuKomentar ke waktu saat ini
     }
 
@@ -90,7 +88,7 @@ const DetailBuku = () => {
       // Kembali ke tampilan biasa
       setEditFormData({
         idKomentar: null,
-        textKomentar: '',
+        teksKomentar: '',
       })
     } catch (error) {
       console.error(error)
@@ -99,15 +97,6 @@ const DetailBuku = () => {
       }
     }
   }
-
-  // const [addFormRiwayat, setAddFormRiwayat] = useState({
-  //   NIS: null, // Menggunakan siswaId yang sudah didapatkan dari fetchData
-  //   NamaAkun: null, // Menggunakan nama yang sudah didapatkan dari fetchData
-  //   kodeBukuRiwayat: null,
-  //   judulRiwayat: null,
-  //   coverRiwayat: null,
-  //   tersediaRiwayat: null,
-  // })
 
   const fetchData = async () => {
     try {
@@ -120,12 +109,13 @@ const DetailBuku = () => {
       const response = await axios.get(`http://localhost:3005/berhasilLogin/${refreshToken}`)
 
       const decoded = jwtDecode(response.data.accessToken)
-      setNama(decoded.Nama)
+
+      setNama(decoded.nama)
       setSiswaId(decoded.siswaId)
       setKelas(decoded.Kelas)
       setJurusan(decoded.Jurusan)
       setNIS(decoded.siswaId)
-      console.log(decoded)
+      console.log(NIS)
     } catch (err) {
       if (err.message === 'Refresh token siswa not found') {
         navigate('/siswa/login')
@@ -139,30 +129,31 @@ const DetailBuku = () => {
   }
 
   const formOnChangeTglPinjam = (value) => {
-    value !== null
-      ? setAddFormDataMemesan({
-        ...addFormDataMemesan,
-        waktuBooking: formatDate(value),
-      })
-      : setAddFormDataMemesan({
-        ...addFormDataMemesan,
-        waktuBooking: null,
-      })
-
-    console.log(addFormData);
+    if (value == null) {
+      setAddFormDataMemesan((prevData) => ({
+        ...prevData,
+        tglPemesanan: null,
+      }))
+    } else {
+      setAddFormDataMemesan((prevData) => ({
+        ...prevData,
+        tglPemesanan: formatDate(value),
+      }))
+    }
+    console.log(addFormDataMemesan)
   }
 
   const [addFormDataMemesan, setAddFormDataMemesan] = useState({
-    NIS: NIS,
-    nama: Nama,
-    judulBuku: judulBuku,
-    waktuBooking: today,
+    Siswa_NIS: NIS,
+    // nama: Nama,
+    Buku_kodeBuku: kodeBuku,
+    tglPemesanan: today,
   })
 
   const handleBatal = () => {
     setAddFormData({
       ...addFormDataMemesan,
-      waktuBooking: today
+      tglPemesanan: today,
     })
   }
 
@@ -180,7 +171,7 @@ const DetailBuku = () => {
 
   useEffect(() => {
     const fetchCatalogItem = async () => {
-      console.log(params.id)
+      // console.log(params.id)
       try {
         const url = `http://localhost:3005/book/${params.id}`
         const response = await axios.get(url)
@@ -205,7 +196,7 @@ const DetailBuku = () => {
     }
   }, [kodeBuku])
 
-  console.log(catalogItem)
+  // console.log(catalogItem)
   if (!catalogItem) {
     return <div>Loading...</div>
   }
@@ -214,6 +205,7 @@ const DetailBuku = () => {
     try {
       // Send a request to update the likes count in the database
       const url = `http://localhost:3005/updateTop/${params.id}`
+      console.log(params.id)
       const response = await axios.put(url, {
         kodeBuku: params.id, // Assuming 'params.id' contains the book's kodeBuku
         likes: likeCount + 1,
@@ -229,28 +221,23 @@ const DetailBuku = () => {
   const formOnSubmitHandler = async (event) => {
     event.preventDefault()
 
-    // Pastikan siswaId dan nama sudah terisi dari hasil fetchData
-    if (!siswaId || !Nama) {
-      console.log('Data NIS dan namaKomentator belum terisi.')
-      return
-    }
+    // Pastikan siswaId dan nama sudah terisi
 
     const newDataKomentar = {
-      NIS: siswaId,
-      namaKomentator: Nama,
-      kodeBuku: catalogItem.kodeBuku,
-      judulBuku: catalogItem.judul,
-      textKomentar: addFormData.textKomentar,
+      siswa_NIS: NIS,
+      buku_kodeBuku: kodeBuku,
+      teksKomentar: addFormData.teksKomentar,
       waktuKomentar: moment(),
     }
-
+    console.log(newDataKomentar)
     try {
       const response = await axios.post('http://localhost:3005/komentar', newDataKomentar)
-      console.log(response.data)
+      console.log('response', response.data)
 
       // Jika komentar berhasil dikirim, tambahkan komentar baru ke state KomentarDatas
       setKomentarDatas([...KomentarDatas, response.data.data])
-      setAddFormData({ textKomentar: '' })
+      setAddFormData({ teksKomentar: '' })
+      fetchKomentar()
     } catch (error) {
       console.error(error)
       if (error.response && error.response.status === 404) {
@@ -270,11 +257,9 @@ const DetailBuku = () => {
       console.error(err)
     }
   }
-  const handleDelete = async (idKomentar, namaKomentator) => {
+  const handleDelete = async (idKomentar) => {
     try {
-      await axios.delete('http://localhost:3005/komentar', {
-        data: { idKomentar, namaKomentator },
-      })
+      await axios.delete(`http://localhost:3005/komentar/${idKomentar}`)
       fetchData()
       window.location.reload()
     } catch (err) {
@@ -292,13 +277,12 @@ const DetailBuku = () => {
     }
 
     const newDataRiwayat = {
-      NIS: siswaId,
-      NamaAkun: Nama,
-      kodeBukuRiwayat: catalogItem.kodeBuku,
-      judulRiwayat: catalogItem.judul,
-      coverRiwayat: catalogItem.cover_buku,
+      siswa_NIS: NIS,
+      // nama: Nama,
+      buku_kodeBuku: kodeBuku,
+
       tersediaRiwayat: catalogItem.tersedia,
-      waktuKomentar: moment(),
+      createdAt: moment(),
     }
 
     try {
@@ -323,14 +307,17 @@ const DetailBuku = () => {
   const handleTambahBooking = async () => {
     try {
       const dataBooking = {
-        NIS: NIS,
-        nama: Nama,
-        kodeBuku: kodeBuku,
-        judulBuku: judulBuku,
-        waktuBooking: addFormData.waktuBooking
+        Siswa_NIS: NIS,
+        Buku_kodeBuku: kodeBuku,
+        tglPemesanan: addFormDataMemesan.tglPemesanan,
       }
       const response = await axios.post('http://localhost:3005/booking-pinjam', dataBooking)
       // console.log(response)
+      setAddFormDataMemesan((prevData) => ({
+        ...prevData,
+        tglPemesanan: today,
+      }))
+
       alert(response.data.message)
       toggleModal()
     } catch (err) {
@@ -344,7 +331,7 @@ const DetailBuku = () => {
       <div className="bookDetailContainer">
         <div className="bookPosterAction">
           <img
-            src={`http://localhost:3005/${catalogItem.cover_buku}`}
+            src={`http://localhost:3005/${catalogItem.cover}`}
             alt={catalogItem.judul}
             className="bookPoster"
           />
@@ -359,7 +346,7 @@ const DetailBuku = () => {
             </CButton>
           ) : (
             <Link to={`/PdfRead/${catalogItem.kodeBuku}`}>
-              <CButton type="submit" onClick={formOnSubmitRiwayat}>
+              <CButton type="submit" className="btnBaca" onClick={formOnSubmitRiwayat}>
                 Baca
               </CButton>
             </Link>
@@ -383,11 +370,11 @@ const DetailBuku = () => {
                       <div>
                         <input
                           type="text"
-                          value={editFormData.textKomentar}
+                          value={editFormData.teksKomentar}
                           onChange={(e) =>
                             setEditFormData({
                               ...editFormData,
-                              textKomentar: e.target.value,
+                              teksKomentar: e.target.value,
                             })
                           }
                         />
@@ -400,9 +387,9 @@ const DetailBuku = () => {
                       <div className="comment-text-container">
                         <div className="comment-header">
                           <p className="comment-text">
-                            {komentar.namaKomentator} : {komentar.textKomentar}
+                            {komentar.nama} : {komentar.teksKomentar}
                           </p>
-                          {komentar.namaKomentator === Nama && (
+                          {komentar.nama === Nama && (
                             <>
                               <div className="edit-delete-container">
                                 <p
@@ -411,7 +398,7 @@ const DetailBuku = () => {
                                       'Are you sure you want to delete this comment?',
                                     )
                                     if (confirmation) {
-                                      handleDelete(komentar.idKomentar, komentar.namaKomentator)
+                                      handleDelete(komentar.idKomentar)
                                     }
                                   }}
                                   className="delete-button"
@@ -420,7 +407,7 @@ const DetailBuku = () => {
                                 </p>
                                 <p
                                   onClick={() =>
-                                    handleEdit(komentar.idKomentar, komentar.textKomentar)
+                                    handleEdit(komentar.idKomentar, komentar.teksKomentar)
                                   }
                                   className="edit-button"
                                 >
@@ -450,9 +437,9 @@ const DetailBuku = () => {
             }}
           >
             <input
-              value={addFormData.textKomentar || ''}
+              value={addFormData.teksKomentar || ''}
               placeholder="Tulis Komentar"
-              onChange={(e) => setAddFormData({ ...addFormData, textKomentar: e.target.value })}
+              onChange={(e) => setAddFormData({ ...addFormData, teksKomentar: e.target.value })}
               required
               style={{
                 width: '75%', // Lebar form input diatur menjadi lebih panjang
@@ -468,7 +455,7 @@ const DetailBuku = () => {
               type="submit"
               style={{
                 width: '20%', // Lebar tombol kirim diatur menjadi lebih pendek
-                backgroundColor: 'blue',
+                backgroundColor: '#29266a',
                 color: 'white',
                 padding: '8px 16px',
                 borderRadius: '5px',
@@ -505,7 +492,7 @@ const DetailBuku = () => {
           </div>
         </div>
       </div>
-      <CFooter>
+      {/* <CFooter>
         <CImage href={linkUper} className="logo" rounded src="/images/logouper.png" />
         <div style={{ fontFamily: 'Poppins' }}>
           <span className="ms-1"> Copyright &copy; 2023 Pengabdian Kepada Masyarakat</span>
@@ -513,7 +500,7 @@ const DetailBuku = () => {
             Universitas Pertamina
           </CLink>
         </div>
-      </CFooter>
+      </CFooter> */}
 
       <CModal alignment="center" scrollable visible={visible}>
         <CModalHeader>
@@ -522,18 +509,35 @@ const DetailBuku = () => {
         <CModalBody>
           <CForm>
             <CDatePicker
-              name="waktuBooking"
+              name="tglPemesanan"
               footer
               locale="id-ID"
               id="waktuBooking"
               label="Waktu Booking"
-              value={addFormDataMemesan.waktuBooking}
+              value={addFormDataMemesan.tglPemesanan}
               date={today}
+              minDate={today}
               onDateChange={formOnChangeTglPinjam}
               className="mb-3"
             />
-            <CFormInput type="text" label="NIS" id="inputNIS" name="NIS" className="mb-3" value={NIS} readOnly />
-            <CFormInput type="text" label="Nama" id="inputNama" name="nama" className="mb-3" value={Nama} readOnly />
+            <CFormInput
+              type="text"
+              label="NIS"
+              id="inputNIS"
+              name="NIS"
+              className="mb-3"
+              value={NIS}
+              readOnly
+            />
+            <CFormInput
+              type="text"
+              label="Nama"
+              id="inputNama"
+              name="nama"
+              className="mb-3"
+              value={Nama}
+              readOnly
+            />
             <CFormInput
               type="text"
               label="Kode Buku"
@@ -555,7 +559,10 @@ const DetailBuku = () => {
           </CForm>
         </CModalBody>
         <CModalFooter>
-          <CButton type="submit" onClick={handleTambahBooking}> Tambah </CButton>
+          <CButton type="submit" onClick={handleTambahBooking}>
+            {' '}
+            Tambah{' '}
+          </CButton>
           <CButton color="light" onClick={toggleModal}>
             {' '}
             Kembali{' '}

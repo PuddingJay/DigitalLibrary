@@ -13,6 +13,7 @@ const DataPengunjung = React.lazy(() => import('./views/admin/data-pengunjung/Da
 const SiswaLogin = React.lazy(() => import('./views/user/LoginSiswa/LoginSiswa'))
 const UpdateData = React.lazy(() => import('./views/admin/updateData/UpdateData'))
 const BookingPinjam = React.lazy(() => import('./views/admin/booking-pinjam/AdminBookingPinjam'))
+// const kotaksaran = React.lazy(() => import('./views/admin/admin-kotakSaran/adminKotakSaran'))
 const Laporan = React.lazy(() => import('./views/admin/laporan/Laporan'))
 
 const routes = [

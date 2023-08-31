@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { Suspense, useEffect, useState } from 'react'
 import { NavbarComponent } from 'src/component/index'
 import {
@@ -24,6 +25,10 @@ import axios from 'axios'
 import './updateSiswa.scss'
 import CIcon from '@coreui/icons-react'
 import { cilToggleOff, cilToggleOn, cilCheckCircle, cilXCircle } from '@coreui/icons'
+import Card from 'react-bootstrap/Card'
+import { Row } from 'react-bootstrap'
+import moment from 'moment'
+import { useNavigate } from 'react-router-dom'
 
 const UpdateSiswa = () => {
   const formatDate = (dateString) => {
@@ -54,6 +59,8 @@ const UpdateSiswa = () => {
   const [msg, setMsg] = useState(null)
   const [showSuccessAlert, setShowSuccessAlert] = useState(false)
   const [showErrorAlert, setShowErrorAlert] = useState(false)
+
+  const [RiwayatDatas, setRiwayatDatas] = useState([])
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword)
@@ -157,6 +164,39 @@ const UpdateSiswa = () => {
       setMsg(err.response.data.message)
     }
   }
+
+  useEffect(() => {
+    if (nama) {
+      fetchHistory(id) // Menggunakan NIS, bukan nama
+    }
+  }, [nama, id])
+
+  const fetchHistory = async (siswa_NIS) => {
+    try {
+      console.log('Fetching history for user:', id)
+      const response = await axios.get(`http://localhost:3005/history/${id}`)
+      if (response.data.data.length > 0) {
+        setRiwayatDatas(response.data.data)
+      } else {
+        setRiwayatDatas([])
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  const handleDeleteClick = async (idRiwayat) => {
+    console.log(idRiwayat)
+    try {
+      const confirmed = window.confirm('Apakah Anda yakin ingin menghapus?')
+      if (confirmed) {
+        const response = await axios.delete(`http://localhost:3005/history/${idRiwayat}`)
+        console.log(response.data) // Print response from server
+        fetchHistory(id) // Menggunakan nilai id
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
   return (
     <Suspense fallback={<CSpinner color="primary" />}>
       <NavbarComponent />
@@ -179,7 +219,9 @@ const UpdateSiswa = () => {
               <div className="avatarName">
                 <CAvatar
                   // eslint-disable-next-line prettier/prettier
-                  src={`https://ui-avatars.com/api/?name=${nama ? nama : undefined}&background=random`}
+                  src={`https://ui-avatars.com/api/?name=${
+                    nama ? nama : undefined
+                  }&background=random`}
                   size="xl"
                 />
                 <div className="name">
@@ -305,7 +347,37 @@ const UpdateSiswa = () => {
             />
           </CCardBody>
         </CCard>
+        <div className="reading-history">
+          <h2>Riwayat baca</h2>
+          <Row className="mb-4 katalog">
+            {RiwayatDatas.map((item) => (
+              <Card className="shadow history-card" key={item.buku_kodeBuku}>
+                <div className="dropdown-container">
+                  <Card.Img variant="top" src={`http://localhost:3005/${item.cover}`} />
+                  <Card.Body>
+                    <Card.Title>{item.judul}</Card.Title>
+                    <Card.Text>Tersedia: {item.tersedia}</Card.Text>
+                    <Card.Text>
+                      Diakses pada: {moment(item.createdAt).format('DD/MM/YYYY HH:mm')}
+                      id Riwayat : {item.idRiwayat}
+                    </Card.Text>
+                  </Card.Body>
+
+                  <div className="delete-button-container">
+                    <button
+                      className="delete-button"
+                      onClick={() => handleDeleteClick(item.idRiwayat)}
+                    >
+                      Hapus
+                    </button>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </Row>
+        </div>
       </div>
+
       <CFooter>
         <CImage className="logo" rounded src="/images/logouper.png" />
         <div style={{ fontFamily: 'Poppins' }}>

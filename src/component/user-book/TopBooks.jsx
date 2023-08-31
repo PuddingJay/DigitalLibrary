@@ -29,10 +29,10 @@ const TopBooks = () => {
     <Col className="ml-3 containerBook">
       <Row className="mb-4 katalog">
         {DaftarPustaka.map((item) => (
-          <Card className="shadow" key={item.idBuku}>
+          <Card className="shadow" key={item.kodeBuku}>
             <Card.Body>
               <Link to={`/Detail/${item.idBuku}`}>
-                <Card.Img variant="top" src={`http://localhost:3005/${item.cover_buku}`} />
+                <Card.Img variant="top" src={`http://localhost:3005/${item.cover}`} />
                 <Card.Title>{item.judul}</Card.Title>
                 <Card.Text>Tersedia: {item.jumlah}</Card.Text>
               </Link>

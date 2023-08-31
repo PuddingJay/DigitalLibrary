@@ -6,11 +6,11 @@
     width: 70%;
     padding: 10px;
 
-    @media only screen and (max-width:600px) {
+    @media only screen and (max-width: 600px) {
       width: 90%;
     }
 
-    @media (min-width: 601px) and (max-width:1200px) {
+    @media (min-width: 601px) and (max-width: 1200px) {
       width: 70%;
     }
 
@@ -23,7 +23,7 @@
         padding: 30px;
         display: flex;
 
-        @media screen and (max-width:600px) {
+        @media screen and (max-width: 600px) {
           padding: 5px;
           flex-direction: column;
         }
@@ -44,7 +44,7 @@
         .infoUser {
           margin-left: 20px;
 
-          @media screen and (max-width:600px) {
+          @media screen and (max-width: 600px) {
             margin: 0;
           }
 
@@ -54,7 +54,7 @@
           .infoLabel {
             margin-left: 15px;
 
-            @media screen and (max-width:600px) {
+            @media screen and (max-width: 600px) {
               margin: 0 15px 0 0;
             }
 
@@ -71,7 +71,7 @@
       }
 
       .form-updateSiswa {
-        @media screen and (max-width:600px) {
+        @media screen and (max-width: 600px) {
           padding: 0 10px 10px 10px;
         }
 
@@ -107,11 +107,93 @@
           width: 100%;
         }
       }
-    }
+      .reading-history {
+        background-color: #fff;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .delete-button-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: auto; /* Push the button to the bottom */
+      }
 
+      .delete-button {
+        background-color: #f44336; /* Red color for delete */
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      .history-card {
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+        margin-bottom: 20px;
+      }
+
+      .history-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+
+      .history-card .card-title {
+        font-size: 1.25rem;
+        margin: 10px 0;
+      }
+
+      .history-card .card-text {
+        color: #6c757d;
+      }
+    }
   }
 }
+.reading-history {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.delete-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto; /* Push the button to the bottom */
+}
 
+.delete-button {
+  background-color: #f44336; /* Red color for delete */
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.history-card {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+}
+
+.history-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.history-card .card-title {
+  font-size: 1.25rem;
+  margin: 10px 0;
+}
+
+.history-card .card-text {
+  color: #6c757d;
+}
 .footer {
   position: relative;
   bottom: 0;

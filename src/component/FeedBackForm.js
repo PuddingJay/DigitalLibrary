@@ -10,6 +10,7 @@ const FeedbackForm = () => {
   const [Nama, setNama] = useState('')
   const [Kelas, setKelas] = useState('')
   const [siswaId, setSiswaId] = useState('')
+  const [NIS, setNIS] = useState('')
   const [SaranDatas, setSaranDatas] = useState([])
   const [Jurusan, setJurusan] = useState('')
   //   const [saran, setSaran] = useState([])
@@ -17,10 +18,10 @@ const FeedbackForm = () => {
   const navigate = useNavigate()
 
   const [addFormData, setAddFormData] = useState({
-    NIS: null,
-    pemberiSaran: null,
-    saranJudulBuku: null,
-    saranPengarangBuku: null,
+    siswa_NIS: null,
+
+    judulBuku: null,
+    pengarang: null,
   })
 
   useEffect(() => {
@@ -39,11 +40,13 @@ const FeedbackForm = () => {
       const response = await axios.get(`http://localhost:3005/berhasilLogin/${refreshToken}`)
 
       const decoded = jwtDecode(response.data.accessToken)
-      setNama(decoded.Nama)
+
+      setNama(decoded.nama)
       setSiswaId(decoded.siswaId)
       setKelas(decoded.Kelas)
       setJurusan(decoded.Jurusan)
-      console.log(decoded)
+      setNIS(decoded.siswaId)
+      console.log(NIS)
     } catch (err) {
       if (err.message === 'Refresh token siswa not found') {
         navigate('/siswa/login')
@@ -59,17 +62,11 @@ const FeedbackForm = () => {
   const formOnSubmitHandler = (event) => {
     event.preventDefault()
 
-    // Pastikan siswaId dan nama sudah terisi dari hasil fetchData
-    if (!siswaId || !Nama) {
-      console.log('Data NIS dan pemberiSaran belum terisi.')
-      return
-    }
-
     const newDataSaran = {
-      NIS: siswaId, // Menggunakan siswaId yang sudah didapatkan dari fetchData
-      pemberiSaran: Nama, // Menggunakan nama yang sudah didapatkan dari fetchData
-      saranJudulBuku: addFormData.saranJudulBuku, // Pastikan properti ini sudah sesuai dengan yang diinginkan
-      saranPengarangBuku: addFormData.saranPengarangBuku, // Pastikan properti ini sudah sesuai dengan yang diinginkan
+      siswa_NIS: NIS, // Menggunakan siswaId yang sudah didapatkan dari fetchData
+      // Menggunakan nama yang sudah didapatkan dari fetchData
+      judulBuku: addFormData.judulBuku, // Pastikan properti ini sudah sesuai dengan yang diinginkan
+      pengarang: addFormData.pengarang, // Pastikan properti ini sudah sesuai dengan yang diinginkan
     }
 
     console.log(newDataSaran)
@@ -103,18 +100,16 @@ const FeedbackForm = () => {
           <div style={{ flex: '1', maxWidth: '400px', marginRight: '10px' }}>
             <h4>Judul Buku</h4>
             <input
-              value={addFormData.saranJudulBuku}
-              onChange={(e) => setAddFormData({ ...addFormData, saranJudulBuku: e.target.value })}
+              value={addFormData.judulBuku}
+              onChange={(e) => setAddFormData({ ...addFormData, judulBuku: e.target.value })}
               required
             />
           </div>
           <div style={{ flex: '1', maxWidth: '400px', marginLeft: '10px' }}>
             <h4>Penulis Buku</h4>
             <input
-              value={addFormData.saranPengarangBuku}
-              onChange={(e) =>
-                setAddFormData({ ...addFormData, saranPengarangBuku: e.target.value })
-              }
+              value={addFormData.pengarang}
+              onChange={(e) => setAddFormData({ ...addFormData, pengarang: e.target.value })}
               required
             />
           </div>

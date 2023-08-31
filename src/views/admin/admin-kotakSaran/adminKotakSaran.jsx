@@ -13,29 +13,6 @@ const AdminKotakSaran = () => {
   const [kotakSaran, setkotakSaran] = useState([])
   const navigate = useNavigate()
 
-  const [name, setName] = useState('')
-  const [role, setRole] = useState('')
-
-  useEffect(() => {
-    RefreshToken()
-  }, [])
-
-  const RefreshToken = async () => {
-    try {
-      const refreshToken = localStorage.getItem('refreshToken')
-      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
-      const decoded = jwtDecode(response.data.accessToken)
-
-      setName(decoded.name)
-      if (decoded.role !== 'admin') {
-        navigate('/dashboard') // Ganti '/dashboard' dengan rute yang sesuai
-        alert('Anda tidak punya akses untuk halaman ini')
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   useEffect(() => {
     fetchData()
     setLoading(false)
@@ -52,24 +29,24 @@ const AdminKotakSaran = () => {
     }
   }
 
-  const handleDelete = async (idSaran) => {
+  const handleDelete = async (idPengadaan) => {
     try {
-      await axios.delete(`http://localhost:3005/kotaksaran/${idSaran}`)
+      await axios.delete(`http://localhost:3005/kotaksaran/${idPengadaan}`)
       fetchData()
     } catch (error) {
       console.log(error)
     }
   }
 
-  const [details, setDetails] = useState([])
   const columns = [
     {
-      key: 'NIS',
+      key: 'siswa_NIS',
       _style: { width: '18%' },
     },
-    { key: 'pemberiSaran', _style: { width: '18%' } },
-    { key: 'saranJudulBuku', _style: { width: '50%' } },
-    { key: 'saranPengarangBuku', _style: { width: '18%' } },
+    { key: 'nama', _style: { width: '18%' } },
+    { key: 'judulBuku', _style: { width: '18%' } },
+    { key: 'pengarang', _style: { width: '50%' } },
+
     {
       key: 'show_details',
       label: '',
@@ -140,7 +117,7 @@ const AdminKotakSaran = () => {
                             'Apakah Anda yakin ingin menghapus item ini?',
                           )
                           if (shouldDelete) {
-                            handleDelete(item.idSaran)
+                            handleDelete(item.idPengadaan)
                           }
                         }}
                       >

@@ -8,7 +8,7 @@ import { cilToggleOff, cilToggleOn } from '@coreui/icons'
 
 // eslint-disable-next-line react/prop-types
 const Login = () => {
-  const [Nama, setNama] = useState('')
+  const [nama, setnama] = useState('')
   const [password, setPassword] = useState('')
   const [msg, setMsg] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -26,11 +26,11 @@ const Login = () => {
 
   const Auth = async (e) => {
     e.preventDefault()
-    const formattedNama = convertToFullName(Nama)
+    const formattednama = convertToFullName(nama)
 
     try {
       const response = await axios.post('http://localhost:3005/siswa/login', {
-        Nama: formattedNama,
+        nama: formattednama,
         password: password,
       })
 
@@ -41,8 +41,8 @@ const Login = () => {
       window.location.href = '/Home'
     } catch (error) {
       if (error.response) {
-        console.log(formattedNama)
-        console.log(Nama)
+        console.log(formattednama)
+        console.log(nama)
         console.log(error)
         setMsg(error.response.data.message)
       }
@@ -70,10 +70,10 @@ const Login = () => {
               <CFormInput
                 type="text"
                 id="floatingInput"
-                floatingLabel="Nama"
-                placeholder="Nama"
-                value={Nama}
-                onChange={(e) => setNama(e.target.value)}
+                floatingLabel="nama"
+                placeholder="nama"
+                value={nama}
+                onChange={(e) => setnama(e.target.value)}
               />
               <CInputGroup>
                 <CFormInput

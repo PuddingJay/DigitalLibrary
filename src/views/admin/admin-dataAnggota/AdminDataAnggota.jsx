@@ -50,23 +50,7 @@ const AdminDataAnggota = () => {
   useEffect(() => {
     fetchData()
     setLoading(false)
-    RefreshToken()
   }, [])
-
-  const RefreshToken = async () => {
-    try {
-      const refreshToken = localStorage.getItem('refreshToken')
-      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
-      const decoded = jwtDecode(response.data.accessToken)
-
-      if (decoded.role !== 'admin') {
-        window.location.href = '/dashboard' // Ganti '/dashboard' dengan rute yang sesuai
-        alert('Anda tidak punya akses untuk halaman ini')
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
 
   const [modalTambah, setModalTambah] = useState(false)
   const [modalUpdate, setModalUpdate] = useState(false)
