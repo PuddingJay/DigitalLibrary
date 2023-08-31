@@ -1,10 +1,11 @@
-import React, { useState /*useEffect*/ } from 'react'
+import React, { useState, useEffect } from 'react'
 import './formDataPengunjung.scss'
 import { CAlert, CForm, CFormInput, CButton, CFormSelect } from '@coreui/react-pro'
 import { CCard, CCardBody, CCardHeader } from '@coreui/react-pro'
 import axios from 'axios'
 import CIcon from '@coreui/icons-react'
 import { cilCheckCircle, cilXCircle } from '@coreui/icons'
+import jwtDecode from 'jwt-decode'
 
 const DataPengunjung = () => {
   const [inputValues, setInputValues] = useState({
@@ -18,9 +19,42 @@ const DataPengunjung = () => {
   const [showSuccessAlert, setShowSuccessAlert] = useState(false)
   const [showErrorAlert, setShowErrorAlert] = useState(false)
 
-  // useEffect(() => {
-  //   fetchSisws()
-  // }, [])
+  const RefreshToken = async () => {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken')
+      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
+      const decoded = jwtDecode(response.data.accessToken)
+
+      if (decoded.role !== 'admin') {
+        window.location.href = '/siswa/login'
+        alert('Anda tidak punya akses untuk halaman ini')
+      }
+    } catch (err) {
+      console.error(err)
+      if (err.response && err.response.status === 404) {
+        window.location.href = '/login'
+      }
+    }
+  }
+
+  useEffect(() => {
+    RefreshToken()
+
+    const refreshToken = localStorage.getItem('refreshToken')
+    const handleBackNavigation = async () => {
+      window.location.replace('/login')
+      await axios.delete(`http://localhost:3005/siswaLogout/${refreshToken}`)
+      window.removeEventListener('popstate', handleBackNavigation)
+    }
+
+    // Add event listener to detect when the user navigates back
+    window.addEventListener('popstate', handleBackNavigation)
+
+    // Remove the event listener when the component unmounts
+    // return () => {
+    //   window.removeEventListener('popstate', handleBackNavigation)
+    // }
+  }, [])
 
   // const fetchSisws = async () => {
   //   try {

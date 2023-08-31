@@ -46,14 +46,14 @@ const AdminBookingPinjam = () => {
   const fetchData = async () => {
     try {
       const currentDate = new Date()
-      const fiveSecondinMilliseconds = 5 * 1000 // 2 days in milliseconds
+      const twoDaysinMilliseconds = 2 * 24 * 60 * 60 * 1000 // 2 days in milliseconds
       const response = await axios.get('http://localhost:3005/booking-pinjam')
       const updatedDataPromises = response.data.data.map(async (item) => {
         if (item.status === 'Belum Dipinjam') {
           const tglPemesanan = new Date(item.tglPemesanan)
           const timeDifference = currentDate - tglPemesanan
 
-          if (timeDifference >= fiveSecondinMilliseconds) {
+          if (timeDifference >= twoDaysinMilliseconds) {
             return {
               ...item,
               status: 'Kadaluarsa',
@@ -65,10 +65,9 @@ const AdminBookingPinjam = () => {
       })
 
       const updatedData = await Promise.all(updatedDataPromises)
-
-      console.log(updatedData)
+      // console.log(updatedData)
       setDataBooking(updatedData)
-      console.log(dataBooking)
+      // console.log(dataBooking)
     } catch (error) {
       alert(error.message)
     }

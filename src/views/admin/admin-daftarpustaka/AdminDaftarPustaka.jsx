@@ -50,15 +50,12 @@ const AdminDaftarPustaka = () => {
   const [fileWarning, setfileWarning] = useState('')
   const [kategoriLainnya, setKategoriLainnya] = useState('')
   const [isApproval, setIsApproval] = useState('Belum Disetujui')
+  const [fullKategori, setFullKategori] = useState([])
 
   const [msg, setMsg] = useState(null)
   const [showSuccessAlert, setShowSuccessAlert] = useState(false)
 
   const formRef = useRef(null)
-
-  useEffect(() => {
-    RefreshToken()
-  }, [])
 
   const RefreshToken = async () => {
     try {
@@ -78,6 +75,8 @@ const AdminDaftarPustaka = () => {
   useEffect(() => {
     fetchData()
     setLoading(false)
+    fetchKategori()
+    RefreshToken()
   }, [])
 
   const toggleModalTambah = () => {
@@ -108,15 +107,27 @@ const AdminDaftarPustaka = () => {
     }
   }
 
+  const fetchKategori = async () => {
+    try {
+      const response = await axios.get('http://localhost:3005/kategori')
+      setFullKategori(response.data.data)
+      console.log('response', response.data.data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const handleAdd = (e) => {
     e.preventDefault()
-    let selectedKategori
-    if (Kategori === 'Lainnya') {
-      // Use kategoriLainnya as the selected Kategori
-      selectedKategori = kategoriLainnya
-    } else {
-      // Use Kategori as is
-      selectedKategori = Kategori
+    const selectedCategory = fullKategori.find(
+      (kategori) => kategori.idKategori === parseInt(Kategori),
+    )
+    console.log(selectedCategory)
+    console.log(fullKategori)
+    console.log(Kategori)
+    if (selectedCategory.idKategori !== parseInt(Kategori)) {
+      alert('Kategori tidak ditemukan. Silakan pilih kategori yang valid.')
+      return
     }
 
     axios
@@ -128,9 +139,12 @@ const AdminDaftarPustaka = () => {
         } else {
           // KodeBuku doesn't exist, proceed with form submission
           const formData = new FormData(formRef.current)
-          formData.set('Kategori', selectedKategori)
-          cover_buku?.files && formData.append('cover_buku', cover_buku.files[0])
-          file_ebook?.files && formData.append('file_ebook', file_ebook.files[0])
+          formData.set('Kategori_idKategori', selectedCategory.idKategori)
+          cover_buku?.files && formData.append('cover', cover_buku.files[0])
+          file_ebook?.files && formData.append('file', file_ebook.files[0])
+          formData.forEach((value, key) => {
+            console.log(key, value)
+          })
 
           axios
             .post('http://localhost:3005/book', formData)
@@ -442,7 +456,7 @@ const AdminDaftarPustaka = () => {
 
                         {/* <CImage fluid src="/images/react.jpg" /> */}
                         <CImage
-                          src={`http://localhost:3005/${item.cover_buku}`}
+                          src={`http://localhost:3005/${item.cover}`}
                           width={100}
                           height={100}
                         />
@@ -503,28 +517,16 @@ const AdminDaftarPustaka = () => {
                   <Label for="Kategori">Kategori</Label>
                   <Input
                     type="select"
-                    name="Kategori"
+                    name="kategori_idKategori"
                     id="Kategori"
                     value={Kategori}
                     onChange={(e) => setKategori(e.target.value)}
                   >
-                    <option value="">Pilih Kategori</option>
-                    <option value="PKN">PKN</option>
-                    <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-                    <option value="Bahasa Inggris">Bahasa Inggris</option>
-                    <option value="Sejarah">Sejarah</option>
-                    <option value="Matematika">Matematika</option>
-                    <option value="Penjas">Penjas</option>
-                    <option value="Seni Budaya">Seni Budaya</option>
-                    <option value="Agama">Agama</option>
-                    <option value="TIK">TIK</option>
-                    <option value="Fisika">Fisika</option>
-                    <option value="Biologi">Biologi</option>
-                    <option value="Kimia">Kimia</option>
-                    <option value="Ekonomi">Ekonomi</option>
-                    <option value="Geografi">Geografi</option>
-                    <option value="Sosiologi">Sosiologi</option>
-                    <option value="Lainnya">Lainnya</option>
+                    {fullKategori.map((kategori) => (
+                      <option key={kategori.idKategori} value={kategori.idKategori}>
+                        {kategori.nama}
+                      </option>
+                    ))}
                     {/* Tambahkan opsi tipe file lainnya sesuai kebutuhan */}
                   </Input>
                   {Kategori === 'Lainnya' && (
@@ -550,7 +552,7 @@ const AdminDaftarPustaka = () => {
                   <Label for="tahun_terbit">Tahun Terbit</Label>
                   <Input
                     type="text"
-                    name="tahun_terbit"
+                    name="tahunTerbit"
                     id="tahun_terbit"
                     value={tahun_terbit}
                     onChange={(e) => setTahun_terbit(e.target.value)}
@@ -584,7 +586,7 @@ const AdminDaftarPustaka = () => {
                   <Label for="cover_buku">Cover Buku</Label>
                   <Input
                     type="file"
-                    name="cover_buku"
+                    name="cover"
                     id="cover_buku"
                     onChange={(e) => {
                       const selectedFile = e.target.files[0]
@@ -609,7 +611,7 @@ const AdminDaftarPustaka = () => {
                   <Label for="file_ebook">File Buku digital</Label>
                   <Input
                     type="file"
-                    name="file_ebook"
+                    name="berkasBuku"
                     id="file_ebook"
                     onChange={(e) => {
                       const selectedFile = e.target.files[0]
@@ -690,28 +692,16 @@ const AdminDaftarPustaka = () => {
                   <Label for="Kategori">Kategori</Label>
                   <Input
                     type="select"
-                    name="Kategori"
+                    name="Kategori_idKategori"
                     id="Kategori"
                     value={Kategori}
                     onChange={(e) => setKategori(e.target.value)}
                   >
-                    <option value="">Pilih Kategori</option>
-                    <option value="PKN">PKN</option>
-                    <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-                    <option value="Bahasa Inggris">Bahasa Inggris</option>
-                    <option value="Sejarah">Sejarah</option>
-                    <option value="Matematika">Matematika</option>
-                    <option value="Penjas">Penjas</option>
-                    <option value="Seni Budaya">Seni Budaya</option>
-                    <option value="Agama">Agama</option>
-                    <option value="TIK">TIK</option>
-                    <option value="Fisika">Fisika</option>
-                    <option value="Biologi">Biologi</option>
-                    <option value="Kimia">Kimia</option>
-                    <option value="Ekonomi">Ekonomi</option>
-                    <option value="Geografi">Geografi</option>
-                    <option value="Sosiologi">Sosiologi</option>
-                    <option value="Lainnya">Lainnya</option>
+                    {fullKategori.map((kategori) => (
+                      <option key={kategori.idKategori} value={kategori.idKategori}>
+                        {kategori.nama}
+                      </option>
+                    ))}
                     {/* Tambahkan opsi tipe file lainnya sesuai kebutuhan */}
                   </Input>
                   {Kategori === 'Lainnya' && (
