@@ -37,7 +37,7 @@ const FeedbackForm = () => {
         throw new Error('Refresh token siswa not found')
       }
 
-      const response = await axios.get(`http://localhost:3005/berhasilLogin/${refreshToken}`)
+      const response = await axios.get(`https://api2.librarysmayuppentek.sch.id/berhasilLogin/${refreshToken}`)
 
       const decoded = jwtDecode(response.data.accessToken)
 
@@ -74,7 +74,7 @@ const FeedbackForm = () => {
     setSaranDatas(newDataSarans)
 
     axios
-      .post('http://localhost:3005/kotaksaran', newDataSaran)
+      .post('https://api2.librarysmayuppentek.sch.id/kotaksaran', newDataSaran)
       .then((res) => {
         console.log(res)
         fetchData() // Ambil data terbaru setelah pengiriman sukses

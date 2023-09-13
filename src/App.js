@@ -39,11 +39,9 @@ const PdfRead = React.lazy(() => import('./views/user/PdfRead'))
 const UpdateSiswa = React.lazy(() => import('./views/user/UpdateSiswa/UpdateSiswa'))
 const SiswaLogin = React.lazy(() => import('./views/user/LoginSiswa/LoginSiswa'))
 const ShowPdf = React.lazy(() => import('./views/admin/admin-daftarpustaka/ShowPdf'))
-const Profil = React.lazy(() => import('./views/user/profil/Profil'))
 const FormPengunjung = React.lazy(() =>
   import('./views/pages/form-data-pengunjung/FormDataPengunjung'),
 )
-const ListKategori = React.lazy(() => import('./views/admin/admin-daftarpustaka/Kategori'))
 const App = () => {
   const dispatch = useDispatch()
   const theme = useSelector((state) => state.theme)
@@ -85,7 +83,6 @@ const App = () => {
           <Route exact path="/500" name="Page 500" element={<Page500 />} />
           <Route exact path="/Home" name="Katalog Buku" element={<Home />} />
           <Route exact path="/Detail/:id" name="Detail Buku" element={<Detail />} />
-          <Route exact path="/Profil" name="Detail Buku" element={<Profil />} />
           <Route exact path="/Kategori" name="Kategori Buku" element={<Kategori />} />
           <Route exact path="/PdfRead/:id" name="Baca Buku" element={<PdfRead />} />
           <Route exact path="/ShowPdf/:id" name="Lihat Buku" element={<ShowPdf />} />

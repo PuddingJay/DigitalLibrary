@@ -45,7 +45,7 @@
 //   }
 
 //   // const getAdmin = async () => {
-//   //   const response = await axiosJWT.get('http://localhost:3005/admin', {
+//   //   const response = await axiosJWT.get('https://api2.librarysmayuppentek.sch.id/admin', {
 //   //     headers: {
 //   //       Authorization: `Bearer ${token}`,
 //   //     },
@@ -60,7 +60,7 @@
 //   //     const currentDate = new Date()
 //   //     if (expire * 1000 < currentDate.getTime()) {
 //   //       try {
-//   //         const response = await axios.get('http://localhost:3005/token')
+//   //         const response = await axios.get('https://api2.librarysmayuppentek.sch.id/token')
 //   //         config.headers.Authorization = `Bearer ${response.data.accessToken}`
 //   //         setToken(response.data.accessToken)
 //   //         const decoded = jwtDecode(response.data.accessToken)

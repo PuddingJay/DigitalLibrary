@@ -7,7 +7,6 @@ import { cilCloudDownload } from '@coreui/icons'
 import 'react-datepicker/dist/react-datepicker.css'
 import * as XLSX from 'xlsx'
 import './laporan.scss'
-import jwtDecode from 'jwt-decode'
 
 const Laporan = () => {
   const [loading, setLoading] = useState()
@@ -21,25 +20,6 @@ const Laporan = () => {
   const [selectedMonth, setSelectedMonth] = useState(null)
 
   useEffect(() => {
-    RefreshToken()
-  }, [])
-
-  const RefreshToken = async () => {
-    try {
-      const refreshToken = localStorage.getItem('refreshToken')
-      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
-      const decoded = jwtDecode(response.data.accessToken)
-
-      if (decoded.role !== 'admin') {
-        window.location.href = '/dashboard' // Ganti '/dashboard' dengan rute yang sesuai
-        alert('Anda tidak punya akses untuk halaman ini')
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  useEffect(() => {
     console.log(filteredData)
   })
 
@@ -50,7 +30,7 @@ const Laporan = () => {
 
   const fetchPengunjung = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/data-pengunjung')
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/data-pengunjung')
       setDataPengunjung(response.data.data)
     } catch (err) {
       console.log(err)
@@ -59,7 +39,7 @@ const Laporan = () => {
 
   const fetchPeminjaman = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/peminjaman')
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/peminjaman')
       setDataPeminjaman(response.data.data)
     } catch (err) {
       console.log(err)
@@ -68,7 +48,7 @@ const Laporan = () => {
 
   const fetchBuku = async () => {
     try {
-      const responseBook = await axios.get('http://localhost:3005/book')
+      const responseBook = await axios.get('https://api2.librarysmayuppentek.sch.id/book')
       setDataBuku(responseBook.data?.data ?? [])
     } catch (err) {
       console.log(err)
@@ -77,7 +57,7 @@ const Laporan = () => {
 
   const fetchBooking = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/booking-pinjam')
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/booking-pinjam')
       setDataBooking(response.data.data)
       console.log(response.data.data)
     } catch (err) {
@@ -179,11 +159,15 @@ const Laporan = () => {
   const columnsBooking = [
     {
       key: 'No',
-      _style: { width: '5%' },
+      _style: { width: '1%' },
       filter: false,
       sorter: false,
     },
-
+    {
+      key: 'Siswa_NIS',
+      label: 'NIS/ID',
+      _style: { width: '10%' },
+    },
     { key: 'nama', _style: { width: '18%' } },
     { key: 'Buku_kodeBuku', _style: { width: '10%' }, label: 'Kode Buku' },
     { key: 'judul', _style: { width: '21%' } },
@@ -238,7 +222,9 @@ const Laporan = () => {
       case 'Belum Dipinjam':
         return 'warning'
       case 'Dipinjam':
-        return 'success'
+        return 'primary'
+      case 'Kadaluarsa':
+        return 'danger'
       default:
         return 'primary'
     }

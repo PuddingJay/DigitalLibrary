@@ -22,17 +22,23 @@ const DataPengunjung = () => {
   const RefreshToken = async () => {
     try {
       const refreshToken = localStorage.getItem('refreshToken')
-      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
+      const response = await axios.get(
+        `https://api2.librarysmayuppentek.sch.id/token/${refreshToken}`,
+      )
       const decoded = jwtDecode(response.data.accessToken)
 
-      if (decoded.role !== 'admin') {
+      if (decoded.role !== 'admin' || decoded.role !== 'superadmin') {
         window.location.href = '/siswa/login'
         alert('Anda tidak punya akses untuk halaman ini')
       }
     } catch (err) {
       console.error(err)
-      if (err.response && err.response.status === 404) {
-        window.location.href = '/login'
+      if (
+        (err.response && err.response.status === 404) ||
+        err.response.status === 403 ||
+        err.response.status === 401
+      ) {
+        window.location.href = '/siswa/login'
       }
     }
   }
@@ -43,7 +49,7 @@ const DataPengunjung = () => {
     const refreshToken = localStorage.getItem('refreshToken')
     const handleBackNavigation = async () => {
       window.location.replace('/login')
-      await axios.delete(`http://localhost:3005/siswaLogout/${refreshToken}`)
+      await axios.delete(`https://api2.librarysmayuppentek.sch.id/siswaLogout/${refreshToken}`)
       window.removeEventListener('popstate', handleBackNavigation)
     }
 
@@ -58,7 +64,7 @@ const DataPengunjung = () => {
 
   // const fetchSisws = async () => {
   //   try {
-  //     const responseSiswa = await axios.get('http://localhost:3005/siswa')
+  //     const responseSiswa = await axios.get('https://api2.librarysmayuppentek.sch.id/siswa')
   //     setSiswas(responseSiswa.data?.data ?? [])
   //     // console.log(responseSiswa.data.data)
   //   } catch (error) {
@@ -99,7 +105,10 @@ const DataPengunjung = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3005/add-data-pengunjung', inputValues)
+      const response = await axios.post(
+        'https://api2.librarysmayuppentek.sch.id/add-data-pengunjung',
+        inputValues,
+      )
       // console.log(response.data.message)
       setMsg(response.data.message)
       setShowSuccessAlert(true)

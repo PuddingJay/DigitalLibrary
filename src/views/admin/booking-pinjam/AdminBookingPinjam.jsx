@@ -5,15 +5,10 @@ import axios from 'axios'
 import CIcon from '@coreui/icons-react'
 import { cilCloudDownload } from '@coreui/icons'
 import * as XLSX from 'xlsx'
-import jwtDecode from 'jwt-decode'
 
 const AdminBookingPinjam = () => {
   const [loading, setLoading] = useState()
   const [dataBooking, setDataBooking] = useState([])
-
-  useEffect(() => {
-    RefreshToken()
-  }, [])
 
   const getBadge = (status) => {
     switch (status) {
@@ -28,26 +23,11 @@ const AdminBookingPinjam = () => {
     }
   }
 
-  const RefreshToken = async () => {
-    try {
-      const refreshToken = localStorage.getItem('refreshToken')
-      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
-      const decoded = jwtDecode(response.data.accessToken)
-
-      if (decoded.role !== 'admin') {
-        window.location.href = '/dashboard' // Ganti '/dashboard' dengan rute yang sesuai
-        alert('Anda tidak punya akses untuk halaman ini')
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   const fetchData = async () => {
     try {
       const currentDate = new Date()
       const twoDaysinMilliseconds = 2 * 24 * 60 * 60 * 1000 // 2 days in milliseconds
-      const response = await axios.get('http://localhost:3005/booking-pinjam')
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/booking-pinjam')
       const updatedDataPromises = response.data.data.map(async (item) => {
         if (item.status === 'Belum Dipinjam') {
           const tglPemesanan = new Date(item.tglPemesanan)
@@ -59,7 +39,10 @@ const AdminBookingPinjam = () => {
               status: 'Kadaluarsa',
             }
           }
-          axios.put(`http://localhost:3005/booking-pinjam/${item.idReservasi}`, item)
+          axios.put(
+            `https://api2.librarysmayuppentek.sch.id/booking-pinjam/${item.idReservasi}`,
+            item,
+          )
         }
         return item
       })
@@ -80,7 +63,9 @@ const AdminBookingPinjam = () => {
 
   const handleDelete = async (idBookingPinjam) => {
     try {
-      await axios.delete(`http://localhost:3005/booking-pinjam/${idBookingPinjam}`)
+      await axios.delete(
+        `https://api2.librarysmayuppentek.sch.id/booking-pinjam/${idBookingPinjam}`,
+      )
       fetchData()
     } catch (error) {
       console.log(error)
@@ -89,9 +74,12 @@ const AdminBookingPinjam = () => {
 
   const handleDipinjam = async (idBookingPinjam) => {
     try {
-      const response = await axios.put(`http://localhost:3005/booking-pinjam/${idBookingPinjam}`, {
-        status: 'Dipinjam',
-      })
+      const response = await axios.put(
+        `https://api2.librarysmayuppentek.sch.id/booking-pinjam/${idBookingPinjam}`,
+        {
+          status: 'Dipinjam',
+        },
+      )
 
       // Update the bookings list with the updated status
       const updatedBookings = dataBooking.map((booking) => {
@@ -115,9 +103,14 @@ const AdminBookingPinjam = () => {
   const columns = [
     {
       key: 'No',
-      _style: { width: '5%' },
+      _style: { width: '1%' },
       filter: false,
       sorter: false,
+    },
+    {
+      key: 'Siswa_NIS',
+      label: 'NIS/ID',
+      _style: { width: '10%' },
     },
     { key: 'nama', _style: { width: '18%' } },
     { key: 'Buku_kodeBuku', _style: { width: '10%' }, label: 'Kode Buku' },

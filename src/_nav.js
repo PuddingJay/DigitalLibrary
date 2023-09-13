@@ -8,6 +8,7 @@ import {
   cilDescription,
   cilNoteAdd,
   cilAddressBook,
+  cilInbox,
 } from '@coreui/icons'
 import { CNavItem, CNavTitle } from '@coreui/react-pro'
 import axios from 'axios'
@@ -17,7 +18,7 @@ const SidebarData = () => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3005/booking-pinjam')
+      .get('https://api2.librarysmayuppentek.sch.id/booking-pinjam')
       .then((response) => {
         setTotalBooking(response.data.data.length)
       })
@@ -71,24 +72,17 @@ const SidebarData = () => {
       component: CNavItem,
       name: 'Booking Pinjam',
       to: '/booking-pinjam',
-      icon: <CIcon icon={cilNoteAdd} customClassName="nav-icon" />,
+      icon: <CIcon icon={cilInbox} customClassName="nav-icon" />,
       badge: {
         color: 'danger',
         text: totalBooking.toString(),
       },
     },
-
     {
       component: CNavItem,
       name: 'Permintaan Buku',
       to: '/kotakSaran',
-      icon: <CIcon icon={cilBook} customClassName="nav-icon" />,
-    },
-    {
-      component: CNavItem,
-      name: 'Permintaan Buku',
-      to: '/kotakSaran',
-      icon: <CIcon icon={cilSpreadsheet} customClassName="nav-icon" />,
+      icon: <CIcon icon={cilNoteAdd} customClassName="nav-icon" />,
     },
     {
       component: CNavItem,

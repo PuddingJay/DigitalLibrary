@@ -47,7 +47,7 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         // Fetch total buku
-        const booksResponse = await axios.get('http://localhost:3005/book')
+        const booksResponse = await axios.get('https://api2.librarysmayuppentek.sch.id/book')
         const booksData = booksResponse.data.data
 
         const uniqueCategories = new Set(booksData.map((book) => book.Kategori))
@@ -61,18 +61,22 @@ const Dashboard = () => {
         setTotalBukuTersedia(totalTersedia)
 
         // Fetch total anggota
-        const usersResponse = await axios.get('http://localhost:3005/siswa')
+        const usersResponse = await axios.get('https://api2.librarysmayuppentek.sch.id/siswa')
         const usersData = usersResponse.data.data
         setTotalUsers(usersData.length)
         setSiswa(usersData)
 
         // Fetch data peminjaman
-        const peminjamanResponse = await axios.get('http://localhost:3005/peminjaman')
+        const peminjamanResponse = await axios.get(
+          'https://api2.librarysmayuppentek.sch.id/peminjaman',
+        )
         const peminjamanData = peminjamanResponse.data.data
         setPeminjaman(peminjamanData)
 
         // Fetch data pengunjung
-        const pengunjungResponse = await axios.get('http://localhost:3005/data-pengunjung')
+        const pengunjungResponse = await axios.get(
+          'https://api2.librarysmayuppentek.sch.id/data-pengunjung',
+        )
         const pengunjungData = pengunjungResponse.data.data
         setDataPengunjung(pengunjungData)
       } catch (error) {
@@ -466,7 +470,7 @@ const Dashboard = () => {
                       <CIcon icon={cilPeople} />
                     </CTableHeaderCell>
                     <CTableHeaderCell>Nama</CTableHeaderCell>
-                    <CTableHeaderCell /*className="text-center"*/>Kelas</CTableHeaderCell>
+                    <CTableHeaderCell /*className="text-center"*/>Status</CTableHeaderCell>
                     <CTableHeaderCell>Jumlah Pinjam</CTableHeaderCell>
                     <CTableHeaderCell>Activity</CTableHeaderCell>
                   </CTableRow>
@@ -488,13 +492,11 @@ const Dashboard = () => {
                         <div>{item.nama}</div>
                         <div className="small text-disabled text-nowrap">
                           {' '}
-                          NIS: {item.siswa_NIS}
+                          NIS/ID: {item.siswa_NIS}
                         </div>
                       </CTableDataCell>
                       <CTableDataCell /*className="text-center"*/>
-                        <div>
-                          {item.Kelas} {item.Jurusan}
-                        </div>
+                        <div>{item.status}</div>
                       </CTableDataCell>
                       <CTableDataCell>
                         <div className="d-flex justify-content-between mb-1">

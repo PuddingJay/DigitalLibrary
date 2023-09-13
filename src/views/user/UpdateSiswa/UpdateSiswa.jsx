@@ -75,7 +75,7 @@ const UpdateSiswa = () => {
   useEffect(() => {
     const getPeminjamanOnSiswa = async () => {
       try {
-        const response = await axios.get(`http://localhost:3005/peminjaman/${id}`)
+        const response = await axios.get(`https://api2.librarysmayuppentek.sch.id/peminjaman/${id}`)
         // console.log(response.data.data)
         setJumlahPinjam(response.data.data.length)
         setDataPinjam(response.data.data)
@@ -129,9 +129,9 @@ const UpdateSiswa = () => {
   const getSiswa = async () => {
     try {
       const refreshTokenSiswa = localStorage.getItem('refreshTokenSiswa')
-      const response = await axios.get(`http://localhost:3005/siswa/${refreshTokenSiswa}`)
+      const response = await axios.get(`https://api2.librarysmayuppentek.sch.id/siswa/${refreshTokenSiswa}`)
       setNama(response.data.data[0].nama)
-      setId(response.data.data[0].siswa_NIS)
+      setId(response.data.data[0].siswa.NIS)
       // setJurusan(response.data.data[0].Jurusan)
       console.log(response.data.data)
     } catch (err) {
@@ -153,7 +153,7 @@ const UpdateSiswa = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3005/siswa-update/${siswaId}`,
+        `https://api2.librarysmayuppentek.sch.id/siswa-update/${siswaId}`,
         updatePasswordData,
       )
       setShowSuccessAlert(true)
@@ -180,7 +180,7 @@ const UpdateSiswa = () => {
   const fetchHistory = async (siswa_NIS) => {
     try {
       console.log('Fetching history for user:', id)
-      const response = await axios.get(`http://localhost:3005/history/${id}`)
+      const response = await axios.get(`https://api2.librarysmayuppentek.sch.id/history/${id}`)
       if (response.data.data.length > 0) {
         setRiwayatDatas(response.data.data)
       } else {
@@ -195,7 +195,7 @@ const UpdateSiswa = () => {
     try {
       const confirmed = window.confirm('Apakah Anda yakin ingin menghapus?')
       if (confirmed) {
-        const response = await axios.delete(`http://localhost:3005/history/${idRiwayat}`)
+        const response = await axios.delete(`https://api2.librarysmayuppentek.sch.id/history/${idRiwayat}`)
         console.log(response.data) // Print response from server
         fetchHistory(id) // Menggunakan nilai id
       }
@@ -225,9 +225,8 @@ const UpdateSiswa = () => {
               <div className="avatarName">
                 <CAvatar
                   // eslint-disable-next-line prettier/prettier
-                  src={`https://ui-avatars.com/api/?name=${
-                    nama ? nama : undefined
-                  }&background=random`}
+                  src={`https://ui-avatars.com/api/?name=${nama ? nama : undefined
+                    }&background=random`}
                   size="xl"
                 />
                 <div className="name">
@@ -363,7 +362,7 @@ const UpdateSiswa = () => {
             {RiwayatDatas.map((item) => (
               <Card className="shadow history-card" key={item.buku_kodeBuku}>
                 <div className="dropdown-container">
-                  <Card.Img variant="top" src={`http://localhost:3005/${item.cover}`} />
+                  <Card.Img variant="top" src={`https://api2.librarysmayuppentek.sch.id/${item.cover}`} />
                   <Card.Body>
                     <Card.Title>{item.judul}</Card.Title>
                     <Card.Text>Tersedia: {item.tersedia}</Card.Text>

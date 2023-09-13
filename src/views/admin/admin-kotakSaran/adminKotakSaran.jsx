@@ -5,24 +5,19 @@ import { CButton, CCard, CCardBody, CSmartTable } from '@coreui/react-pro'
 import axios from 'axios'
 import CIcon from '@coreui/icons-react'
 import { cilCloudDownload } from '@coreui/icons'
-import { Link, useNavigate } from 'react-router-dom'
-import jwtDecode from 'jwt-decode'
 
 const AdminKotakSaran = () => {
   const [loading, setLoading] = useState()
   const [kotakSaran, setkotakSaran] = useState([])
-  const navigate = useNavigate()
 
   useEffect(() => {
     fetchData()
     setLoading(false)
   }, [])
 
-  //
-
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/kotaksaran')
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/kotaksaran')
       setkotakSaran(response.data.data)
     } catch (error) {
       console.error(error)
@@ -31,7 +26,7 @@ const AdminKotakSaran = () => {
 
   const handleDelete = async (idPengadaan) => {
     try {
-      await axios.delete(`http://localhost:3005/kotaksaran/${idPengadaan}`)
+      await axios.delete(`https://api2.librarysmayuppentek.sch.id/kotaksaran/${idPengadaan}`)
       fetchData()
     } catch (error) {
       console.log(error)
@@ -77,7 +72,10 @@ const AdminKotakSaran = () => {
     return (
       <>
         <CCard>
-          <div className="download-container">
+          {/* <div className="download-container"> */}
+
+          {/* </div>/ */}
+          <CCardBody>
             <CButton
               className="download-button"
               color="primary"
@@ -89,8 +87,6 @@ const AdminKotakSaran = () => {
               <CIcon icon={cilCloudDownload} size="lg" />
               {/* Download data peminjaman (.csv) */}
             </CButton>
-          </div>
-          <CCardBody>
             <CSmartTable
               className="mt-3"
               activePage={3}

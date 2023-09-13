@@ -31,7 +31,7 @@ const NavbarComponent = () => {
       }
 
       const response = await axios.get(
-        `http://localhost:3005/berhasilLogin/${refreshToken}`,
+        `https://api2.librarysmayuppentek.sch.id/berhasilLogin/${refreshToken}`,
       )
       const decoded = jwtDecode(response.data.accessToken)
       setNama(decoded.nama)
@@ -65,7 +65,7 @@ const NavbarComponent = () => {
   const logout = async () => {
     try {
       const refreshToken = localStorage.getItem('refreshTokenSiswa')
-      await axios.delete(`http://localhost:3005/siswaLogout/${refreshToken}`)
+      await axios.delete(`https://api2.librarysmayuppentek.sch.id/siswaLogout/${refreshToken}`)
       localStorage.removeItem('accessTokenSiswa')
       localStorage.removeItem('refreshTokenSiswa')
       window.location.href = '/siswa/login'
@@ -98,9 +98,6 @@ const NavbarComponent = () => {
               <CDropdown variant="nav-item" popper={true} className="nav-dropdown">
                 <CDropdownToggle>Selamat datang {Nama}</CDropdownToggle>
                 <CDropdownMenu>
-                  <Link to="/Profil/">
-                    <CDropdownItem component='span'>Profil</CDropdownItem>
-                  </Link>
                   <Link to="/Home" style={{ textDecoration: 'none' }}>
                     <CDropdownItem component='span'>
                       <CIcon icon={cilHome} className="me-2" disabled />

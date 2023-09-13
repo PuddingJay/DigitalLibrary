@@ -24,7 +24,9 @@ const AppContent = () => {
         throw new Error('Refresh token not found')
       }
 
-      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
+      const response = await axios.get(
+        `https://api2.librarysmayuppentek.sch.id/token/${refreshToken}`,
+      )
       localStorage.setItem('refreshToken', refreshToken)
       const decoded = jwtDecode(response.data.accessToken)
 
@@ -34,6 +36,10 @@ const AppContent = () => {
       if (currentTime > tokenExpirationTime + oneDayInMilliseconds) {
         localStorage.removeItem('refreshToken')
         throw new Error('Refresh token has expired')
+      }
+      if (decoded.role !== 'siswa') {
+        window.location.href('/siswa-login') // Ganti '/dashboard' dengan rute yang sesuai
+        alert('Anda tidak punya akses untuk halaman ini')
       }
 
       console.log(decoded)
@@ -55,7 +61,7 @@ const AppContent = () => {
     // finally {
     //   try {
     //     const refreshTokenSiswa = localStorage.getItem('refreshTokenSiswa')
-    //     await axios.delete(`http://localhost:3005/siswaLogout/${refreshTokenSiswa}`)
+    //     await axios.delete(`https://api2.librarysmayuppentek.sch.id/siswaLogout/${refreshTokenSiswa}`)
     //   } catch (err) {
     //     console.log(err.message)
     //   }

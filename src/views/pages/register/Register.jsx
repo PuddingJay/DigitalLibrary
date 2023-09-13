@@ -35,7 +35,9 @@ const Register = () => {
         throw new Error('Refresh token not found')
       }
 
-      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
+      const response = await axios.get(
+        `https://api2.librarysmayuppentek.sch.id/token/${refreshToken}`,
+      )
       localStorage.setItem('refreshToken', refreshToken)
       const decoded = jwtDecode(response.data.accessToken)
 
@@ -54,7 +56,9 @@ const Register = () => {
     } finally {
       try {
         const refreshTokenSiswa = localStorage.getItem('refreshTokenSiswa')
-        await axios.delete(`http://localhost:3005/siswaLogout/${refreshTokenSiswa}`)
+        await axios.delete(
+          `https://api2.librarysmayuppentek.sch.id/siswaLogout/${refreshTokenSiswa}`,
+        )
       } catch (err) {
         console.log(err.message)
       }
@@ -64,7 +68,9 @@ const Register = () => {
   const RefreshToken = async () => {
     try {
       const refreshToken = localStorage.getItem('refreshToken')
-      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
+      const response = await axios.get(
+        `https://api2.librarysmayuppentek.sch.id/token/${refreshToken}`,
+      )
       const decoded = jwtDecode(response.data.accessToken)
 
       if (decoded.role !== 'superadmin') {
@@ -83,7 +89,7 @@ const Register = () => {
     e.preventDefault()
 
     try {
-      await axios.post('http://localhost:3005/admin', {
+      await axios.post('https://api2.librarysmayuppentek.sch.id/admin', {
         nama: nama,
         username: username,
         password: password,

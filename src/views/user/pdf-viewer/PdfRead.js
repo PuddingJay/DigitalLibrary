@@ -30,7 +30,7 @@ function PdfRead() {
   const loadPdf = async () => {
     console.log(params.id)
     try {
-      const url = `http://localhost:3005/book/pdf/${params.id}`
+      const url = `https://api2.librarysmayuppentek.sch.id/book/pdf/${params.id}`
 
       const response = await axios.get(url, {
         responseType: 'blob',

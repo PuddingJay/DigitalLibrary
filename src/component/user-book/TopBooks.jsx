@@ -19,7 +19,7 @@ const TopBooks = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/topBooks')
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/topBooks')
       setDaftarPustaka(response.data.data)
     } catch (error) {
       console.error(error)
@@ -32,7 +32,7 @@ const TopBooks = () => {
           <Card className="shadow" key={item.kodeBuku}>
             <Card.Body>
               <Link to={`/Detail/${item.kodeBuku}`}>
-                <Card.Img variant="top" src={`http://localhost:3005/${item.cover}`} />
+                <Card.Img variant="top" src={`https://api2.librarysmayuppentek.sch.id/${item.cover}`} />
                 <Card.Title>{item.judul}</Card.Title>
                 <Card.Text>Tersedia: {item.tersedia}</Card.Text>
               </Link>

@@ -5,7 +5,6 @@ import axios from 'axios'
 import CIcon from '@coreui/icons-react'
 import { cilCloudDownload, cilCheckCircle, cilXCircle } from '@coreui/icons'
 import * as XLSX from 'xlsx'
-import jwtDecode from 'jwt-decode'
 
 const DataPengunjung = () => {
   const [loading, setLoading] = useState(true)
@@ -14,30 +13,13 @@ const DataPengunjung = () => {
   const [showSuccessAlert, setShowSuccessAlert] = useState(false)
   const [showErrorAlert, setShowErrorAlert] = useState(false)
 
-  const RefreshToken = async () => {
-    try {
-      const refreshToken = localStorage.getItem('refreshToken')
-      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
-      const decoded = jwtDecode(response.data.accessToken)
-
-      if (decoded.role !== 'admin') {
-        window.location.href = '/dashboard' // Ganti '/dashboard' dengan rute yang sesuai
-        alert('Anda tidak punya akses untuk halaman ini')
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   useEffect(() => {
     fetchData()
-    RefreshToken()
-    console.log(dataPengunjung)
   }, [])
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/data-pengunjung')
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/data-pengunjung')
       setDataPengunjung(response.data.data)
       setLoading(false)
       console.log(response.data.data)
@@ -48,7 +30,9 @@ const DataPengunjung = () => {
 
   const handleDelete = async (idPengunjung) => {
     try {
-      const response = await axios.delete(`http://localhost:3005/data-pengunjung/${idPengunjung}`)
+      const response = await axios.delete(
+        `https://api2.librarysmayuppentek.sch.id/data-pengunjung/${idPengunjung}`,
+      )
       fetchData()
       setMsg(response.data.message)
       setShowSuccessAlert(true)

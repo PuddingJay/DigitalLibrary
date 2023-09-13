@@ -25,7 +25,9 @@ const AppHeaderDropdown = () => {
   const fetchData = async () => {
     try {
       const refreshToken = localStorage.getItem('refreshToken')
-      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
+      const response = await axios.get(
+        `https://api2.librarysmayuppentek.sch.id/token/${refreshToken}`,
+      )
       const decoded = jwtDecode(response.data.accessToken)
       setName(decoded.name)
       console.log(decoded)
@@ -37,7 +39,7 @@ const AppHeaderDropdown = () => {
   const logout = async () => {
     try {
       const refreshToken = localStorage.getItem('refreshToken')
-      await axios.delete(`http://localhost:3005/logout/${refreshToken}`)
+      await axios.delete(`https://api2.librarysmayuppentek.sch.id/logout/${refreshToken}`)
       localStorage.removeItem('accessToken')
       localStorage.removeItem('refreshToken')
       window.location.href = '/login'

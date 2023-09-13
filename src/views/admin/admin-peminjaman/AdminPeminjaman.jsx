@@ -26,7 +26,6 @@ import axios from 'axios'
 import CIcon from '@coreui/icons-react'
 import { cilCloudDownload, cilCheckCircle } from '@coreui/icons'
 import * as XLSX from 'xlsx'
-import jwtDecode from 'jwt-decode'
 
 const AdminPeminjaman = () => {
   const [msg, setMsg] = useState(null)
@@ -88,25 +87,6 @@ const AdminPeminjaman = () => {
   })
 
   useEffect(() => {
-    RefreshToken()
-  }, [])
-
-  const RefreshToken = async () => {
-    try {
-      const refreshToken = localStorage.getItem('refreshToken')
-      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
-      const decoded = jwtDecode(response.data.accessToken)
-
-      if (decoded.role !== 'admin') {
-        window.location.href = '/dashboard' // Ganti '/dashboard' dengan rute yang sesuai
-        alert('Anda tidak punya akses untuk halaman ini')
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  useEffect(() => {
     // Calculate 'peminjaman.batasPinjam' whenever batasPinjamPerHari or tglPinjam changes
     if (addFormData.tglPinjam) {
       setAddFormData((prevFormData) => ({
@@ -164,7 +144,7 @@ const AdminPeminjaman = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/peminjaman');
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/peminjaman');
       const updatedPeminjaman = response.data.data.map((item) => {
         if (
           item.status === 'Belum Dikembalikan' &&
@@ -177,7 +157,7 @@ const AdminPeminjaman = () => {
           );
           item.denda = `Rp. ${differenceInDays * hargaDenda}`
 
-          axios.put(`http://localhost:3005/peminjaman/${item.idPeminjaman}`, item);
+          axios.put(`https://api2.librarysmayuppentek.sch.id/peminjaman/${item.idPeminjaman}`, item);
         }
         return item;
       });
@@ -190,7 +170,7 @@ const AdminPeminjaman = () => {
 
   const fetchBooks = async () => {
     try {
-      const responseBook = await axios.get('http://localhost:3005/book');
+      const responseBook = await axios.get('https://api2.librarysmayuppentek.sch.id/book');
       setBooks(responseBook.data?.data ?? []);
     } catch (error) {
       console.log(error);
@@ -199,7 +179,7 @@ const AdminPeminjaman = () => {
 
   const fetchSisws = async () => {
     try {
-      const responseSiswa = await axios.get('http://localhost:3005/siswa');
+      const responseSiswa = await axios.get('https://api2.librarysmayuppentek.sch.id/siswa');
       setSiswas(responseSiswa.data?.data ?? []);
       console.log(responseSiswa.data.data)
     } catch (error) {
@@ -353,7 +333,7 @@ const AdminPeminjaman = () => {
     setPeminjamanDatas(newDataPeminjamans);
 
     axios
-      .post('http://localhost:3005/peminjaman', newDataPeminjaman)
+      .post('https://api2.librarysmayuppentek.sch.id/peminjaman', newDataPeminjaman)
       .then((res) => {
         console.log(res);
         setOpenModal(false);
@@ -376,7 +356,7 @@ const AdminPeminjaman = () => {
 
   const handleDelete = async (idPeminjaman) => {
     try {
-      const response = await axios.delete(`http://localhost:3005/peminjaman/${idPeminjaman}`)
+      const response = await axios.delete(`https://api2.librarysmayuppentek.sch.id/peminjaman/${idPeminjaman}`)
       fetchData()
       setMsg(response.data.message);
       setShowSuccessAlert(true)
@@ -385,6 +365,7 @@ const AdminPeminjaman = () => {
         setShowSuccessAlert(false)
       }, 3000)
     } catch (err) {
+      alert('Buku masih dipinjam, silahkan hapus dahulu data peminjaman dari siswa terkait')
       console.log(err)
     }
   }
@@ -399,7 +380,7 @@ const AdminPeminjaman = () => {
       denda: calculateDenda(formatDate(siswa.tglKembali), formatDate(siswa.batasPinjam)),
     };
     try {
-      await axios.put(`http://localhost:3005/peminjaman/${idPeminjaman}`, editedDataPeminjaman)
+      await axios.put(`https://api2.librarysmayuppentek.sch.id/peminjaman/${idPeminjaman}`, editedDataPeminjaman)
       fetchData()
       setAddFormData(siswa);
       console.log(editedDataPeminjaman);
@@ -483,7 +464,7 @@ const AdminPeminjaman = () => {
         batasPinjam: formatDate(currentId.batasPinjam),
         tglKembali: formatDate(currentId.tglKembali) ? formatDate(currentId.tglKembali) : null,
       };
-      const response = await axios.put(`http://localhost:3005/peminjaman/${currentId.idPeminjaman}`, formattedData)
+      const response = await axios.put(`https://api2.librarysmayuppentek.sch.id/peminjaman/${currentId.idPeminjaman}`, formattedData)
       fetchData()
       setMsg(response.data.message);
       setShowSuccessAlert(true)
@@ -513,7 +494,7 @@ const AdminPeminjaman = () => {
 
     try {
       await axios.put(
-        `http://localhost:3005/peminjaman/${idPeminjaman}`,
+        `https://api2.librarysmayuppentek.sch.id/peminjaman/${idPeminjaman}`,
         editedDataPeminjaman
       );
       fetchData();

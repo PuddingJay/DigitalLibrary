@@ -27,7 +27,6 @@ import {
 import CIcon from '@coreui/icons-react'
 import { cilCloudDownload, cilCheckCircle } from '@coreui/icons'
 import { Link } from 'react-router-dom'
-import jwtDecode from 'jwt-decode'
 
 const AdminDaftarPustaka = () => {
   const [loading, setLoading] = useState()
@@ -48,7 +47,7 @@ const AdminDaftarPustaka = () => {
   const [currentBookId, setCurrentBookId] = useState('')
   const [coverWarning, setCoverWarning] = useState('')
   const [fileWarning, setfileWarning] = useState('')
-  const [isApproval, setIsApproval] = useState('Belum Disetujui')
+  const isApproval = ' '
   const [fullKategori, setFullKategori] = useState([])
 
   const [msg, setMsg] = useState(null)
@@ -56,26 +55,10 @@ const AdminDaftarPustaka = () => {
 
   const formRef = useRef(null)
 
-  const RefreshToken = async () => {
-    try {
-      const refreshToken = localStorage.getItem('refreshToken')
-      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
-      const decoded = jwtDecode(response.data.accessToken)
-
-      if (decoded.role !== 'admin') {
-        window.location.href = '/dashboard' // Ganti '/dashboard' dengan rute yang sesuai
-        alert('Anda tidak punya akses untuk halaman ini')
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   useEffect(() => {
     fetchData()
     setLoading(false)
     fetchKategori()
-    RefreshToken()
   }, [])
 
   const toggleModalTambah = () => {
@@ -99,7 +82,7 @@ const AdminDaftarPustaka = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/book')
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/book')
       setDaftarPustaka(response.data.data)
     } catch (error) {
       console.error(error)
@@ -108,7 +91,7 @@ const AdminDaftarPustaka = () => {
 
   const fetchKategori = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/kategori')
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/kategori')
       setFullKategori(response.data.data)
       console.log('response', response.data.data)
     } catch (error) {
@@ -130,7 +113,7 @@ const AdminDaftarPustaka = () => {
     }
 
     axios
-      .get(`http://localhost:3005/check-kodeBuku/${kodeBuku}`) // Replace with your API endpoint
+      .get(`https://api2.librarysmayuppentek.sch.id/check-kodeBuku/${kodeBuku}`) // Replace with your API endpoint
       .then((response) => {
         if (response.data.exists) {
           // Show a warning to the user that kodeBuku already exists
@@ -146,7 +129,7 @@ const AdminDaftarPustaka = () => {
           })
 
           axios
-            .post('http://localhost:3005/book', formData)
+            .post('https://api2.librarysmayuppentek.sch.id/book', formData)
             .then((res) => {
               toggleModalTambah()
               fetchData()
@@ -169,7 +152,9 @@ const AdminDaftarPustaka = () => {
 
   const handleDelete = async (kodeBuku) => {
     try {
-      const response = await axios.delete(`http://localhost:3005/book/${kodeBuku}`)
+      const response = await axios.delete(
+        `https://api2.librarysmayuppentek.sch.id/book/${kodeBuku}`,
+      )
       setMsg(response.data.message)
       setShowSuccessAlert(true)
 
@@ -224,7 +209,7 @@ const AdminDaftarPustaka = () => {
     console.log('after', formData)
     try {
       const response = await axios.put(
-        `http://localhost:3005/book/${currentBookId.kodeBuku}`,
+        `https://api2.librarysmayuppentek.sch.id/book/${currentBookId.kodeBuku}`,
         formData,
       )
 
@@ -374,15 +359,16 @@ const AdminDaftarPustaka = () => {
         <CCard>
           <CCardBody>
             <div className="actionDaftarPustaka">
-              <CButton color="primary" size="lg" className="btnModal" onClick={toggleModalTambah}>
-                Tambah Buku
-              </CButton>
-              <Link to="/Kategori">
-                <CButton color="primary" size="lg" className="btnModal">
-                  Lihat List Kategori Buku
+              <div className="form-container">
+                <CButton color="primary" size="lg" className="btnModal" onClick={toggleModalTambah}>
+                  Tambah Buku
                 </CButton>
-              </Link>
-
+                <Link to="/Kategori">
+                  <CButton color="primary" size="lg" className="btnModal">
+                    Lihat List Kategori Buku
+                  </CButton>
+                </Link>
+              </div>
               <CButton
                 color="primary"
                 href={csvCode}
@@ -471,7 +457,7 @@ const AdminDaftarPustaka = () => {
 
                         {/* <CImage fluid src="/images/react.jpg" /> */}
                         <CImage
-                          src={`http://localhost:3005/${item.cover}`}
+                          src={`https://api2.librarysmayuppentek.sch.id/${item.cover}`}
                           width={100}
                           height={100}
                         />

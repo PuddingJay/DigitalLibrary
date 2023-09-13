@@ -29,7 +29,7 @@ const Login = () => {
     const formattednama = convertToFullName(nama)
 
     try {
-      const response = await axios.post('http://localhost:3005/siswa/login', {
+      const response = await axios.post('https://api2.librarysmayuppentek.sch.id/siswa/login', {
         nama: formattednama,
         password: password,
       })
@@ -43,7 +43,7 @@ const Login = () => {
       if (error.response) {
         console.log(formattednama)
         console.log(nama)
-        console.log(error)
+        console.error(error)
         setMsg(error.response.data.message)
       }
     }

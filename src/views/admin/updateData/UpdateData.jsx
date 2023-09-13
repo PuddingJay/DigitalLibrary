@@ -45,7 +45,9 @@ const UpdateData = () => {
   const getAdmin = async () => {
     try {
       const refreshToken = localStorage.getItem('refreshToken')
-      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
+      const response = await axios.get(
+        `https://api2.librarysmayuppentek.sch.id/token/${refreshToken}`,
+      )
       const decoded = jwtDecode(response.data.accessToken)
       setId(decoded.adminId)
       setName(decoded.name)
@@ -86,7 +88,7 @@ const UpdateData = () => {
 
     try {
       await axios
-        .put(`http://localhost:3005/admin-update/${adminId}`, updatedAdminData)
+        .put(`https://api2.librarysmayuppentek.sch.id/admin-update/${adminId}`, updatedAdminData)
         .then((response) => {
           setShowSuccessAlert(true)
 

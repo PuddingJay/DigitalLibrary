@@ -43,7 +43,7 @@ const Kategori = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/kategori')
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/kategori')
       setDataKategori(response.data.data)
     } catch (error) {
       console.error(error)
@@ -56,7 +56,7 @@ const Kategori = () => {
     const formData = { nama }
 
     axios
-      .post('http://localhost:3005/kategori', formData)
+      .post('https://api2.librarysmayuppentek.sch.id/kategori', formData)
       .then(() => {
         toggleModalTambah()
         fetchData()
@@ -68,7 +68,7 @@ const Kategori = () => {
 
   const handleDelete = async (idKategori) => {
     try {
-      await axios.delete(`http://localhost:3005/kategori/${idKategori}`)
+      await axios.delete(`https://api2.librarysmayuppentek.sch.id/kategori/${idKategori}`)
       fetchData()
     } catch (error) {
       console.log(error)
@@ -79,7 +79,7 @@ const Kategori = () => {
     const formData = { nama }
 
     try {
-      await axios.put(`http://localhost:3005/kategori/${idKategori}`, formData)
+      await axios.put(`https://api2.librarysmayuppentek.sch.id/kategori/${idKategori}`, formData)
       toggleModalUpdate()
       fetchData()
 

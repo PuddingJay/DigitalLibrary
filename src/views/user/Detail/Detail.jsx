@@ -18,8 +18,6 @@ import {
   CSpinner,
   CDatePicker,
   CButton,
-  CCard,
-  CCardBody,
 } from '@coreui/react-pro'
 import './Detail.scss'
 import CIcon from '@coreui/icons-react'
@@ -28,13 +26,11 @@ import { useNavigate } from 'react-router-dom'
 import jwtDecode from 'jwt-decode'
 import moment from 'moment'
 
-const linkUper = 'https://universitaspertamina.ac.id/'
-
 const DetailBuku = () => {
   const [catalogItem, setCatalogItem] = useState(null)
   const params = useParams()
   const [likeCount, setLikeCount] = useState(catalogItem?.likes)
-  const [, setDislikeCount] = useState(catalogItem?.dislike)
+  // const [, setDislikeCount] = useState(catalogItem?.dislike)
   const [Nama, setNama] = useState('')
   const [NIS, setNIS] = useState('')
   const [, setKelas] = useState('')
@@ -82,7 +78,7 @@ const DetailBuku = () => {
     }
 
     try {
-      await axios.put(`http://localhost:3005/komentar/${idKomentar}`, updatedData)
+      await axios.put(`https://api2.librarysmayuppentek.sch.id/komentar/${idKomentar}`, updatedData)
       // Refresh daftar komentar setelah berhasil mengedit
       fetchKomentar()
       // Kembali ke tampilan biasa
@@ -106,22 +102,23 @@ const DetailBuku = () => {
         throw new Error('Refresh token siswa not found')
       }
 
-      const response = await axios.get(`http://localhost:3005/berhasilLogin/${refreshToken}`)
+      const response = await axios.get(`https://api2.librarysmayuppentek.sch.id/berhasilLogin/${refreshToken}`)
 
       const decoded = jwtDecode(response.data.accessToken)
       setNama(decoded.nama)
+      console.log(decoded.nama)
       setSiswaId(decoded.siswaId)
       setKelas(decoded.Kelas)
       setJurusan(decoded.Jurusan)
       setNIS(decoded.siswaId)
-      console.log(NIS)
+      // console.log(NIS)
     } catch (err) {
       if (err.message === 'Refresh token siswa not found') {
-        navigate('/siswa/login')
-        // window.location.href = '/siswa/login'
+        // navigate('/siswa/login')
+        window.location.href = '/siswa/login'
       } else if (err.response && err.response.status === 401) {
-        navigate('/siswa/login')
-        // window.location.href = '/siswa/login'
+        // navigate('/siswa/login')
+        window.location.href = '/siswa/login'
       }
       console.log(err)
     }
@@ -172,12 +169,12 @@ const DetailBuku = () => {
     const fetchCatalogItem = async () => {
       // console.log(params.id)
       try {
-        const url = `http://localhost:3005/book/${params.id}`
+        const url = `https://api2.librarysmayuppentek.sch.id/book/${params.id}`
         const response = await axios.get(url)
         // console.log(response)
         setCatalogItem(response.data.data[0])
         setLikeCount(response.data.data[0]?.likes)
-        setDislikeCount(response.data.data[0]?.dislike)
+        // setDislikeCount(response.data.data[0]?.dislike)
         setJudulBuku(response.data.data[0].judul)
         setKodeBuku(response.data.data[0].kodeBuku)
       } catch (error) {
@@ -203,7 +200,7 @@ const DetailBuku = () => {
   const handleLikeClick = async () => {
     try {
       // Send a request to update the likes count in the database
-      const url = `http://localhost:3005/updateTop/${params.id}`
+      const url = `https://api2.librarysmayuppentek.sch.id/updateTop/${params.id}`
       console.log(params.id)
       const response = await axios.put(url, {
         kodeBuku: params.id, // Assuming 'params.id' contains the book's kodeBuku
@@ -214,6 +211,18 @@ const DetailBuku = () => {
       window.location.reload()
     } catch (error) {
       console.error(error)
+    }
+  }
+  const fetchKomentar = async () => {
+    try {
+      const response = await axios.get(`https://api2.librarysmayuppentek.sch.id/komentar/${catalogItem.kodeBuku}`)
+      if (response.data.data.length > 0) {
+        setKomentarDatas(response.data.data)
+      } else {
+        setKomentarDatas([])
+      }
+    } catch (err) {
+      console.error(err)
     }
   }
 
@@ -230,7 +239,7 @@ const DetailBuku = () => {
     }
     console.log(newDataKomentar)
     try {
-      const response = await axios.post('http://localhost:3005/komentar', newDataKomentar)
+      const response = await axios.post('https://api2.librarysmayuppentek.sch.id/komentar', newDataKomentar)
       console.log('response', response.data)
 
       // Jika komentar berhasil dikirim, tambahkan komentar baru ke state KomentarDatas
@@ -244,23 +253,11 @@ const DetailBuku = () => {
       }
     }
   }
-  const fetchKomentar = async () => {
-    try {
-      const response = await axios.get(`http://localhost:3005/komentar/${catalogItem.kodeBuku}`)
-      if (response.data.data.length > 0) {
-        setKomentarDatas(response.data.data)
-      } else {
-        setKomentarDatas([])
-      }
-    } catch (err) {
-      console.error(err)
-    }
-  }
+
   const handleDelete = async (idKomentar) => {
     try {
-      await axios.delete(`http://localhost:3005/komentar/${idKomentar}`)
+      await axios.delete(`https://api2.librarysmayuppentek.sch.id/komentar/${idKomentar}`)
       fetchData()
-      window.location.reload()
     } catch (err) {
       console.log(err)
     }
@@ -285,7 +282,7 @@ const DetailBuku = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3005/history', newDataRiwayat)
+      const response = await axios.post('https://api2.librarysmayuppentek.sch.id/history', newDataRiwayat)
       console.log(response.data)
 
       setRiwayatDatas([...RiwayatDatas, response.data.data])
@@ -310,7 +307,7 @@ const DetailBuku = () => {
         Buku_kodeBuku: kodeBuku,
         tglPemesanan: addFormDataMemesan.tglPemesanan,
       }
-      const response = await axios.post('http://localhost:3005/booking-pinjam', dataBooking)
+      const response = await axios.post('https://api2.librarysmayuppentek.sch.id/booking-pinjam', dataBooking)
       // console.log(response)
       setAddFormDataMemesan((prevData) => ({
         ...prevData,
@@ -330,7 +327,7 @@ const DetailBuku = () => {
       <div className="bookDetailContainer">
         <div className="bookPosterAction">
           <img
-            src={`http://localhost:3005/${catalogItem.cover}`}
+            src={`https://api2.librarysmayuppentek.sch.id/${catalogItem.cover}`}
             alt={catalogItem.judul}
             className="bookPoster"
           />
@@ -362,7 +359,7 @@ const DetailBuku = () => {
           <ul>
             {KomentarDatas.map((komentar, index) => (
               <li key={index}>
-                {!komentar.deleted && (
+                {komentar && !komentar.deleted && (
                   <div className="comment-container">
                     {editFormData.idKomentar === komentar.idKomentar ? (
                       // Mode Edit
@@ -386,7 +383,8 @@ const DetailBuku = () => {
                       <div className="comment-text-container">
                         <div className="comment-header">
                           <p className="comment-text">
-                            {komentar.nama} : {komentar.teksKomentar}
+                            {/* {komentar.nama} : {komentar.teksKomentar} */}
+                            {komentar?.nama} : {komentar?.teksKomentar}
                           </p>
                           {komentar.nama === Nama && (
                             <>

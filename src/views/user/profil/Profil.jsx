@@ -40,7 +40,7 @@ const Profil = () => {
         throw new Error('Refresh token siswa not found')
       }
 
-      const response = await axios.get(`http://localhost:3005/berhasilLogin/${refreshToken}`)
+      const response = await axios.get(`https://api2.librarysmayuppentek.sch.id/berhasilLogin/${refreshToken}`)
 
       const decoded = jwtDecode(response.data.accessToken)
 
@@ -64,7 +64,7 @@ const Profil = () => {
   const fetchHistory = async (siswa_NIS) => {
     try {
       console.log('Fetching history for user:', NIS)
-      const response = await axios.get(`http://localhost:3005/history/${NIS}`)
+      const response = await axios.get(`https://api2.librarysmayuppentek.sch.id/history/${NIS}`)
       if (response.data.data.length > 0) {
         setRiwayatDatas(response.data.data)
       } else {
@@ -79,7 +79,7 @@ const Profil = () => {
     try {
       const confirmed = window.confirm('Apakah Anda yakin ingin menghapus?')
       if (confirmed) {
-        const response = await axios.delete(`http://localhost:3005/history/${idRiwayat}`)
+        const response = await axios.delete(`https://api2.librarysmayuppentek.sch.id/history/${idRiwayat}`)
         console.log(response.data) // Print response from server
         fetchHistory(NIS) // Menggunakan nilai NIS
       }
@@ -105,7 +105,7 @@ const Profil = () => {
             {RiwayatDatas.map((item) => (
               <Card className="shadow history-card" key={item.buku_kodeBuku}>
                 <div className="dropdown-container">
-                  <Card.Img variant="top" src={`http://localhost:3005/${item.cover}`} />
+                  <Card.Img variant="top" src={`https://api2.librarysmayuppentek.sch.id/${item.cover}`} />
                   <Card.Body>
                     <Card.Title>{item.judul}</Card.Title>
                     <Card.Text>Tersedia: {item.tersedia}</Card.Text>

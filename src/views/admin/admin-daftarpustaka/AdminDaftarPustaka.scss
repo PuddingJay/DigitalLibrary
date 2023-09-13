@@ -6,8 +6,36 @@
 }
 
 .actionDaftarPustaka {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  gap: 10px;
+
+  @media screen and (min-width: 600px) {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .form-container {
+    display: grid;
+    gap: 10px;
+
+    @media screen and (min-width: 600px) {
+      display: flex;
+      flex-grow: 1;
+      margin-right: 10px;
+      justify-content: space-between;
+    }
+
+    .btnModal {
+
+      @media screen and (min-width: 600px) {
+        width: auto;
+      }
+
+      width: 100%;
+      margin-right: auto;
+    }
+
+  }
 }
 
 .grid-form {

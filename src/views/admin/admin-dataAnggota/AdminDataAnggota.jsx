@@ -30,7 +30,6 @@ import {
 import { cilCloudDownload, cilCheckCircle, cilCloudUpload } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import * as XLSX from 'xlsx'
-import jwtDecode from 'jwt-decode'
 
 const AdminDataAnggota = () => {
   const [loading, setLoading] = useState()
@@ -75,7 +74,7 @@ const AdminDataAnggota = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/siswa')
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/siswa')
       setDataAnggota(response.data.data)
     } catch (error) {
       console.error(error)
@@ -87,7 +86,7 @@ const AdminDataAnggota = () => {
 
     const formData = { NIS, nama }
     try {
-      const response = await axios.post('http://localhost:3005/siswa', formData)
+      const response = await axios.post('https://api2.librarysmayuppentek.sch.id/siswa', formData)
       toggleModalTambah()
       fetchData()
       setMsg(response.data.message)
@@ -107,7 +106,7 @@ const AdminDataAnggota = () => {
 
   const handleDelete = async (NIS) => {
     try {
-      const response = await axios.delete(`http://localhost:3005/siswa/${NIS}`)
+      const response = await axios.delete(`https://api2.librarysmayuppentek.sch.id/siswa/${NIS}`)
       fetchData()
       setMsg(response.data.message)
       setShowSuccessAlert(true)
@@ -116,7 +115,8 @@ const AdminDataAnggota = () => {
         setShowSuccessAlert(false)
       }, 3000)
     } catch (error) {
-      console.log(error)
+      alert('Siswa masih meminjam buku, silahkan hapus dahulu data peminjaman dari siswa terkait')
+      console.error(error)
     }
   }
 
@@ -124,7 +124,10 @@ const AdminDataAnggota = () => {
     const formData = { NIS, nama }
 
     try {
-      const response = await axios.put(`http://localhost:3005/siswa/${currentAnggotaId}`, formData)
+      const response = await axios.put(
+        `https://api2.librarysmayuppentek.sch.id/siswa/${currentAnggotaId}`,
+        formData,
+      )
       toggleModalUpdate()
       fetchData()
 
@@ -244,7 +247,7 @@ const AdminDataAnggota = () => {
     formData.append('excelFile', selectedFile)
 
     axios
-      .post('http://localhost:3005/import-excel', formData)
+      .post('https://api2.librarysmayuppentek.sch.id/import-excel', formData)
       .then((response) => {
         if (Array.isArray(response.data)) {
           const transformedData = response.data.map((item) => ({
@@ -272,7 +275,10 @@ const AdminDataAnggota = () => {
         return
       }
 
-      const response = await axios.post('http://localhost:3005/siswa-from-excel', jsonData)
+      const response = await axios.post(
+        'https://api2.librarysmayuppentek.sch.id/siswa-from-excel',
+        jsonData,
+      )
       toggleModalImport()
       fetchData()
       setMsg(response.data.message)
@@ -299,7 +305,7 @@ const AdminDataAnggota = () => {
   // const options = ['Open this select menu', '10', '11', '12', 'Guru', 'Umum']
   // const handleNaikKelas = async () => {
   //   try {
-  //     const response = await axios.put('http://localhost:3005/siswa-naik-kelas')
+  //     const response = await axios.put('https://api2.librarysmayuppentek.sch.id/siswa-naik-kelas')
   //     if (response && response.data) {
   //       setMsg(response.data)
   //     } else {
@@ -431,7 +437,7 @@ const AdminDataAnggota = () => {
                               'Apakah Anda yakin ingin menghapus data ini?',
                             )
                             if (shouldDelete) {
-                              handleDelete(item.NIS)
+                              handleDelete(item.siswa_NIS)
                             }
                           }}
                         >

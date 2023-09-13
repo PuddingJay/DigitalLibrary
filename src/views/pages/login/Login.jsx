@@ -22,7 +22,7 @@ const Login = ({ loginSuccess }) => {
   const Auth = async (e) => {
     e.preventDefault()
     try {
-      const response = await axios.post('http://localhost:3005/login', {
+      const response = await axios.post('https://api2.librarysmayuppentek.sch.id/login', {
         username: username,
         password: password,
       })

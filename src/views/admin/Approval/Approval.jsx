@@ -1,24 +1,13 @@
 /* eslint-disable prettier/prettier */
 // import './Approval.scss';
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../admin-dataAnggota/AdminDataAnggota.scss'
 import './Approval.scss'
 
 import { CButton, CCard, CCardBody, CCollapse, CSmartTable, CBadge } from '@coreui/react-pro'
-import { CAvatar, CImage } from '@coreui/react'
+import { CImage } from '@coreui/react'
 
 import axios from 'axios'
-import {
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-} from 'reactstrap'
 import CIcon from '@coreui/icons-react'
 import { cilCloudDownload } from '@coreui/icons'
 import { Link, useNavigate } from 'react-router-dom'
@@ -27,11 +16,8 @@ import jwtDecode from 'jwt-decode'
 const Approval = () => {
   const [loading, setLoading] = useState()
   const [DaftarPustaka, setDaftarPustaka] = useState([])
-  const [isConfirmDialogOpen, setConfirmDialogOpen] = useState(false)
 
   const navigate = useNavigate()
-
-  const formRef = useRef(null)
   const [name, setName] = useState('')
 
   useEffect(() => {
@@ -41,7 +27,7 @@ const Approval = () => {
   const RefreshToken = async () => {
     try {
       const refreshToken = localStorage.getItem('refreshToken')
-      const response = await axios.get(`http://localhost:3005/token/${refreshToken}`)
+      const response = await axios.get(`https://api2.librarysmayuppentek.sch.id/token/${refreshToken}`)
       const decoded = jwtDecode(response.data.accessToken)
 
       setName(decoded.name)
@@ -61,7 +47,7 @@ const Approval = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/book')
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/book')
       setDaftarPustaka(response.data.data)
     } catch (error) {
       console.error(error)
@@ -76,7 +62,7 @@ const Approval = () => {
       const data = { isApproval: 'Disetujui' }
 
       try {
-        await axios.put(`http://localhost:3005/updateApprove/${kodeBuku}`, data, {
+        await axios.put(`https://api2.librarysmayuppentek.sch.id/updateApprove/${kodeBuku}`, data, {
           headers: { 'Content-Type': 'application/json' },
         })
         fetchData()
@@ -87,15 +73,21 @@ const Approval = () => {
     }
   }
   const OnChangeRejected = async (kodeBuku) => {
-    const data = { isApproval: 'Ditolak' }
+    const isApproved = window.confirm(
+      'Sebelum klik Ditolak, silahkan klik show ebook terlebih dahulu, dan cek apakah lisensi buku sudah sesuai ',
+    )
+    if (isApproved) {
+      const data = { isApproval: 'Ditolak' }
 
-    try {
-      await axios.put(`http://localhost:3005/updateRejected/${kodeBuku}`, data, {
-        headers: { 'Content-Type': 'application/json' },
-      })
-      fetchData()
-    } catch (err) {
-      console.error(err)
+
+      try {
+        await axios.put(`https://api2.librarysmayuppentek.sch.id/updateRejected/${kodeBuku}`, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        fetchData()
+      } catch (err) {
+        console.error(err)
+      }
     }
   }
 
@@ -251,13 +243,13 @@ const Approval = () => {
 
                         <Link to={`/ShowPdf/${item.kodeBuku}`}>
                           <CButton size="sm" color="dark">
-                            Show Ebook
+                            Lihat Buku
                           </CButton>
                         </Link>
 
                         {/* <CImage fluid src="/images/react.jpg" /> */}
                         <CImage
-                          src={`http://localhost:3005/${item.cover}`}
+                          src={`https://api2.librarysmayuppentek.sch.id/${item.cover}`}
                           width={100}
                           height={100}
                         />
