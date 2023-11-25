@@ -1,0 +1,25 @@
+.p-3 button {
+  margin-right: 5px;
+}
+
+.actionDataAnggota {
+  display: flex;
+  justify-content: space-between;
+}
+.actionDataAnggota .form-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-right: 10px;
+}
+
+.convert {
+  display: flex;
+  flex-direction: row;
+}
+.convert .form-control {
+  width: 80%;
+}
+.convert .btn {
+  margin-left: 17px;
+}/*# sourceMappingURL=AdminDataAnggota.css.map */

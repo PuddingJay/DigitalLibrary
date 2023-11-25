@@ -9,10 +9,6 @@ import {
   CCardSubtitle,
   CCardTitle,
   CCol,
-  CDropdown,
-  CDropdownItem,
-  CDropdownMenu,
-  CDropdownToggle,
   CProgress,
   CRow,
   CTable,
@@ -26,56 +22,69 @@ import {
 import { CChartBar, CChartLine } from '@coreui/react-chartjs'
 import { getStyle } from '@coreui/utils'
 import CIcon from '@coreui/icons-react'
-import {
-  cilPeople,
-  cilArrowBottom,
-  cilBook,
-  cilArrowTop,
-  cilUserPlus,
-  cilOptions,
-} from '@coreui/icons'
+import { cilPeople, cilBook, cilUserPlus } from '@coreui/icons'
 import { useMemo } from 'react'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
 const Dashboard = () => {
-  const [books, setBooks] = useState([])
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+  const [selectedYearTraffic, setSelectedYearTraffic] = useState(new Date().getFullYear())
+  const [selectedYearPengunjung, setSelectedYearPengunjung] = useState(new Date().getFullYear())
+
+  const chartBartRef = useRef(null)
+  const chartLineRef = useRef(null)
+
   const [totalBooks, setTotalBooks] = useState(0)
   const [totalUsers, setTotalUsers] = useState(0)
   const [peminjaman, setPeminjaman] = useState([])
+  const [dataPengunjung, setDataPengunjung] = useState([])
+  const [totalJenisBuku, setTotalJenisBuku] = useState(0)
+  const [totalBukuTersedia, setTotalBukuTersedia] = useState(0)
   const [siswa, setSiswa] = useState([])
 
   useEffect(() => {
-    // Fetch total number of books
-    axios
-      .get('http://localhost:3005/book')
-      .then((response) => {
-        setTotalBooks(response.data.data.length)
-        setBooks(response.data.data)
-      })
-      .catch((error) => {
-        console.error('Error fetching total number of books:', error)
-      })
+    const fetchData = async () => {
+      try {
+        // Fetch total buku
+        const booksResponse = await axios.get('https://api2.librarysmayuppentek.sch.id/book')
+        const booksData = booksResponse.data.data
 
-    // Fetch total number of users
-    axios
-      .get('http://localhost:3005/siswa')
-      .then((response) => {
-        setTotalUsers(response.data.data.length)
-        setSiswa(response.data.data)
-        console.log(response.data.data)
-      })
-      .catch((error) => {
-        console.error('Error fetching Siswa data::', error)
-      })
+        const uniqueCategories = new Set(booksData.map((book) => book.Kategori))
+        const totalUniqueCategories = uniqueCategories.size
+        setTotalJenisBuku(totalUniqueCategories)
 
-    // Fetch chartData from peminjaman
-    axios
-      .get('http://localhost:3005/peminjaman')
-      .then((response) => {
-        setPeminjaman(response.data.data)
-      })
-      .catch((error) => {
-        console.error('Error fetching Siswa data::', error)
-      })
+        const totalKeseluruhanBuku = booksData.reduce((total, book) => total + book.jumlah, 0)
+        setTotalBooks(totalKeseluruhanBuku)
+
+        const totalTersedia = booksData.reduce((total, book) => total + book.tersedia, 0)
+        setTotalBukuTersedia(totalTersedia)
+
+        // Fetch total anggota
+        const usersResponse = await axios.get('https://api2.librarysmayuppentek.sch.id/siswa')
+        const usersData = usersResponse.data.data
+        setTotalUsers(usersData.length)
+        setSiswa(usersData)
+
+        // Fetch data peminjaman
+        const peminjamanResponse = await axios.get(
+          'https://api2.librarysmayuppentek.sch.id/peminjaman',
+        )
+        const peminjamanData = peminjamanResponse.data.data
+        setPeminjaman(peminjamanData)
+
+        // Fetch data pengunjung
+        const pengunjungResponse = await axios.get(
+          'https://api2.librarysmayuppentek.sch.id/data-pengunjung',
+        )
+        const pengunjungData = pengunjungResponse.data.data
+        setDataPengunjung(pengunjungData)
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    }
+
+    fetchData()
   }, [])
 
   const sortedData = siswa.sort((a, b) => b.jumlahPinjam - a.jumlahPinjam)
@@ -85,10 +94,9 @@ const Dashboard = () => {
     if (waktuPinjam === null) {
       return 'Belum Pinjam'
     }
-    const now = moment() // Get the current time
-    const pinjamTime = moment(waktuPinjam) // Convert the waktuPinjam to a Moment object
+    const now = moment()
+    const pinjamTime = moment(waktuPinjam)
 
-    // Calculate the difference in minutes between now and pinjamTime
     const diffInMinutes = now.diff(pinjamTime, 'minutes')
 
     if (diffInMinutes < 1) {
@@ -104,6 +112,11 @@ const Dashboard = () => {
     }
   }
 
+  // Denda
+  const filteredDenda = peminjaman.filter(
+    (item) => new Date(item.createdAt).getFullYear() === selectedYear,
+  )
+
   const calculateTotalDenda = (peminjaman) => {
     let totalDenda = 0
     peminjaman.forEach((item) => {
@@ -113,30 +126,24 @@ const Dashboard = () => {
       totalDenda += dendaValue
     })
     const formattedDenda = 'Rp ' + totalDenda.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-    console.log(formattedDenda)
     return formattedDenda
   }
-
-  const chartBartRef = useRef(null)
-  const chartLineRef = useRef(null)
 
   const calculateMonthlyDenda = (peminjaman) => {
     const monthlyDenda = Array(12).fill(0)
 
     peminjaman.forEach((item) => {
-      if (item.batasPinjam && item.denda) {
-        const monthIndex = new Date(item.batasPinjam).getMonth()
+      if (item.createdAt && item.denda) {
+        const monthIndex = new Date(item.createdAt).getMonth()
         const dendaValue = parseFloat(item.denda.replace(/[^0-9-]+/g, ''))
         monthlyDenda[monthIndex] += dendaValue
       }
     })
-
-    console.log(monthlyDenda)
     return monthlyDenda
   }
 
   const chartData = useMemo(() => {
-    const monthlyDenda = calculateMonthlyDenda(peminjaman)
+    const monthlyDenda = calculateMonthlyDenda(filteredDenda)
     const months = [
       'January',
       'February',
@@ -165,16 +172,23 @@ const Dashboard = () => {
         },
       ],
     }
-  }, [peminjaman])
+  }, [filteredDenda])
 
-  console.log(chartData)
+  // traffic peminjaman pinjam
+  const filteredPeminjaman = peminjaman.filter(
+    (item) => new Date(item.tglPinjam).getFullYear() === selectedYearTraffic,
+  )
+
+  const filteredPengembalian = peminjaman.filter(
+    (item) =>
+      (item.status === 'Dikembalikan' || item.status === 'Lunas') &&
+      new Date(item.tglKembali).getFullYear() === selectedYearTraffic,
+  )
 
   const getPeminjamanDataByMonth = () => {
-    // Initialize an array to hold the monthly peminjaman data
     const monthlyData = Array(12).fill(0)
 
-    // Iterate over the peminjaman data and count the occurrences by month
-    peminjaman.forEach((item) => {
+    filteredPeminjaman.forEach((item) => {
       const month = new Date(item.tglPinjam).getMonth()
       monthlyData[month]++
     })
@@ -182,20 +196,30 @@ const Dashboard = () => {
     return monthlyData
   }
 
+  // traffic peminjaman kembali
   const getKembaliDataByMonth = () => {
-    // Initialize an array to hold the monthly peminjaman data
     const monthlyData = Array(12).fill(0)
 
-    // Iterate over the peminjaman data and count the occurrences by month
-    peminjaman.forEach((item) => {
+    filteredPengembalian.forEach((item) => {
       const month = new Date(item.tglKembali).getMonth()
       if (item.status === 'Dikembalikan' || item.status === 'Lunas') {
         monthlyData[month]++
       }
-      console.log(month)
     })
     return monthlyData
   }
+
+  // Chart data pengunjung
+
+  const dataPengunjungByMonth = Array(12).fill(0)
+
+  dataPengunjung.forEach((item) => {
+    const visitYear = new Date(item.waktuKunjung).getFullYear()
+    if (visitYear === selectedYearPengunjung) {
+      const month = new Date(item.waktuKunjung).getMonth()
+      dataPengunjungByMonth[month]++
+    }
+  })
 
   useEffect(() => {
     document.documentElement.addEventListener('ColorSchemeChange', () => {
@@ -236,9 +260,17 @@ const Dashboard = () => {
                       <CCardSubtitle className="fw-normal text-disabled">
                         January - December
                       </CCardSubtitle>
+                      <DatePicker
+                        selected={new Date(selectedYear, 0, 1)}
+                        onChange={(date) => setSelectedYear(date.getFullYear())}
+                        dateFormat="yyyy"
+                        showYearPicker
+                        className="form-control mt-1"
+                        yearItemNumber={6}
+                      />
                     </CCol>
                     <CCol className="text-end text-primary fs-4 fw-semibold">
-                      {calculateTotalDenda(peminjaman)}
+                      {calculateTotalDenda(filteredDenda)}
                     </CCol>
                   </CRow>
                 </CCardBody>
@@ -278,7 +310,7 @@ const Dashboard = () => {
               </CCard>
             </CCol>
             <CCol lg={6}>
-              <CCard className="mb-4">
+              <CCard className="mb-4" style={{ height: '10em' }}>
                 <CCardBody>
                   <div className="d-flex justify-content-between">
                     <CCardTitle className="text-disabled">Anggota</CCardTitle>
@@ -294,7 +326,7 @@ const Dashboard = () => {
               </CCard>
             </CCol>
             <CCol lg={6}>
-              <CCard className="mb-4">
+              <CCard className="mb-4" style={{ height: '10em' }}>
                 <CCardBody>
                   <div className="d-flex justify-content-between">
                     <CCardTitle className="text-disabled">Jumlah Buku</CCardTitle>
@@ -312,10 +344,18 @@ const Dashboard = () => {
           </CRow>
         </CCol>
         <CCol xl={8}>
-          <CCard>
+          <CCard className="mb-4">
             <CCardBody className="p-4">
               <CCardTitle className="fs-4 fw-semibold">Traffic Peminjaman</CCardTitle>
               <CCardSubtitle className="fw-normal text-disabled">January - December</CCardSubtitle>
+              <DatePicker
+                selected={new Date(selectedYearTraffic, 0, 1)}
+                onChange={(date) => setSelectedYearTraffic(date.getFullYear())}
+                dateFormat="yyyy"
+                showYearPicker
+                className="form-control mt-1"
+                yearItemNumber={6}
+              />
               <CChartBar
                 data={{
                   labels: [
@@ -430,7 +470,7 @@ const Dashboard = () => {
                       <CIcon icon={cilPeople} />
                     </CTableHeaderCell>
                     <CTableHeaderCell>Nama</CTableHeaderCell>
-                    <CTableHeaderCell /*className="text-center"*/>Kelas</CTableHeaderCell>
+                    <CTableHeaderCell /*className="text-center"*/>Status</CTableHeaderCell>
                     <CTableHeaderCell>Jumlah Pinjam</CTableHeaderCell>
                     <CTableHeaderCell>Activity</CTableHeaderCell>
                   </CTableRow>
@@ -442,20 +482,21 @@ const Dashboard = () => {
                         <CAvatar
                           size="md"
                           // eslint-disable-next-line prettier/prettier
-                          src={`https://ui-avatars.com/api/?name=${item.Nama ? item.Nama : undefined
+                          src={`https://ui-avatars.com/api/?name=${item.nama ? item.nama : undefined
                             // eslint-disable-next-line prettier/prettier
                             }&background=random`}
                           status="success"
                         />
                       </CTableDataCell>
                       <CTableDataCell>
-                        <div>{item.Nama}</div>
-                        <div className="small text-disabled text-nowrap"> NIS: {item.NIS}</div>
+                        <div>{item.nama}</div>
+                        <div className="small text-disabled text-nowrap">
+                          {' '}
+                          NIS/ID: {item.siswa_NIS}
+                        </div>
                       </CTableDataCell>
                       <CTableDataCell /*className="text-center"*/>
-                        <div>
-                          {item.Kelas} {item.Jurusan}
-                        </div>
+                        <div>{item.status}</div>
                       </CTableDataCell>
                       <CTableDataCell>
                         <div className="d-flex justify-content-between mb-1">
@@ -482,167 +523,127 @@ const Dashboard = () => {
         <CCol xl={3}>
           <CRow>
             <CCol md={4} xl={12}>
+              <CCard className="mb-4" color="warning-gradient" style={{ height: '11em' }}>
+                <CCardBody>
+                  <div className="d-flex justify-content-between">
+                    <CCardTitle className="text-black">Jumlah Buku Tersedia</CCardTitle>
+                    <div className="bg-primary bg-opacity-25 text-black p-2 rounded">
+                      <CIcon icon={cilBook} size="xl" />
+                    </div>
+                  </div>
+                  <div className="fs-4 text-black fw-semibold pb-3">{totalBukuTersedia}</div>
+                </CCardBody>
+              </CCard>
+            </CCol>
+            <CCol md={4} xl={12}>
               <CWidgetStatsA
-                className="mb-4"
-                color="primary-gradient"
+                className="mb-4 text-light"
+                color="info-gradient"
+                style={{ height: '13em' }}
                 value={
                   <>
-                    26K{' '}
-                    <span className="fs-6 fw-normal">
-                      (-12.4% <CIcon icon={cilArrowBottom} />)
-                    </span>
+                    <h5> Jumlah Pengunjung / Bulan </h5>
+                    <DatePicker
+                      selected={new Date(selectedYearPengunjung, 0, 1)}
+                      onChange={(date) => setSelectedYearPengunjung(date.getFullYear())}
+                      dateFormat="yyyy"
+                      showYearPicker
+                      className="form-control w-50"
+                      yearItemNumber={6}
+                    />
                   </>
                 }
-                title="Users"
-                action={
-                  <CDropdown alignment="end">
-                    <CDropdownToggle color="transparent" caret={false} className="p-0">
-                      <CIcon icon={cilOptions} className="text-high-emphasis-inverse" />
-                    </CDropdownToggle>
-                    <CDropdownMenu>
-                      <CDropdownItem>Action</CDropdownItem>
-                      <CDropdownItem>Another action</CDropdownItem>
-                      <CDropdownItem>Something else here...</CDropdownItem>
-                      <CDropdownItem disabled>Disabled action</CDropdownItem>
-                    </CDropdownMenu>
-                  </CDropdown>
-                }
                 chart={
-                  <CChartLine
-                    className="mt-3 mx-3"
-                    style={{ height: '85px' }}
-                    data={{
-                      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                      datasets: [
-                        {
-                          label: 'My First dataset',
-                          backgroundColor: 'transparent',
-                          borderColor: 'rgba(255,255,255,.55)',
-                          pointBackgroundColor: getStyle('--cui-primary'),
-                          data: [65, 59, 84, 84, 51, 55, 40],
-                        },
-                      ],
-                    }}
-                    options={{
-                      plugins: {
-                        legend: {
-                          display: false,
-                        },
-                      },
-                      maintainAspectRatio: false,
-                      scales: {
-                        x: {
-                          grid: {
-                            display: false,
-                            drawBorder: false,
+                  <>
+                    <CChartLine
+                      className="mt-3 mx-3"
+                      style={{ height: '85px' }}
+                      data={{
+                        labels: [
+                          'January',
+                          'February',
+                          'March',
+                          'April',
+                          'May',
+                          'June',
+                          'July',
+                          'August',
+                          'September',
+                          'October',
+                          'November',
+                          'December',
+                        ],
+                        datasets: [
+                          {
+                            label: 'Data Pengunjung per Bulan',
+                            backgroundColor: 'transparent',
+                            borderColor: 'rgba(255,255,255,.55)',
+                            pointBackgroundColor: getStyle('--cui-info'),
+                            data: dataPengunjungByMonth,
+                            fill: true,
                           },
-                          ticks: {
-                            display: false,
-                          },
-                        },
-                        y: {
-                          min: 30,
-                          max: 89,
-                          display: false,
-                          grid: {
-                            display: false,
-                          },
-                          ticks: {
+                        ],
+                      }}
+                      options={{
+                        plugins: {
+                          legend: {
                             display: false,
                           },
                         },
-                      },
-                      elements: {
-                        line: {
-                          borderWidth: 1,
-                          tension: 0.4,
+                        maintainAspectRatio: false,
+                        scales: {
+                          x: {
+                            grid: {
+                              display: false,
+                              drawBorder: false,
+                            },
+                            ticks: {
+                              display: false,
+                            },
+                          },
+                          y: {
+                            min: 0,
+                            display: false,
+                            grid: {
+                              display: false,
+                            },
+                            ticks: {
+                              display: false,
+                            },
+                          },
                         },
-                        point: {
-                          radius: 4,
-                          hitRadius: 10,
-                          hoverRadius: 4,
+                        elements: {
+                          line: {
+                            borderWidth: 3,
+                            tension: 0.4,
+                          },
+                          point: {
+                            radius: 4,
+                            hitRadius: 10,
+                            hoverRadius: 4,
+                          },
                         },
-                      },
-                    }}
-                  />
+                      }}
+                    />
+                  </>
                 }
               />
             </CCol>
             <CCol md={4} xl={12}>
-              <CWidgetStatsA
-                className="mb-4"
-                color="warning-gradient"
-                value={
-                  <>
-                    2.49{' '}
-                    <span className="fs-6 fw-normal">
-                      (84.7% <CIcon icon={cilArrowTop} />)
-                    </span>
-                  </>
-                }
-                title="Conversion Rate"
-                action={
-                  <CDropdown alignment="end">
-                    <CDropdownToggle color="transparent" caret={false} className="p-0">
-                      <CIcon icon={cilOptions} className="text-high-emphasis-inverse" />
-                    </CDropdownToggle>
-                    <CDropdownMenu>
-                      <CDropdownItem>Action</CDropdownItem>
-                      <CDropdownItem>Another action</CDropdownItem>
-                      <CDropdownItem>Something else here...</CDropdownItem>
-                      <CDropdownItem disabled>Disabled action</CDropdownItem>
-                    </CDropdownMenu>
-                  </CDropdown>
-                }
-                chart={
-                  <CChartLine
-                    className="mt-3"
-                    style={{ height: '85px' }}
-                    data={{
-                      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                      datasets: [
-                        {
-                          label: 'My First dataset',
-                          backgroundColor: 'rgba(255,255,255,.2)',
-                          borderColor: 'rgba(255,255,255,.55)',
-                          data: [78, 81, 80, 45, 34, 12, 40],
-                          fill: true,
-                        },
-                      ],
-                    }}
-                    options={{
-                      plugins: {
-                        legend: {
-                          display: false,
-                        },
-                      },
-                      maintainAspectRatio: false,
-                      scales: {
-                        x: {
-                          display: false,
-                        },
-                        y: {
-                          display: false,
-                        },
-                      },
-                      elements: {
-                        line: {
-                          borderWidth: 2,
-                          tension: 0.4,
-                        },
-                        point: {
-                          radius: 0,
-                          hitRadius: 10,
-                          hoverRadius: 4,
-                        },
-                      },
-                    }}
-                  />
-                }
-              />
-            </CCol>
-            <CCol md={4} xl={12}>
-              <CWidgetStatsA
+              <CCard className="mb-4" color="primary-gradient" style={{ height: '11em' }}>
+                <CCardBody>
+                  <div className="d-flex justify-content-between">
+                    <CCardTitle className=" text-light"> Jumlah kategori buku</CCardTitle>
+                    <div className="bg-light bg-opacity-25 text-light p-2 rounded">
+                      <CIcon icon={cilBook} size="xl" />
+                    </div>
+                  </div>
+                  <div className="fs-4 fw-semibold pb-3" style={{ color: 'white' }}>
+                    {totalJenisBuku}
+                  </div>
+                </CCardBody>
+              </CCard>
+              {/* <CWidgetStatsA
                 className="mb-4"
                 color="danger-gradient"
                 value={
@@ -731,7 +732,7 @@ const Dashboard = () => {
                     }}
                   />
                 }
-              />
+              /> */}
             </CCol>
           </CRow>
         </CCol>

@@ -12,9 +12,9 @@ import {
   CFormInput,
   CFormSelect,
   CSmartTable,
-} from '@coreui/react-pro'
-import axios from 'axios'
-import {
+  CInputGroup,
+  CInputGroupText,
+  CAlert,
   CDatePicker,
   CModal,
   CModalHeader,
@@ -22,10 +22,40 @@ import {
   CModalTitle,
   CModalFooter,
 } from '@coreui/react-pro'
+import axios from 'axios'
 import CIcon from '@coreui/icons-react'
-import { cilCloudDownload } from '@coreui/icons'
+import { cilCloudDownload, cilCheckCircle } from '@coreui/icons'
+import * as XLSX from 'xlsx'
 
 const AdminPeminjaman = () => {
+  const [msg, setMsg] = useState(null)
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false)
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+
+    const dateObj = new Date(dateString);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const day = String(dateObj.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatCreatedDate = (dateString) => {
+    if (!dateString) return "";
+
+    const dateObj = new Date(dateString);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const day = String(dateObj.getDate()).padStart(2, "0");
+    const time = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+
+    return `${year}-${month}-${day} Pukul: ${time}`;
+  };
+
+  const today = formatDate(new Date());
+
   const [loading, setLoading] = useState()
   const [openModal, setOpenModal] = useState(false)
   const [openModalUpdate, setOpenModalUpdate] = useState(false)
@@ -33,54 +63,88 @@ const AdminPeminjaman = () => {
   const [books, setBooks] = useState([])
   const [siswas, setSiswas] = useState([])
   const [peminjamanDatas, setPeminjamanDatas] = useState(peminjaman)
-  const [addFormData, setAddFormData] = useState({
-    kodeBuku: null,
-    NIS: null,
-    namaPeminjam: null,
-    judulBuku: null,
-    tglKembali: null,
-    tglPinjam: null,
-    batasPinjam: null,
-    status: "Belum Dikembalikan",
-    denda: '',
-  })
+  const [batasPinjamPerHari, setBatasPinjamPerHari] = useState(() => {
+    const storedBatasPinjamPerHari = localStorage.getItem('batasPinjamPerHari');
+    return storedBatasPinjamPerHari ? parseInt(storedBatasPinjamPerHari) : 7;
+  });
   const [currentId, setCurrentId] = useState('')
   const [hargaDenda, setHargaDenda] = useState(() => {
     const storedHargaDenda = localStorage.getItem('hargaDenda');
     return storedHargaDenda ? parseInt(storedHargaDenda) : 500;
   });
+  const [addFormData, setAddFormData] = useState({
+    Buku_kodeBuku: null,
+    Siswa_NIS: null,
+    namaPeminjam: null,
+    judulBuku: null,
+    tglKembali: null,
+    tglPinjam: today,
+    batasPinjam: formatDate(
+      new Date(new Date(today).getTime() + batasPinjamPerHari * 24 * 60 * 60 * 1000)
+    ),
+    status: "Belum Dikembalikan",
+    denda: '',
+  })
+
+  useEffect(() => {
+    // Calculate 'peminjaman.batasPinjam' whenever batasPinjamPerHari or tglPinjam changes
+    if (addFormData.tglPinjam) {
+      setAddFormData((prevFormData) => ({
+        ...prevFormData,
+        batasPinjam: formatDate(new Date(new Date(prevFormData.tglPinjam).getTime() + (batasPinjamPerHari * 24 * 60 * 60 * 1000))),
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [batasPinjamPerHari, formatDate(addFormData.tglPinjam)]);
 
   const batalHandler = () => {
-    setAddFormData({})
-    setOpenModal(false)
-    setOpenModalUpdate(false)
-  }
+    setAddFormData({
+      ...addFormData,
+      status: "Belum Dikembalikan",
+      tglPinjam: today,
+      kodeBuku: null,
+      NIS: null,
+      namaPeminjam: null,
+      judulBuku: null,
+      tglKembali: null,
+      batasPinjam: formatDate(
+        new Date(new Date(today).getTime() + batasPinjamPerHari * 24 * 60 * 60 * 1000)
+      ),
+      denda: '',
+    });
+    setOpenModal(false);
+    setOpenModalUpdate(false);
+  };
 
   useEffect(() => {
     localStorage.setItem('hargaDenda', hargaDenda.toString());
-  }, [hargaDenda]);
+    localStorage.setItem('batasPinjamPerHari', batasPinjamPerHari.toString());
+  }, [hargaDenda, batasPinjamPerHari]);
 
   useEffect(() => {
     fetchData()
     fetchBooks()
     fetchSisws()
     setLoading(false)
+    console.log(addFormData)
+    console.log(currentId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchNamaSiswa = async () => {
     const sisw = siswas.find((item) => item.NIS === addFormData.NIS);
-    const NISSiswa = sisw ? sisw.NIS : null;
+    const NISSiswa = sisw ? sisw.siswa_NIS : null;
 
     setAddFormData((prevFormData) => ({
       ...prevFormData,
-      NIS: NISSiswa,
+      Siswa_NIS: NISSiswa,
     }));
+    console.log(sisw);
   };
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/peminjaman');
+      const response = await axios.get('https://api2.librarysmayuppentek.sch.id/peminjaman');
       const updatedPeminjaman = response.data.data.map((item) => {
         if (
           item.status === 'Belum Dikembalikan' &&
@@ -93,10 +157,11 @@ const AdminPeminjaman = () => {
           );
           item.denda = `Rp. ${differenceInDays * hargaDenda}`
 
-          axios.put(`http://localhost:3005/peminjaman/${item.idPeminjaman}`, item);
+          axios.put(`https://api2.librarysmayuppentek.sch.id/peminjaman/${item.idPeminjaman}`, item);
         }
         return item;
       });
+      console.log(updatedPeminjaman)
       setPeminjaman(updatedPeminjaman);
     } catch (error) {
       console.error(error);
@@ -105,7 +170,7 @@ const AdminPeminjaman = () => {
 
   const fetchBooks = async () => {
     try {
-      const responseBook = await axios.get('http://localhost:3005/book');
+      const responseBook = await axios.get('https://api2.librarysmayuppentek.sch.id/book');
       setBooks(responseBook.data?.data ?? []);
     } catch (error) {
       console.log(error);
@@ -114,13 +179,14 @@ const AdminPeminjaman = () => {
 
   const fetchSisws = async () => {
     try {
-      const responseSiswa = await axios.get('http://localhost:3005/siswa');
+      const responseSiswa = await axios.get('https://api2.librarysmayuppentek.sch.id/siswa');
       setSiswas(responseSiswa.data?.data ?? []);
-      console.log(responseSiswa.data.data[1].Nama)
+      console.log(responseSiswa.data.data)
     } catch (error) {
       console.log(error);
     }
   };
+
   const hargaDendaOnChangeHandler = (event) => {
     const fieldValue = event.target.value;
     setHargaDenda(fieldValue);
@@ -146,20 +212,21 @@ const AdminPeminjaman = () => {
     if (fieldName === 'kodeBuku') {
       const book = books.find((item) => item.kodeBuku === fieldValue);
       const judulBuku = book ? book.judul : null;
+      console.log(book);
 
       newFormData = {
         ...addFormData,
-        kodeBuku: fieldValue,
+        Buku_kodeBuku: fieldValue,
         judulBuku: judulBuku,
       };
     } else if (fieldName === 'NIS') {
       const nisValue = parseInt(fieldValue);
-      const sisw = siswas.find((item) => item.NIS === nisValue);
-      const namaSiswa = sisw ? sisw.Nama : null;
-
+      const sisw = siswas.find((item) => item.siswa_NIS === nisValue);
+      const namaSiswa = sisw ? sisw.nama : null;
+      console.log(sisw);
       newFormData = {
         ...addFormData,
-        NIS: nisValue,
+        Siswa_NIS: nisValue,
         namaPeminjam: namaSiswa,
       };
     } else if (fieldName === 'status') {
@@ -185,20 +252,19 @@ const AdminPeminjaman = () => {
       newFormData = {
         ...addFormData,
         [fieldName]: fieldValue,
-      };
+      }
     }
-
     console.log(fieldName, fieldValue)
     console.log(newFormData)
 
     setAddFormData(newFormData)
-  };
+  }
 
   const formOnChangeTglPinjam = (value) => {
     value !== null
       ? setAddFormData({
         ...addFormData,
-        tglPinjam: value.toISOString().split('T')[0],
+        tglPinjam: formatDate(value),
       })
       : setAddFormData({
         ...addFormData,
@@ -207,10 +273,11 @@ const AdminPeminjaman = () => {
   }
 
   const formOnChangeBatasPinjam = (value) => {
+    console.log('Received value:', value);
     value !== null
       ? setAddFormData({
         ...addFormData,
-        batasPinjam: value.toISOString().split('T')[0],
+        batasPinjam: formatDate(value),
       })
       : setAddFormData({
         ...addFormData,
@@ -222,7 +289,7 @@ const AdminPeminjaman = () => {
     value !== null
       ? setAddFormData({
         ...addFormData,
-        tglKembali: value.toISOString().split('T')[0],
+        tglKembali: formatDate(value),
       })
       : setAddFormData({
         ...addFormData,
@@ -235,9 +302,23 @@ const AdminPeminjaman = () => {
 
     fetchNamaSiswa(); // Fetch the namaSiswa value based on the NIS
 
+    if (
+      !addFormData.Buku_kodeBuku ||
+      !addFormData.Siswa_NIS ||
+      !addFormData.namaPeminjam ||
+      !addFormData.judulBuku ||
+      !addFormData.tglPinjam ||
+      !addFormData.batasPinjam ||
+      !addFormData.status
+    ) {
+      // Handle the error here (e.g., show a message to the user)
+      alert("Hanya kolom tanggal kembali dan denda yang boleh kosong");
+      return;
+    }
+
     const newDataPeminjaman = {
-      kodeBuku: addFormData.kodeBuku,
-      NIS: addFormData.NIS,
+      Buku_kodeBuku: addFormData.Buku_kodeBuku,
+      Siswa_NIS: addFormData.Siswa_NIS,
       namaPeminjam: addFormData.namaPeminjam,
       judulBuku: addFormData.judulBuku,
       tglKembali: addFormData.tglKembali,
@@ -252,12 +333,18 @@ const AdminPeminjaman = () => {
     setPeminjamanDatas(newDataPeminjamans);
 
     axios
-      .post('http://localhost:3005/peminjaman', newDataPeminjaman)
+      .post('https://api2.librarysmayuppentek.sch.id/peminjaman', newDataPeminjaman)
       .then((res) => {
         console.log(res);
         setOpenModal(false);
         fetchData();
         setAddFormData({});
+        setMsg(res.data.message);
+        setShowSuccessAlert(true)
+
+        setTimeout(() => {
+          setShowSuccessAlert(false)
+        }, 3000)
       })
       .catch((err) => {
         if (err.response && err.response.status === 404) {
@@ -269,9 +356,16 @@ const AdminPeminjaman = () => {
 
   const handleDelete = async (idPeminjaman) => {
     try {
-      await axios.delete(`http://localhost:3005/peminjaman/${idPeminjaman}`)
+      const response = await axios.delete(`https://api2.librarysmayuppentek.sch.id/peminjaman/${idPeminjaman}`)
       fetchData()
+      setMsg(response.data.message);
+      setShowSuccessAlert(true)
+
+      setTimeout(() => {
+        setShowSuccessAlert(false)
+      }, 3000)
     } catch (err) {
+      alert('Buku masih dipinjam, silahkan hapus dahulu data peminjaman dari siswa terkait')
       console.log(err)
     }
   }
@@ -281,12 +375,12 @@ const AdminPeminjaman = () => {
 
     const editedDataPeminjaman = {
       ...siswa,
-      tglKembali: siswa.tglKembali === null ? new Date().toISOString().split('T')[0] : siswa.tglKembali,
+      tglKembali: siswa.tglKembali === null ? formatDate(new Date()) : formatDate(siswa.tglKembali),
       status: 'Dikembalikan',
-      denda: calculateDenda(siswa.tglKembali, siswa.batasPinjam),
-    }
+      denda: calculateDenda(formatDate(siswa.tglKembali), formatDate(siswa.batasPinjam)),
+    };
     try {
-      await axios.put(`http://localhost:3005/peminjaman/${idPeminjaman}`, editedDataPeminjaman)
+      await axios.put(`https://api2.librarysmayuppentek.sch.id/peminjaman/${idPeminjaman}`, editedDataPeminjaman)
       fetchData()
       setAddFormData(siswa);
       console.log(editedDataPeminjaman);
@@ -304,34 +398,36 @@ const AdminPeminjaman = () => {
   }
 
   const formUpdateChangeHandler = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setCurrentId((prevState) => ({
       ...prevState,
       [name]: value,
-    }));
+    }))
 
-    if (name === 'NIS') {
-      const nisValue = parseInt(value);
-      const sisw = siswas.find((item) => item.NIS === nisValue);
+    if (name === 'Siswa_NIS') {
+      const nisValue = parseInt(value)
+      const sisw = siswas.find((item) => item.siswa_NIS === nisValue)
+      // console.log(sisw);
       if (sisw) {
         setCurrentId((prevState) => ({
           ...prevState,
-          namaPeminjam: sisw.Nama,
-        }));
+          nama: sisw.nama,
+        }))
       }
-    } else if (name === 'kodeBuku') {
-      const book = books.find((item) => item.kodeBuku === value);
+    } else if (name === 'Buku_kodeBuku') {
+      const book = books.find((item) => item.kodeBuku === value)
+      console.log(book);
       if (book) {
         setCurrentId((prevState) => ({
           ...prevState,
-          judulBuku: book.judul,
+          judul: book.judul,
         }));
       }
     } else if (name === 'status') {
       if (value === 'Dikembalikan') {
         const denda = calculateDenda(
-          currentId.tglKembali,
-          currentId.batasPinjam
+          formatDate(currentId.tglKembali),
+          formatDate(currentId.batasPinjam)
         );
 
         setCurrentId((prevState) => ({
@@ -350,28 +446,39 @@ const AdminPeminjaman = () => {
   };
 
   const formOnChangeDateHandler = (name, date) => {
-    date !== null
-      ? setCurrentId((prevState) => ({
-        ...prevState,
-        [name]: date.toISOString().split('T')[0],
-      }))
-      : setCurrentId((prevState) => ({
-        ...prevState,
-        [name]: null,
-      }))
-  }
+    const formattedDate = date ? formatDate(date) : null;
+    setCurrentId((prevState) => ({
+      ...prevState,
+      [name]: formattedDate,
+    }));
+    console.log(currentId);
+  };
 
   const formUpdateHandler = async (event) => {
     event.preventDefault()
 
     try {
-      await axios.put(`http://localhost:3005/peminjaman/${currentId.idPeminjaman}`, currentId)
+      const formattedData = {
+        ...currentId,
+        tglPinjam: formatDate(currentId.tglPinjam),
+        batasPinjam: formatDate(currentId.batasPinjam),
+        tglKembali: formatDate(currentId.tglKembali) ? formatDate(currentId.tglKembali) : null,
+      };
+      const response = await axios.put(`https://api2.librarysmayuppentek.sch.id/peminjaman/${currentId.idPeminjaman}`, formattedData)
       fetchData()
+      setMsg(response.data.message);
+      setShowSuccessAlert(true)
+
+      setTimeout(() => {
+        setShowSuccessAlert(false)
+      }, 3000)
       batalHandler()
     } catch (err) {
+      if (err.response && err.response.status === 404) {
+        alert('Buku Tidak Tersedia');
+      }
       console.error(err)
     }
-    console.log(currentId)
   }
 
   const handleDibayar = async (idPeminjaman) => {
@@ -387,7 +494,7 @@ const AdminPeminjaman = () => {
 
     try {
       await axios.put(
-        `http://localhost:3005/peminjaman/${idPeminjaman}`,
+        `https://api2.librarysmayuppentek.sch.id/peminjaman/${idPeminjaman}`,
         editedDataPeminjaman
       );
       fetchData();
@@ -399,11 +506,18 @@ const AdminPeminjaman = () => {
   const [details, setDetails] = useState([])
   const columns = [
     {
-      key: 'kodeBuku',
-      _style: { width: '12%' },
+      key: 'No',
+      _style: { width: '5%' },
+      filter: false,
+      sorter: false,
     },
-    { key: 'namaPeminjam', _style: { width: '17%' } },
-    { key: 'judulBuku', _style: { width: '20%' } },
+    {
+      key: 'Buku_kodeBuku',
+      _style: { width: '10%' },
+      label: 'Kode Buku',
+    },
+    { key: 'nama', _style: { width: '17%' } },
+    { key: 'judul', _style: { width: '18%' } },
     { key: 'tglPinjam', _style: { width: '10%' } },
     { key: 'batasPinjam', _style: { width: '10%' } },
     { key: 'tglKembali', _style: { width: '10%' } },
@@ -443,12 +557,52 @@ const AdminPeminjaman = () => {
   }
 
   // buat download
-  const csvContent = peminjaman.map((item) => Object.values(item).join(',')).join('\n')
-  const csvCode = 'data:text/csv;charset=utf-8,SEP=,%0A' + encodeURIComponent(csvContent)
+  const getExcelData = () => {
+    if (!peminjaman || !peminjaman[0]) {
+      alert('Tidak bisa download data kosong')
+      return new Blob()
+    }
+    const header = Object.keys(peminjaman[0])
+    const data = peminjaman.map((item) => {
+      const formattedPeminjaman = formatCreatedDate(item.createdAt)
+      return header.map((column) => {
+        if (column === 'createdAt') {
+          return formattedPeminjaman
+        }
+        return item[column]
+      })
+    })
+
+    const ws = XLSX.utils.aoa_to_sheet([header, ...data])
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    })
+
+    return blob
+  }
+
+  const downloadExcel = () => {
+    const blob = getExcelData()
+    if (blob.size > 0) {
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(blob)
+      link.download = 'data-peminjaman.xlsx'
+      link.click()
+    }
+  }
 
   try {
     return (
       <>
+        {showSuccessAlert && (
+          <CAlert color="success" className="d-flex align-items-center">
+            <CIcon icon={cilCheckCircle} className="flex-shrink-0 me-2" width={24} height={24} />
+            <div>{msg}</div>
+          </CAlert>
+        )}
         <CCard>
           <CCardBody>
             <div className="actionPeminjaman">
@@ -463,153 +617,44 @@ const AdminPeminjaman = () => {
                 >
                   Tambah Data Pinjam
                 </CButton>
+                <CInputGroup>
+                  <CForm>
+                    <CFormInput
+                      name="batasPinjamPerHari"
+                      type="number"
+                      size="lg"
+                      id="inputBatasPinjamPerHarii"
+                      value={batasPinjamPerHari} // Display the value from the state
+                      onChange={(e) => setBatasPinjamPerHari(parseInt(e.target.value))} // Update the state when the input changes
+                      floatingLabel="Batas Peminjaman"
+                    />
+                  </CForm>
+                  <CInputGroupText id="batasPeminjamanPerHari">Hari</CInputGroupText>
+                </CInputGroup>
                 <CForm>
-                  {/* <CInputGroup> */}
                   <CFormInput
                     name="hargaDenda"
                     type="number"
                     size="lg"
                     id="inputHargaDenda"
-                    floatingLabel="Harga Denda"
+                    floatingLabel="Denda/Hari"
                     value={hargaDenda}
                     onChange={hargaDendaOnChangeHandler}
                   />
-                  {/* </CInputGroup> */}
                 </CForm>
               </div>
               <div className="download-container">
                 <CButton
                   className="download-button"
                   color="primary"
-                  href={csvCode}
-                  download="data-peminjaman.csv"
+                  onClick={downloadExcel}
                   target="_blank"
                   size="lg"
                 >
                   <CIcon icon={cilCloudDownload} size="lg" />
-                  {/* Download data peminjaman (.csv) */}
-                </CButton>
-              </div>
-            </div>
-
-            <CModal
-              allignment="center"
-              size="lg"
-              scrollable
-              visible={openModal}
-              onClose={() => batalHandler()}
-            >
-              <CModalHeader>
-                <CModalTitle>Tambah Data Peminjaman</CModalTitle>
-              </CModalHeader>
-              <CModalBody>
-                <CForm className="row g-3" onSubmit={formOnSubmitHandler}>
-                  <CCol md={3}>
-                    <CFormInput
-                      name="NIS"
-                      type="text"
-                      id="inputNIS"
-                      label="NIS"
-                      onChange={formOnChangeHandler}
-                    />
-                  </CCol>
-                  <CCol md={9}>
-                    <CFormInput
-                      name="namaPeminjam"
-                      type="text"
-                      id="inputNamaPeminjam"
-                      label="Nama Peminjam"
-                      value={addFormData.namaPeminjam || ''}
-                      // onChange={formOnChangeHandler}
-                      readOnly
-                    />
-                  </CCol>
-                  <CCol md={2}>
-                    <CFormInput
-                      name="kodeBuku"
-                      type="text"
-                      id="inputKodeBuku"
-                      label="Kode Buku"
-                      onChange={formOnChangeHandler}
-                    // onBlur={fetchJudulBuku}
-                    />
-                  </CCol>
-                  <CCol xs={10}>
-                    <CFormInput
-                      name="judulBuku"
-                      id="inputJudulBuku"
-                      label="Judul Buku"
-                      value={addFormData.judulBuku || ''}
-                      placeholder="Judul Buku"
-                      readOnly
-                    />
-                  </CCol>
-                  <CCol md={4}>
-                    <CDatePicker
-                      name="tglPinjam"
-                      footer
-                      locale="en-US"
-                      id="tglPinjam"
-                      label="Tanggal Pinjam"
-                      onDateChange={formOnChangeTglPinjam}
-                    />
-                  </CCol>
-                  <CCol md={4}>
-                    <CDatePicker
-                      name="batasPinjam"
-                      footer
-                      locale="en-US"
-                      id="batasPinjam"
-                      label="Batas Pinjam"
-                      onDateChange={formOnChangeBatasPinjam}
-                    />
-                  </CCol>
-                  <CCol md={4}>
-                    <CDatePicker
-                      name="tglKembali"
-                      footer
-                      locale="en-US"
-                      id="tglKembali"
-                      label="Tanggal Kembali"
-                      onDateChange={formOnChangeTglKembali}
-                    />
-                  </CCol>
-                  <CCol md={8}>
-                    <CFormSelect
-                      name="status"
-                      id="inputStatus"
-                      label="Status"
-                      value={addFormData.status}
-                      onChange={formOnChangeHandler}
-                      text="* Pilih Status"
-                    >
-                      <option>Belum Dikembalikan</option>
-                      <option>Dikembalikan</option>
-                    </CFormSelect>
-                  </CCol>
-                  <CCol md={4}>
-                    <CFormInput
-                      name="denda"
-                      id="inputDenda"
-                      label="Denda"
-                      onChange={formOnChangeHandler}
-                    />
-                  </CCol>
-                  <CModalFooter>
-                    <CButton type="submit"> Tambah </CButton>
-                    <CButton
-                      color="light"
-                      onClick={() => {
-                        batalHandler()
-                      }}
-                    >
-                      {' '}
-                      Kembali{' '}
-                    </CButton>
-                  </CModalFooter>
-                </CForm>
-              </CModalBody>
-            </CModal>
+                </CButton >
+              </div >
+            </div >
 
             <CSmartTable
               className="mt-3"
@@ -625,6 +670,10 @@ const AdminPeminjaman = () => {
               itemsPerPage={5}
               pagination
               scopedColumns={{
+                No: (item, index) => {
+                  const itemNumber = index + 1
+                  return <td>{itemNumber}</td>
+                },
                 status: (item) => (
                   <td>
                     <CBadge color={getBadge(item.status)}>{item.status}</CBadge>
@@ -651,8 +700,8 @@ const AdminPeminjaman = () => {
                   return (
                     <CCollapse visible={details.includes(item.idPeminjaman)}>
                       <CCardBody className="p-3">
-                        <h4>Buku {item.judulBuku}</h4>
-                        <p className="text-muted">Dipinjam Sejak: {item.tglPinjam}</p>
+                        <h4>Buku {item.judul} ( {item.Buku_kodeBuku} ) </h4>
+                        <p className="text-muted">Dicatat pada tanggal: {formatCreatedDate(item.createdAt)} Oleh {item.nama} ({item.Siswa_NIS})</p>
                         <CButton
                           size="sm"
                           color="dark"
@@ -679,7 +728,15 @@ const AdminPeminjaman = () => {
                         <CButton
                           size="sm"
                           color="danger"
-                          onClick={() => handleDelete(item.idPeminjaman)}
+                          onClick={() => {
+                            const shouldDelete = window.confirm(
+                              'Apakah Anda yakin ingin menghapus data ini?',
+                            )
+                            if (shouldDelete) {
+                              handleDelete(item.idPeminjaman)
+                            }
+                          }
+                          }
                         >
                           Delete
                         </CButton>
@@ -699,11 +756,133 @@ const AdminPeminjaman = () => {
                 responsive: true,
               }}
             />
-          </CCardBody>
-        </CCard>
+          </CCardBody >
+        </CCard >
 
         <CModal
-          allignment="center"
+          alignment="center"
+          size="lg"
+          scrollable
+          visible={openModal}
+          onClose={() => batalHandler()}
+        >
+          <CModalHeader>
+            <CModalTitle>Tambah Data Peminjaman</CModalTitle>
+          </CModalHeader>
+          <CModalBody>
+            <CForm className="row g-3" onSubmit={formOnSubmitHandler}>
+              <CCol md={3}>
+                <CFormInput
+                  name="NIS"
+                  type="text"
+                  id="inputNIS"
+                  label="NIS"
+                  onChange={formOnChangeHandler}
+                />
+              </CCol>
+              <CCol md={9}>
+                <CFormInput
+                  name="namaPeminjam"
+                  type="text"
+                  id="inputNamaPeminjam"
+                  label="Nama Peminjam"
+                  value={addFormData.namaPeminjam || ''}
+                  // onChange={formOnChangeHandler}
+                  readOnly
+                />
+              </CCol>
+              <CCol md={2}>
+                <CFormInput
+                  name="kodeBuku"
+                  type="text"
+                  id="inputKodeBuku"
+                  label="Kode Buku"
+                  onChange={formOnChangeHandler}
+                // onBlur={fetchJudulBuku}
+                />
+              </CCol>
+              <CCol xs={10}>
+                <CFormInput
+                  name="judulBuku"
+                  id="inputJudulBuku"
+                  label="Judul Buku"
+                  value={addFormData.judulBuku || ''}
+                  placeholder="Judul Buku"
+                  readOnly
+                />
+              </CCol>
+              <CCol md={4}>
+                <CDatePicker
+                  name="tglPinjam"
+                  footer
+                  locale="id-ID"
+                  id="tglPinjam"
+                  label="Tanggal Pinjam"
+                  value={addFormData.tglPinjam}
+                  date={today}
+                  onDateChange={formOnChangeTglPinjam}
+                />
+              </CCol>
+              <CCol md={4}>
+                <CDatePicker
+                  name="batasPinjam"
+                  footer
+                  locale="id-ID"
+                  id="batasPinjam"
+                  label="Batas Pinjam"
+                  date={addFormData.batasPinjam}
+                  onDateChange={formOnChangeBatasPinjam}
+                />
+              </CCol>
+              <CCol md={4}>
+                <CDatePicker
+                  name="tglKembali"
+                  footer
+                  locale="id-ID"
+                  id="tglKembali"
+                  label="Tanggal Kembali"
+                  onDateChange={formOnChangeTglKembali}
+                />
+              </CCol>
+              <CCol md={8}>
+                <CFormSelect
+                  name="status"
+                  id="inputStatus"
+                  label="Status"
+                  value={addFormData.status}
+                  onChange={formOnChangeHandler}
+                  text="* Pilih Status"
+                >
+                  <option>Belum Dikembalikan</option>
+                  <option>Dikembalikan</option>
+                </CFormSelect>
+              </CCol>
+              <CCol md={4}>
+                <CFormInput
+                  name="denda"
+                  id="inputDenda"
+                  label="Denda"
+                  onChange={formOnChangeHandler}
+                />
+              </CCol>
+              <CModalFooter>
+                <CButton type="submit"> Tambah </CButton>
+                <CButton
+                  color="light"
+                  onClick={() => {
+                    batalHandler()
+                  }}
+                >
+                  {' '}
+                  Kembali{' '}
+                </CButton>
+              </CModalFooter>
+            </CForm>
+          </CModalBody>
+        </CModal>
+
+        <CModal
+          alignment="center"
           size="lg"
           scrollable
           visible={openModalUpdate}
@@ -716,8 +895,8 @@ const AdminPeminjaman = () => {
             <CForm className="row g-3" onSubmit={formUpdateHandler}>
               <CCol md={3}>
                 <CFormInput
-                  value={currentId.NIS}
-                  name="NIS"
+                  value={currentId.Siswa_NIS}
+                  name="Siswa_NIS"
                   type="text"
                   id="inputNIS"
                   label="NIS"
@@ -726,8 +905,8 @@ const AdminPeminjaman = () => {
               </CCol>
               <CCol md={9}>
                 <CFormInput
-                  value={currentId.namaPeminjam}
-                  name="namaPeminjam"
+                  value={currentId.nama}
+                  name="nama"
                   type="text"
                   id="inputNamaPeminjam"
                   label="Nama Peminjam"
@@ -736,8 +915,8 @@ const AdminPeminjaman = () => {
               </CCol>
               <CCol md={2}>
                 <CFormInput
-                  value={currentId.kodeBuku}
-                  name="kodeBuku"
+                  value={currentId.Buku_kodeBuku}
+                  name="Buku_kodeBuku"
                   type="text"
                   id="inputIdBuku"
                   label="Kode Buku"
@@ -746,8 +925,8 @@ const AdminPeminjaman = () => {
               </CCol>
               <CCol xs={10}>
                 <CFormInput
-                  value={currentId.judulBuku}
-                  name="judulBuku"
+                  value={currentId.judul}
+                  name="judul"
                   id="inputJudulBuku"
                   label="Judul Buku"
                   placeholder="Judul Buku"
@@ -759,7 +938,7 @@ const AdminPeminjaman = () => {
                   date={currentId.tglPinjam}
                   name="tglPinjam"
                   footer
-                  locale="en-US"
+                  locale="id-ID"
                   id="tglPinjam"
                   label="Tanggal Pinjam"
                   onDateChange={(date) => {
@@ -772,7 +951,7 @@ const AdminPeminjaman = () => {
                   date={currentId.batasPinjam}
                   name="batasPinjam"
                   footer
-                  locale="en-US"
+                  locale="id-ID"
                   id="batasPinjam"
                   label="Batas Pinjam"
                   onDateChange={(date) => {
@@ -785,7 +964,7 @@ const AdminPeminjaman = () => {
                   date={currentId.tglKembali}
                   name="tglKembali"
                   footer
-                  locale="en-US"
+                  locale="id-ID"
                   id="tglKembali"
                   label="Tanggal Kembali"
                   onDateChange={(date) => {

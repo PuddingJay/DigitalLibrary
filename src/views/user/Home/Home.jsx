@@ -1,69 +1,101 @@
-import { ListCategories, Books } from '../../../component'
-import { Col, Row, Container } from 'react-bootstrap'
-import React, { Component } from 'react'
-import { API_URL } from '../../../utils/Constant'
+import { Books } from '../../../component'
+import { Col, Container } from 'react-bootstrap'
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button'
+import React, { useState, useRef, Suspense } from 'react'
 import axios from 'axios'
-// import NavBar from "../../../component/admin-nav-bar/NavBar";
-import NavbarComponent from '../../../component/NavbarComponent'
+import NavbarComponent from '../../../component/navbar/NavbarComponent'
+import { CImage, CSpinner } from '@coreui/react'
 import './home.scss'
+import { BookProvider } from '../../../component/BookContext'
+import { CFooter, CLink } from '@coreui/react-pro'
+import { CgSearch } from 'react-icons/cg'
+import FeedbackForm from 'src/component/FeedBackForm'
+import TopBooks from 'src/component/user-book/TopBooks'
 
-export default class Home extends Component {
-  constructor(props) {
-    super(props)
+const Home = () => {
+  const [searchKeyword, setSearchKeyword] = useState('')
+  const booksComponentRef = useRef(null)
+  const [searchResult, setSearchResult] = useState([])
+  const linkUper = 'https://universitaspertamina.ac.id/'
 
-    this.state = {
-      books: [],
-      categoryTerpilih: 'FISIKA',
+  const handleSearch = (event) => {
+    setSearchKeyword(event.target.value)
+  }
+
+  const handleSearchSubmit = () => {
+    if (booksComponentRef.current) {
+      booksComponentRef.current.getSearch(searchKeyword)
     }
   }
 
-  componentDidMount() {
+  const getSearch = (keyword) => {
     axios
-      .get(API_URL + 'products?category.nama' + this.state.categoryTerpilih)
+      .get(`https://api2.librarysmayuppentek.sch.id/book/search/${keyword}`)
       .then((response) => {
-        const books = response.data
-        this.setState({ books })
+        setSearchResult(response.data.data)
       })
       .catch((error) => {
-        console.log(error)
-      })
-  }
-  ChangeCategory = (value) => {
-    this.setState({
-      categoryTerpilih: value,
-      books: [],
-    })
-    axios
-      .get(API_URL + 'products?category.nama' + value)
-      .then((response) => {
-        const books = response.data
-        this.setState({ books })
-      })
-      .catch((error) => {
-        console.log(error)
+        console.error('Gagal melakukan pencarian:', error)
       })
   }
 
-  render() {
-    // const { categoryTerpilih } = this.state;
-    return (
+  return (
+    <Suspense fallback={<CSpinner color="primary" />}>
       <div className="App">
-        <NavbarComponent />
-        {/* <NavBar></NavBar> */}
-        <div className="mt-3">
-          <Container fluid>
-            <Row className="mb-3">
-              <ListCategories
-                categoryTerpilih={this.categoryTerpilih}
-                ChangeCategory={this.ChangeCategory}
-              />
-              <Col className="mb-2 ml-3">
-                <Books />
-              </Col>
-            </Row>
-          </Container>
-        </div>
+        <NavbarComponent style={{ position: 'sticky' }} />
+
+        <Container fluid style={{ minHeight: '100vh' }}>
+          <Col className="mb-2 ml-3">
+            <div className="searchContainer">
+              <div className="search">
+                <CgSearch />
+                <Form className="d-flex ml-2">
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    value={searchKeyword}
+                    onChange={handleSearch}
+                  />
+                  <Button onClick={handleSearchSubmit}>Search</Button>
+                </Form>
+              </div>
+            </div>
+
+            <div className="book-provider-container">
+              <BookProvider>
+                <Books
+                  ref={booksComponentRef}
+                  searchResult={searchResult}
+                  fetchData={() => getSearch(searchKeyword)}
+                />
+              </BookProvider>
+            </div>
+            <div className="center-container">
+              <div className="top-books-container">
+                <h2 className="ml-4">Top Rates Books</h2>
+                <TopBooks />
+              </div>
+              <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '18px' }}>
+                Mari bangun dan dukung lebih maju SMA Yuppentek 1 kita tercinta dengan memberikan
+                feedback dan saran buku supaya sistem e-library ini berkembang lebih baik.
+              </p>
+              <FeedbackForm />
+            </div>
+          </Col>
+        </Container>
+        <CFooter>
+          <CImage href={linkUper} className="logo" rounded src="/images/logouper.png" />
+          <div style={{ fontFamily: 'Poppins' }}>
+            <span className="ms-1"> Copyright &copy; 2023 Pengabdian Kepada Masyarakat</span>
+            <CLink href={linkUper} target="_blank" rel="noreferrer">
+              Universitas Pertamina
+            </CLink>
+          </div>
+        </CFooter>
       </div>
-    )
-  }
+    </Suspense>
+  )
 }
+
+export default Home

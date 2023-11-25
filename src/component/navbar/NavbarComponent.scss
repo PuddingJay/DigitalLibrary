@@ -1,0 +1,106 @@
+@import "../../scss/style.scss";
+
+.navBar {
+  background-color: $white;
+
+  .container-fluid {
+
+    @include laptop-s {
+      width: 90%;
+    }
+
+    .navContainer {
+      width: 100%;
+
+      @include mobile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      @include laptop-s {
+        flex-direction: row;
+        justify-content: space-around;
+      }
+
+      .navPositionHandler {
+        @include mobile {
+          display: flex;
+          width: 90%;
+        }
+
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: space-between;
+
+
+        .logoSekolah {
+          img {
+            width: 50px;
+            height: 50px;
+          }
+
+          span {
+            font-size: 14px;
+            font-family: "Poppins", Sans-serif;
+            color: $primary;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            margin-left: 15px;
+          }
+
+          @include mobile {
+            img {
+              display: block;
+              margin: 0 auto;
+              height: 70px;
+              width: 70px;
+              border: none;
+            }
+
+            span {
+              display: block;
+              margin: 0 auto;
+              font-size: 18px;
+              line-height: 1;
+            }
+          }
+        }
+      }
+
+      .navbar-collapse {
+        list-style: none;
+
+        .nav-dropdown {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+
+          // @include mobile {
+          //   display: inline;
+          // }
+        }
+
+        .dropdown-menu {
+          @include mobile {
+            left: 0;
+          }
+
+          right: 0;
+          left: 200px;
+        }
+      }
+    }
+  }
+}
+
+.barBiru {
+  display: block;
+  height: 44px;
+  background-color: #29266a;
+}
+
+.custom-toggler.navbar-toggler {
+  border-color: rgb(255, 255, 255);
+}

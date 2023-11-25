@@ -1,0 +1,19 @@
+@import "../../../scss/style.scss";
+
+.wrapper {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #29266a;
+
+  .card {
+    display: block;
+    margin: auto;
+
+    form {
+      display: grid;
+      gap: 10px;
+    }
+  }
+}

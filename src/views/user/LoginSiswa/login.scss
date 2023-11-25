@@ -1,0 +1,186 @@
+@import "../../../scss/style";
+
+.login {
+  height: 100vh;
+  background-color: #29266a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .cardLogin {
+    @include tablet {
+      width: 80%;
+    }
+
+    @include laptop-s {
+      width: 70%;
+    }
+
+    @include laptop-m {
+      width: 40%;
+    }
+
+    display: flex;
+    flex-direction: row-reverse;
+    width: 80%;
+    background-color: white;
+    border-radius: 10px;
+    min-height: 500px;
+    overflow: hidden;
+
+    .left {
+      @include tablet {
+        flex: 1;
+        background: linear-gradient(#29266a8f, rgba(0, 0, 0, 0.5)),
+          url('../../../../public/images/perpus.jpg') center;
+        background-size: cover;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        color: #fff;
+      }
+
+      display: none;
+
+      .greeter {
+        margin: auto;
+        text-align: center;
+
+        .divider {
+          height: 10px;
+          width: 75px;
+          border-radius: 15px;
+          margin: 20px auto;
+          background-color: white;
+        }
+
+        h1 {
+          font-size: 4em;
+          font-weight: bolder;
+          line-height: 70px;
+        }
+      }
+
+      span {
+        color: white;
+        font-size: 0.8em;
+        font-weight: bold;
+      }
+
+      button {
+        min-height: 44px;
+        font-size: 16px;
+        padding: 10px;
+        border: none;
+        background-color: rgb(255, 255, 255);
+        color: #29266a;
+        font-weight: bold;
+        cursor: pointer;
+      }
+    }
+
+    .right {
+      @include mobile {
+        padding: 35px;
+      }
+
+      display: flex;
+      flex: 1;
+      padding: 50px;
+      flex-direction: column;
+      gap: 10px;
+
+      .logo {
+        display: flex;
+        gap: 10px;
+        flex-direction: row;
+
+        img {
+          height: 20px;
+          width: 20px;
+        }
+
+        p {
+          font-weight: 600;
+        }
+      }
+
+      .loginContainer {
+        h1 {
+          margin: 0 0 60px 0;
+          color: #333;
+        }
+
+        .formLogin {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+
+          input {
+            border: 1px solid lightgrey;
+            // padding: 10px 10px;
+          }
+
+          .btnMasuk {
+            width: 50%;
+            padding: 10px;
+            border: none;
+            background-color: #29266a;
+            color: white;
+            font-weight: bold;
+          }
+
+          .input-group {
+            .btn {
+              .icon {
+                .ci-primary {
+                  color: #29266a;
+                }
+              }
+            }
+          }
+        }
+
+        p {
+          text-align: center;
+          color: $dark;
+          margin-top: 20px;
+        }
+      }
+
+      .uper {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 50px;
+
+        img {
+          width: 80px;
+        }
+      }
+
+      // .toRegister {
+      //   @include mobile {
+      //     visibility: visible;
+      //   }
+
+      //   visibility: hidden;
+      //   margin-top: 10px;
+      //   gap: 0;
+
+      //   span:first-child {
+      //     font-weight: 700;
+      //     font-size: 14px;
+      //   }
+
+      //   a span:last-child {
+      //     display: block;
+      //     min-height: 44px;
+      //     font-weight: 500;
+      //     color: black;
+      //     font-size: 12px;
+      //   }
+      // }
+
+    }
+  }
+}

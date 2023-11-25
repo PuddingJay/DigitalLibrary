@@ -1,5 +1,5 @@
-import React, { Suspense, useEffect, useState } from 'react'
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
+import React, { Suspense, useEffect } from 'react'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { CContainer, CSpinner } from '@coreui/react-pro'
 
 // routes config
@@ -9,10 +9,8 @@ import axios from 'axios'
 import jwtDecode from 'jwt-decode'
 
 const AppContent = () => {
-  const [, setToken] = useState('')
-  const [setExpire] = useState('')
-  const navigate = useNavigate()
-
+  // const [, setToken] = useState('')
+  // const [expire, setExpire] = useState('')
   useEffect(() => {
     refreshToken()
     // getAdmin()
@@ -21,50 +19,54 @@ const AppContent = () => {
 
   const refreshToken = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/token')
-      setToken(response.data.accessToken)
+      const refreshToken = localStorage.getItem('refreshToken')
+      if (!refreshToken) {
+        throw new Error('Refresh token not found')
+      }
+
+      const response = await axios.get(
+        `https://api2.librarysmayuppentek.sch.id/token/${refreshToken}`,
+      )
+      localStorage.setItem('refreshToken', refreshToken)
       const decoded = jwtDecode(response.data.accessToken)
-      setExpire(decoded.exp)
+
+      const oneDayInMilliseconds = 24 * 60 * 60 * 1000
+      const tokenExpirationTime = decoded.exp * 1000
+      const currentTime = Date.now()
+      if (currentTime > tokenExpirationTime + oneDayInMilliseconds) {
+        localStorage.removeItem('refreshToken')
+        throw new Error('Refresh token has expired')
+      }
+      if (decoded.role !== 'siswa') {
+        window.location.href('/siswa-login') // Ganti '/dashboard' dengan rute yang sesuai
+        alert('Anda tidak punya akses untuk halaman ini')
+      }
+
       console.log(decoded)
     } catch (err) {
-      if (err.response && err.response.status === 401) {
-        navigate('/login')
+      if (
+        err.message === 'Refresh token not found' ||
+        err.message === 'Refresh token has expired' ||
+        (err.response && err.response.status === 403)
+      ) {
+        window.location.href = '/login'
+      } else if (err.response && err.response.status === 401) {
+        window.location.href = '/login'
+      } else if (err.response && err.response.status === 403) {
+        localStorage.removeItem('refreshToken')
+        window.location.href = '/login'
       }
-      console.log(err.message)
+      console.log(err)
     }
+    // finally {
+    //   try {
+    //     const refreshTokenSiswa = localStorage.getItem('refreshTokenSiswa')
+    //     await axios.delete(`https://api2.librarysmayuppentek.sch.id/siswaLogout/${refreshTokenSiswa}`)
+    //   } catch (err) {
+    //     console.log(err.message)
+    //   }
+    // }
   }
-
-  // const getAdmin = async () => {
-  //   const response = await axiosJWT.get('http://localhost:3005/admin', {
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //   })
-  //   console.log(response.data)
-  // }
-
-  // const axiosJWT = axios.create()
-
-  // axiosJWT.interceptors.request.use(
-  //   async (config) => {
-  //     const currentDate = new Date()
-  //     if (expire * 1000 < currentDate.getTime()) {
-  //       try {
-  //         const response = await axios.get('http://localhost:3005/token')
-  //         config.headers.Authorization = `Bearer ${response.data.accessToken}`
-  //         setToken(response.data.accessToken)
-  //         const decoded = jwtDecode(response.data.accessToken)
-  //         setExpire(decoded.exp)
-  //       } catch (error) {
-  //         console.log(error)
-  //       }
-  //     }
-  //     return config
-  //   },
-  //   (error) => {
-  //     return Promise.reject(error)
-  //   },
-  // )
 
   return (
     <CContainer lg>

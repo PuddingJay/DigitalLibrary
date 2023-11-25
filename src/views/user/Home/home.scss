@@ -1,9 +1,85 @@
-@import "../../../scss/style.scss";
+@import '../../../scss/style.scss';
+
+.searchContainer {
+  display: flex;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+
+  .search {
+    margin: 20px;
+    padding-left: 5px;
+    height: 35px;
+    display: flex;
+    color: #555;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 0 2px grey;
+    background-color: #ffffff;
+    transition: all 0.2s ease-in-out;
+    position: sticky;
+
+    @include mobile {
+      display: flex;
+      justify-content: center;
+    }
+
+    input {
+      width: 240px;
+      background-color: #ffffff;
+      color: #555;
+      border: none;
+      position: sticky;
+
+      @include mobile {
+        width: 300px;
+      }
+
+      @include tablet {
+        width: 600px;
+      }
+    }
+
+    input:focus {
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #555;
+    }
+
+    button {
+      background-color: $primary;
+      box-shadow: 0 0 1px #f6f3f3;
+      border-radius: 0;
+      color: white;
+      border: none;
+      height: 35px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      position: sticky;
+    }
+
+    button:hover {
+      background: #258fce;
+      color: black;
+    }
+  }
+
+  .search:focus-within {
+    box-shadow: 0 0 0 2px $primary;
+  }
+}
 
 .katalog {
   display: grid !important;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  grid-template-columns: repeat(2, 1fr);
 
-  @include tablet {
+  @include mobile {
     grid-template-columns: repeat(3, 1fr);
   }
 
@@ -15,15 +91,98 @@
     grid-template-columns: repeat(5, 1fr);
   }
 
+  @include laptop-l {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
   @include laptop-xl {
     grid-template-columns: repeat(7, 1fr);
   }
 
   @include laptop-xxl {
-    grid-template-columns: repeat(9, 1fr);
+    grid-template-columns: repeat(8, 1fr);
   }
 
-  @include laptop-xxl {
+  @include laptop-xxxl {
     grid-template-columns: repeat(9, 1fr);
+  }
+}
+
+.center-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  max-width: 800px; // Sesuaikan dengan lebar maksimum yang diinginkan
+  padding: 20px;
+}
+
+.top-books-container {
+  border-top: 2px solid transparent;
+  /* Tambahkan garis dengan warna transparan */
+}
+
+.kotak {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.footer {
+  position: relative;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  z-index: 5;
+  flex-wrap: nowrap;
+  flex-direction: row;
+
+  @include mobile {
+    position: sticky;
+  }
+
+  .logo {
+    width: 100px;
+    height: 70px;
+
+    @include mobile {
+      margin: 0 10px;
+      width: 150px;
+      height: auto;
+    }
+
+    margin: 0;
+    z-index: 9999;
+  }
+
+  span {
+    font-size: 10px;
+
+    @include mobile {
+      font-size: 15px;
+    }
+
+    margin-right: 5px;
+  }
+
+  a {
+    font-size: 10px;
+
+    @include mobile {
+      font-size: 15px;
+    }
+  }
+
+  p {
+    font-size: 10px;
+
+    @include mobile {
+      font-size: 15px;
+    }
   }
 }

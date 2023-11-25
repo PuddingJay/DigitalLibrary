@@ -1,5 +1,6 @@
 import React from 'react'
 import { AppContent, AppSidebar, AppFooter, AppHeader } from '../components/index'
+// import { CImage } from '@coreui/react-pro'
 
 const DefaultLayout = () => {
   return (

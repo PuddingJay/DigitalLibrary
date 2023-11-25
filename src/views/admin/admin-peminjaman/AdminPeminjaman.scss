@@ -14,13 +14,42 @@
 }
 
 .actionPeminjaman {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  gap: 10px;
 
-  .form-container {
+  @include mobile {
     display: flex;
     justify-content: space-between;
-    flex-grow: 1;
+
+  }
+
+  .form-container {
+    display: grid;
+    gap: 10px;
+
+    @include mobile {
+      display: flex;
+      flex-grow: 1;
+    }
+  }
+
+  .btnModal {
+    margin-right: auto;
+  }
+
+  .input-group {
+    width: auto;
+    margin-right: 10px;
+
+    input {
+      width: 130px;
+    }
+  }
+
+  .form-floating {
+    input {
+      width: 150px;
+    }
   }
 
   .download-container {
